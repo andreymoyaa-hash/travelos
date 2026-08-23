@@ -1,0 +1,32 @@
+{
+  "name": "travel-os",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "leaflet": "1.9.4",
+    "lucide-react": "1.33.0",
+    "next": "16.3.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/leaflet": "1.9.22",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.2",
+    "playwright-core": "1.62.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3"
+  },
+  "packageManager": "pnpm@11.19.0"
+}
