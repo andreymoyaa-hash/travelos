@@ -25,6 +25,8 @@ import type {
   Reservation,
   TravelPhoto,
   Trip,
+  TripBase,
+  TripDay,
 } from "@/types/travel";
 
 const isInJapan = ({ latitude, longitude }: GeoPosition) =>
@@ -39,6 +41,23 @@ const distanceInMeters = (position: GeoPosition, target: { latitude: number; lon
   return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 };
 
+const shortWeekdays = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+const shortMonths = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+
+const getDateLabels = (date: string) => {
+  const parsed = new Date(`${date}T12:00:00Z`);
+  return {
+    weekday: shortWeekdays[parsed.getUTCDay()],
+    dayNumber: date.slice(-2),
+    month: shortMonths[parsed.getUTCMonth()],
+  };
+};
+
+const formatReservationDate = (date: string) => {
+  const labels = getDateLabels(date);
+  return `${labels.dayNumber} ${labels.month}`;
+};
+
 export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
   const [activeFeature, setActiveFeature] = useState<FeatureId>("dashboard");
   const [selectedCountry, setSelectedCountry] = useState<CountryId>(initialTrip.countryId);
@@ -48,6 +67,7 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
   const [budget, setBudget] = useState<Budget>(initialTrip.budget);
   const [expenses, setExpenses] = useState<Expense[]>(initialTrip.expenses);
   const [itinerary, setItinerary] = useState(initialTrip.itinerary);
+  const [bases, setBases] = useState(initialTrip.bases);
   const [reservations, setReservations] = useState(initialTrip.reservations);
   const [achievements, setAchievements] = useState<Achievement[]>(initialTrip.achievements);
   const [photos, setPhotos] = useState<TravelPhoto[]>(initialTrip.photos);
@@ -58,7 +78,7 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
   const spentInBudgetCurrency = expenses
     .filter((expense) => expense.currency === budget.currency)
     .reduce((sum, expense) => sum + expense.amount, 0);
-  const trip: Trip = { ...initialTrip, budget, expenses, itinerary, reservations, achievements, photos };
+  const trip: Trip = { ...initialTrip, budget, expenses, itinerary, bases, reservations, achievements, photos };
 
   const themeStyle = {
     "--accent": theme.colors.accent,
@@ -77,10 +97,111 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
     setCountrySelectorOpen(false);
   };
 
-  const addActivity = (dayId: string, activity: Activity) => {
+  const saveActivity = (dayId: string, activity: Activity) => {
+    setItinerary((currentItinerary) => currentItinerary.map((day) => {
+      if (day.id !== dayId) return day;
+      const exists = day.activities.some((item) => item.id === activity.id);
+      return {
+        ...day,
+        activities: exists
+          ? day.activities.map((item) => item.id === activity.id ? activity : item)
+          : [...day.activities, activity],
+      };
+    }));
+  };
+
+  const deleteActivity = (dayId: string, activityId: string) => {
     setItinerary((currentItinerary) => currentItinerary.map((day) =>
-      day.id === dayId ? { ...day, activities: [...day.activities, activity] } : day,
+      day.id === dayId
+        ? { ...day, activities: day.activities.filter((activity) => activity.id !== activityId) }
+        : day,
     ));
+  };
+
+  const reorderActivity = (dayId: string, activityId: string, direction: -1 | 1) => {
+    setItinerary((currentItinerary) => currentItinerary.map((day) => {
+      if (day.id !== dayId) return day;
+      const sourceIndex = day.activities.findIndex((activity) => activity.id === activityId);
+      const targetIndex = sourceIndex + direction;
+      if (sourceIndex < 0 || targetIndex < 0 || targetIndex >= day.activities.length) return day;
+      const activities = [...day.activities];
+      [activities[sourceIndex], activities[targetIndex]] = [activities[targetIndex], activities[sourceIndex]];
+      return { ...day, activities };
+    }));
+  };
+
+  const updateDay = (dayId: string, update: Partial<TripDay>) => {
+    setItinerary((currentItinerary) => currentItinerary.map((day) => {
+      if (day.id !== dayId) return day;
+      const date = update.date ?? day.date;
+      return {
+        ...day,
+        ...update,
+        ...(date !== day.date ? getDateLabels(date) : {}),
+        activities: (update.activities ?? day.activities).map((activity) => ({ ...activity, date })),
+      };
+    }));
+  };
+
+  const updateBase = (updatedBase: TripBase) => {
+    setBases((currentBases) => currentBases.map((base) => base.id === updatedBase.id ? updatedBase : base));
+  };
+
+  const moveLinkedReservations = (reservationIds: string[], targetDate: string) => {
+    if (reservationIds.length === 0) return;
+    setReservations((currentReservations) => currentReservations.map((reservation) =>
+      reservationIds.includes(reservation.id)
+        ? { ...reservation, dateISO: targetDate, date: formatReservationDate(targetDate) }
+        : reservation,
+    ));
+  };
+
+  const moveActivity = (sourceDayId: string, targetDayId: string, activityId: string, moveReservation: boolean) => {
+    const sourceDay = itinerary.find((day) => day.id === sourceDayId);
+    const targetDay = itinerary.find((day) => day.id === targetDayId);
+    const movingActivity = sourceDay?.activities.find((activity) => activity.id === activityId);
+    if (!sourceDay || !targetDay || !movingActivity) return;
+
+    setItinerary((currentItinerary) => currentItinerary.map((day) => {
+      if (day.id === sourceDayId) {
+        return { ...day, activities: day.activities.filter((activity) => activity.id !== activityId) };
+      }
+      if (day.id === targetDayId) {
+        return { ...day, activities: [...day.activities, { ...movingActivity, date: day.date }] };
+      }
+      return day;
+    }));
+
+    if (moveReservation && movingActivity.reservationId) {
+      moveLinkedReservations([movingActivity.reservationId], targetDay.date);
+    }
+  };
+
+  const swapDayPlans = (sourceDayId: string, targetDayId: string, moveReservations: boolean) => {
+    const sourceDay = itinerary.find((day) => day.id === sourceDayId);
+    const targetDay = itinerary.find((day) => day.id === targetDayId);
+    if (!sourceDay || !targetDay) return;
+
+    const planFields = ["area", "visitedCity", "dayType", "weather", "notes", "hiddenGem", "flexible"] as const;
+    setItinerary((currentItinerary) => currentItinerary.map((day) => {
+      if (day.id !== sourceDayId && day.id !== targetDayId) return day;
+      const otherDay = day.id === sourceDayId ? targetDay : sourceDay;
+      const swapped = { ...day };
+      for (const field of planFields) {
+        Object.assign(swapped, { [field]: otherDay[field] });
+      }
+      return {
+        ...swapped,
+        activities: otherDay.activities.map((activity) => ({ ...activity, date: day.date })),
+      };
+    }));
+
+    if (moveReservations) {
+      const sourceReservationIds = sourceDay.activities.flatMap((activity) => activity.reservationId ? [activity.reservationId] : []);
+      const targetReservationIds = targetDay.activities.flatMap((activity) => activity.reservationId ? [activity.reservationId] : []);
+      moveLinkedReservations(sourceReservationIds, targetDay.date);
+      moveLinkedReservations(targetReservationIds, sourceDay.date);
+    }
   };
 
   const updateAchievementForParticipant = useCallback((id: string, participantId: string, unlocked: boolean) => {
@@ -147,7 +268,21 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
               onNavigate={navigate}
             />
           ) : null}
-          {activeFeature === "itinerary" ? <ItineraryView itinerary={itinerary} onAddActivity={addActivity} /> : null}
+          {activeFeature === "itinerary" ? (
+            <ItineraryView
+              itinerary={itinerary}
+              bases={bases}
+              flightSegments={initialTrip.flightSegments}
+              reservations={reservations}
+              onSaveActivity={saveActivity}
+              onDeleteActivity={deleteActivity}
+              onReorderActivity={reorderActivity}
+              onUpdateDay={updateDay}
+              onUpdateBase={updateBase}
+              onMoveActivity={moveActivity}
+              onSwapDayPlans={swapDayPlans}
+            />
+          ) : null}
           {activeFeature === "expenses" ? (
             <ExpensesView
               trip={trip}

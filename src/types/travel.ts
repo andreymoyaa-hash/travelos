@@ -33,7 +33,6 @@ export interface Participant {
   avatarUrl?: string;
 }
 
-// Compatibility alias for integrations that still use the Phase 1 name.
 export type Traveler = Participant;
 
 export interface Budget {
@@ -41,27 +40,130 @@ export interface Budget {
   currency: Currency;
 }
 
-export interface Activity {
-  id: string;
-  time: string;
-  title: string;
-  location: string;
-  category: "culture" | "food" | "transport" | "shopping" | "leisure";
-  estimatedCost: number;
-  note?: string;
-  completed?: boolean;
+export interface TripLocation {
+  name: string;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  placeId: string | null;
 }
 
-export interface ItineraryDay {
+export interface ReservationReference {
+  reservationId?: string;
+}
+
+export interface TravelStampReference {
+  stampId?: string;
+}
+
+export type ActivityCategory =
+  | "travel"
+  | "transport"
+  | "food"
+  | "geek"
+  | "shopping"
+  | "culture"
+  | "temple"
+  | "photography"
+  | "nature"
+  | "viewpoint"
+  | "gaming"
+  | "anime"
+  | "theme-park"
+  | "leisure";
+
+export interface Activity extends ReservationReference, TravelStampReference {
+  id: string;
+  title: string;
+  date: string;
+  startTime?: string;
+  endTime?: string;
+  city?: string;
+  category: ActivityCategory;
+  categories: ActivityCategory[];
+  location: TripLocation;
+  estimatedCost?: number;
+  currency?: Currency;
+  notes?: string;
+  optional?: boolean;
+  hiddenGem?: boolean;
+  completed?: boolean;
+  flightSegmentId?: string;
+}
+
+export type TripDayType =
+  | "standard"
+  | "travel"
+  | "base-transition"
+  | "theme-park"
+  | "pokemon-full-day"
+  | "flexible"
+  | "relaxed"
+  | "recovery";
+
+export interface TripDay {
   id: string;
   date: string;
   weekday: string;
   dayNumber: string;
   month: string;
   city: string;
+  visitedCity?: string;
+  baseId?: string;
+  previousBaseId?: string;
   area: string;
+  dayType: TripDayType;
   weather?: string;
+  notes?: string;
+  hiddenGem?: string;
+  flexible?: boolean;
   activities: Activity[];
+}
+
+export type ItineraryDay = TripDay;
+
+export type AccommodationStatus = "confirmed" | "pending";
+
+export interface TripBase extends ReservationReference {
+  id: string;
+  city: string;
+  icon: string;
+  checkInDate: string;
+  checkOutDate: string;
+  nights: number;
+  status: AccommodationStatus;
+  area: string | null;
+  location: TripLocation;
+  checkInTime: string | null;
+  checkOutTime: string | null;
+  reservationCode?: string;
+  provider?: string;
+  price?: number;
+  currency?: Currency;
+  documentIds: string[];
+  photoIds: string[];
+}
+
+export interface FlightEndpoint {
+  airportCode: string;
+  city: string;
+  terminal?: string;
+  dateTime: string;
+  timezone: string;
+}
+
+export interface FlightSegment {
+  id: string;
+  airline: string;
+  flightNumber: string;
+  departure: FlightEndpoint;
+  arrival: FlightEndpoint;
+  durationMinutes: number;
+  aircraft: string;
+  layoverAfter?: {
+    city: string;
+    durationMinutes: number;
+  };
 }
 
 export type ExpenseCategory =
@@ -100,10 +202,13 @@ export interface Reservation {
   title: string;
   subtitle: string;
   date: string;
+  dateISO?: string;
   time: string;
   status: "confirmed" | "pending";
   accent: string;
   meta: string;
+  documentIds?: string[];
+  qrCode?: string;
 }
 
 export type AchievementCategory =
@@ -164,14 +269,21 @@ export interface Trip {
   id: string;
   name: string;
   countryId: CountryId;
+  startDate: string;
+  endDate: string;
   dateRange: string;
   countdownDays: number;
   currentCity: string;
+  timezones: {
+    origin: string;
+    destination: string;
+  };
   participants: Participant[];
   route: string[];
-  bases: Array<{ city: string; nights: number; icon: string }>;
+  bases: TripBase[];
+  flightSegments: FlightSegment[];
   budget: Budget;
-  itinerary: ItineraryDay[];
+  itinerary: TripDay[];
   expenses: Expense[];
   reservations: Reservation[];
   achievements: Achievement[];

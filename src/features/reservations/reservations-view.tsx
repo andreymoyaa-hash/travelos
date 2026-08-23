@@ -35,6 +35,13 @@ const accentByType: Record<ReservationType, string> = {
   restaurant: "#3f8a70",
 };
 
+const monthLabels = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+
+const formatReservationDate = (dateISO: string) => {
+  const date = new Date(`${dateISO}T12:00:00Z`);
+  return `${dateISO.slice(-2)} ${monthLabels[date.getUTCMonth()]}`;
+};
+
 export function ReservationsView({ reservations, onAddReservation }: ReservationsViewProps) {
   const [filter, setFilter] = useState<(typeof filters)[number]["id"]>("all");
   const [formOpen, setFormOpen] = useState(false);
@@ -46,17 +53,19 @@ export function ReservationsView({ reservations, onAddReservation }: Reservation
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const type = form.get("type") as ReservationType;
+    const dateISO = String(form.get("dateISO") || "");
 
     onAddReservation({
-      id: `reservation-${Date.now()}`,
+      id: `reservation-${crypto.randomUUID()}`,
       type,
-      provider: String(form.get("provider") || "Proveedor"),
-      code: String(form.get("code") || "PENDIENTE"),
-      title: String(form.get("title") || "Nueva reserva"),
-      subtitle: String(form.get("subtitle") || "2 viajeros"),
-      date: String(form.get("date") || "13 NOV").toUpperCase(),
-      time: String(form.get("time") || "09:00"),
-      status: "confirmed",
+      provider: String(form.get("provider") || "").trim(),
+      code: String(form.get("code") || "").trim() || "PENDIENTE",
+      title: String(form.get("title") || "").trim(),
+      subtitle: String(form.get("subtitle") || "").trim(),
+      date: formatReservationDate(dateISO),
+      dateISO,
+      time: String(form.get("time") || ""),
+      status: form.get("status") as Reservation["status"],
       accent: accentByType[type],
       meta: "Añadida desde Travel OS",
     });
@@ -115,15 +124,16 @@ export function ReservationsView({ reservations, onAddReservation }: Reservation
             <form onSubmit={handleSubmit}>
               <div className="form-grid">
                 <label>Tipo<select name="type" defaultValue="flight"><option value="flight">✈️ Vuelo</option><option value="hotel">🏨 Hotel</option><option value="train">🚄 Tren</option><option value="ticket">🎟️ Entrada</option><option value="restaurant">🍽️ Restaurante</option></select></label>
-                <label>Proveedor<input name="provider" placeholder="Ej. JR Central" required /></label>
+                <label>Estado<select name="status" defaultValue="confirmed"><option value="confirmed">Confirmada</option><option value="pending">Pendiente</option></select></label>
               </div>
+              <label>Proveedor<input name="provider" placeholder="Ej. JR Central" required /></label>
               <label>Nombre de la reserva<input name="title" placeholder="Ej. Kyoto → Shin-Osaka" required autoFocus /></label>
               <label>Detalle<input name="subtitle" placeholder="2 viajeros · asiento reservado" /></label>
               <div className="form-grid">
-                <label>Código<input name="code" placeholder="ABC-123" required /></label>
-                <label>Fecha<input name="date" placeholder="15 NOV" required /></label>
+                <label>Código<input name="code" placeholder="Pendiente si aún no existe" /></label>
+                <label>Fecha<input name="dateISO" type="date" min="2026-11-09" max="2026-11-30" required /></label>
               </div>
-              <label>Hora<input name="time" type="time" defaultValue="09:00" required /></label>
+              <label>Hora<input name="time" type="time" required /></label>
               <button type="submit" className="primary-button full-width">Guardar reserva</button>
             </form>
           </section>

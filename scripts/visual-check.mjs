@@ -57,9 +57,16 @@ try {
   await desktop.getByRole("button", { name: "Itinerario", exact: true }).click();
   report.desktop.itineraryDays = await desktop.locator(".date-chip").count();
   report.desktop.fullDateRange = await desktop.getByRole("button", { name: /Lun 30 NOV/ }).isVisible();
+  await desktop.getByRole("button", { name: /Mié 11 NOV/ }).click();
+  report.desktop.masterArrival = await desktop.getByText("Llegada a Narita Terminal 1", { exact: true }).isVisible();
+  report.desktop.osakaBase = await desktop.locator(".accommodation-card").filter({ hasText: "Motomachi / Namba" }).getByText("Confirmado", { exact: true }).isVisible();
+  await desktop.getByRole("button", { name: /Dom 15 NOV/ }).click();
+  report.desktop.pendingKyotoBase = await desktop.locator(".accommodation-card").filter({ hasText: "Kyoto" }).getByText("Pendiente de agregar", { exact: true }).isVisible();
+  await desktop.screenshot({ path: join(artifacts, "travel-os-japan-2026-itinerary.png"), fullPage: true });
+  await desktop.getByRole("button", { name: /Lun 09 NOV/ }).click();
   await desktop.getByRole("button", { name: "Nueva actividad" }).click();
   await desktop.getByRole("textbox", { name: "Actividad", exact: true }).fill("Nintendo Museum");
-  await desktop.getByLabel("Ubicación").fill("Uji, Kyoto");
+  await desktop.getByLabel("Lugar").fill("Uji, Kyoto");
   await desktop.getByRole("button", { name: "Añadir al itinerario" }).click();
   report.desktop.activityCreated = await desktop.getByText("Nintendo Museum", { exact: true }).isVisible();
 
@@ -77,12 +84,32 @@ try {
 
   await desktop.getByRole("button", { name: "Reservas", exact: true }).first().click();
   await desktop.getByRole("button", { name: "Añadir reserva" }).click();
-  await desktop.getByLabel("Proveedor").fill("JR Central");
-  await desktop.getByLabel("Nombre de la reserva").fill("Shinkansen Hikari");
-  await desktop.getByLabel("Código").fill("JR-2026");
-  await desktop.getByLabel("Fecha").fill("21 NOV");
+  await desktop.locator('select[name="type"]').selectOption("ticket");
+  await desktop.getByLabel("Proveedor").fill("Shibuya Sky");
+  await desktop.getByLabel("Nombre de la reserva").fill("Entrada Shibuya Sky");
+  await desktop.getByLabel("Código").fill("SKY-2026");
+  await desktop.getByLabel("Fecha").fill("2026-11-24");
+  await desktop.getByLabel("Hora").fill("17:00");
   await desktop.getByRole("button", { name: "Guardar reserva" }).click();
-  report.desktop.reservationCreated = await desktop.getByRole("heading", { name: "Shinkansen Hikari" }).isVisible();
+  report.desktop.reservationCreated = await desktop.getByRole("heading", { name: "Entrada Shibuya Sky" }).isVisible();
+
+  await desktop.getByRole("button", { name: "Itinerario", exact: true }).first().click();
+  await desktop.getByRole("button", { name: /Mar 24 NOV/ }).click();
+  await desktop.getByRole("button", { name: "Editar Shibuya Sky al atardecer" }).click();
+  const shibuyaReservationId = await desktop.locator('select[name="reservationId"] option').filter({ hasText: "Entrada Shibuya Sky" }).getAttribute("value");
+  await desktop.locator('select[name="reservationId"]').selectOption(shibuyaReservationId);
+  await desktop.getByRole("button", { name: "Guardar cambios" }).click();
+  await desktop.getByRole("button", { name: "Mover Shibuya Sky al atardecer" }).click();
+  report.desktop.linkedReservationWarning = await desktop.getByText("Este día contiene reservas vinculadas.", { exact: true }).isVisible();
+  await desktop.locator('select[name="targetDayId"]').selectOption("jp-2026-day-2026-11-23");
+  await desktop.getByRole("button", { name: "Mover actividad", exact: true }).click();
+  await desktop.getByRole("button", { name: /Lun 23 NOV/ }).click();
+  report.desktop.activityMoved = await desktop.getByText("Shibuya Sky al atardecer", { exact: true }).isVisible();
+  await desktop.getByRole("button", { name: "Reservas", exact: true }).first().click();
+  const movedReservationCard = desktop.locator(".reservation-card").filter({ hasText: "Entrada Shibuya Sky" });
+  report.desktop.reservationCardText = await movedReservationCard.innerText();
+  report.desktop.linkedReservationMoved = await movedReservationCard.locator(".reservation-date strong").getByText("23", { exact: true }).isVisible()
+    && await movedReservationCard.locator(".reservation-date span").getByText("NOV", { exact: true }).isVisible();
 
   await desktop.getByRole("button", { name: "Mapa", exact: true }).first().click();
   await desktop.locator(".leaflet-container").waitFor();
@@ -139,11 +166,17 @@ const failed =
   !report.desktop.reservationEmpty ||
   !report.desktop.participantSwitch ||
   !report.desktop.fullDateRange ||
+  !report.desktop.masterArrival ||
+  !report.desktop.osakaBase ||
+  !report.desktop.pendingKyotoBase ||
   !report.desktop.activityCreated ||
   !report.desktop.expenseEmpty ||
   !report.desktop.expenseCreated ||
   !report.desktop.multicurrency ||
   !report.desktop.reservationCreated ||
+  !report.desktop.linkedReservationWarning ||
+  !report.desktop.activityMoved ||
+  !report.desktop.linkedReservationMoved ||
   !report.desktop.leafletVisible ||
   !report.desktop.realLocation ||
   !report.desktop.mapBaseHandled ||

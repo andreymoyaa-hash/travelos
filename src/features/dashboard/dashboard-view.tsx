@@ -3,7 +3,7 @@ import { ArrowRight, CalendarDays, CircleDollarSign, Clock3, MapPin, Navigation,
 import { MetricCard } from "@/components/cards/metric-card";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { formatMoney } from "@/lib/format";
-import type { CountryTheme, FeatureId, Participant, Trip } from "@/types/travel";
+import type { ActivityCategory, CountryTheme, FeatureId, Participant, Trip } from "@/types/travel";
 
 interface DashboardViewProps {
   trip: Trip;
@@ -13,7 +13,22 @@ interface DashboardViewProps {
   onNavigate: (feature: FeatureId) => void;
 }
 
-const activityIcons = { culture: "⛩️", food: "🍜", transport: "🚄", shopping: "🛍️", leisure: "✨" };
+const activityIcons: Record<ActivityCategory, string> = {
+  travel: "✈️",
+  transport: "🚄",
+  food: "🍜",
+  geek: "👾",
+  shopping: "🛍️",
+  culture: "⛩️",
+  temple: "🏯",
+  photography: "📷",
+  nature: "🌿",
+  viewpoint: "🌇",
+  gaming: "🎮",
+  anime: "✨",
+  "theme-park": "🎢",
+  leisure: "✨",
+};
 
 export function DashboardView({ trip, theme, participant, spent, onNavigate }: DashboardViewProps) {
   const remaining = trip.budget.amount - spent;
@@ -88,7 +103,7 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate }: D
           <header className="card-header-row"><div><p className="eyebrow">Inicio del viaje · {featuredDay.weekday} {featuredDay.dayNumber}</p><h2>{featuredDay.area}</h2></div>{featuredDay.weather ? <span className="weather-pill">{featuredDay.weather}</span> : null}</header>
           <div className="mini-timeline">
             {featuredDay.activities.slice(0, 3).map((activity) => (
-              <div key={activity.id} className="mini-timeline-item"><time>{activity.time}</time><span className="mini-activity-icon">{activityIcons[activity.category]}</span><div><strong>{activity.title}</strong><small><MapPin size={12} aria-hidden="true" /> {activity.location}</small></div></div>
+              <div key={activity.id} className="mini-timeline-item"><time>{activity.startTime ?? "Flexible"}</time><span className="mini-activity-icon">{activityIcons[activity.category]}</span><div><strong>{activity.title}</strong><small><MapPin size={12} aria-hidden="true" /> {activity.location.name}</small></div></div>
             ))}
           </div>
           <button type="button" className="secondary-button full-width" onClick={() => onNavigate("itinerary")}>Abrir itinerario <ArrowRight size={16} aria-hidden="true" /></button>
