@@ -2682,3 +2682,141 @@ button:disabled {
   .clock-skeleton { animation: none; }
   .day-card-strip { scroll-behavior: auto; }
 }
+
+/* Multi-trip platform, Passport V2 and camera review */
+textarea { font: inherit; }
+.heading-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 9px; }
+.trips-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+.trips-heading h1 { margin: 0; font-family: var(--font-display), Georgia, serif; font-size: clamp(34px, 5vw, 54px); font-weight: 420; letter-spacing: -.04em; }
+.trips-heading p:last-child { max-width: 640px; margin: 8px 0 0; color: var(--muted); }
+.mode-banner { display: flex; align-items: flex-start; gap: 12px; border: 1px solid color-mix(in srgb, var(--nature) 30%, var(--line)); border-radius: 17px; background: color-mix(in srgb, var(--nature) 8%, var(--surface)); padding: 15px 17px; }
+.mode-banner svg { flex: 0 0 auto; color: var(--nature); }
+.mode-banner strong { font-size: 14px; }
+.mode-banner p { margin: 2px 0 0; color: var(--muted); font-size: 12px; }
+.trip-manager-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.trip-manager-card { position: relative; display: grid; min-width: 0; min-height: 330px; overflow: hidden; border: 1px solid var(--line); border-top: 5px solid var(--trip-card-accent); border-radius: 24px; background: var(--surface); padding: 22px; box-shadow: var(--shadow-soft); }
+.trip-manager-card.active { border-color: color-mix(in srgb, var(--trip-card-accent) 55%, var(--line)); box-shadow: 0 18px 45px color-mix(in srgb, var(--trip-card-accent) 13%, transparent); }
+.trip-manager-card > header { z-index: 1; display: flex; align-items: center; justify-content: space-between; }
+.trip-card-flag { font-size: 30px; }
+.storage-pill, .protected-note { width: fit-content; border-radius: 999px; background: var(--accent-soft); padding: 5px 9px; color: var(--accent-dark); font-size: 10px; font-weight: 800; }
+.trip-manager-card h2 { z-index: 1; margin: 18px 0 3px; font-family: var(--font-display); font-size: 30px; font-weight: 520; }
+.trip-manager-card > p { z-index: 1; margin: 0; color: var(--muted); font-size: 13px; }
+.trip-card-facts { z-index: 1; display: grid; gap: 7px; align-content: start; margin: 20px 0; }
+.trip-card-facts span { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; }
+.trip-card-facts svg { color: var(--trip-card-accent); }
+.trip-manager-card > footer { z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: auto; }
+.trip-manager-card > footer .primary-button { flex: 1 1 150px; }
+.trip-card-pattern { position: absolute; inset: auto -24px -42px auto; display: grid; width: 180px; height: 180px; place-items: center; border-radius: 50%; color: color-mix(in srgb, var(--trip-card-accent) 13%, transparent); font-size: 80px; transform: rotate(-8deg); }
+.trip-card-pattern.mexico { border-radius: 24px; background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--trip-card-accent) 7%, transparent) 0 9px, transparent 9px 18px); }
+.trip-form-modal { width: min(100%, 720px); }
+.expense-modal textarea { width: 100%; resize: vertical; border: 1px solid var(--line); border-radius: 12px; background: #fbf8f3; padding: 10px 12px; color: var(--ink); font-size: 13px; }
+.cloud-explanation { display: grid; place-items: center; gap: 8px; margin: 22px 0; border-radius: 18px; background: var(--accent-soft); padding: 24px; text-align: center; }
+.cloud-explanation svg { color: var(--accent); }
+.cloud-explanation p { max-width: 430px; margin: 0; color: var(--muted); font-size: 13px; }
+
+[data-country-style="mexico"] .trip-hero { background: linear-gradient(130deg, #f6dca8, color-mix(in srgb, var(--accent) 16%, #fff7e7)); color: var(--ink); }
+[data-country-style="mexico"] .hero-pattern { background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--accent) 10%, transparent) 0 15px, transparent 15px 30px); }
+[data-country-style="mexico"] .sun-disc { border-radius: 16px; background: var(--cultural); transform: rotate(12deg); }
+.destination-geometry { position: absolute; right: 12%; bottom: 12%; color: color-mix(in srgb, var(--accent) 42%, transparent); font-size: clamp(80px, 14vw, 170px); line-height: 1; }
+
+.passport-cover { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 22px; overflow: hidden; min-height: 250px; border-radius: 28px 28px 28px 9px; background: linear-gradient(135deg, var(--ink), color-mix(in srgb, var(--secondary) 70%, var(--ink))); padding: clamp(24px, 4vw, 42px); color: var(--surface); box-shadow: 0 22px 54px color-mix(in srgb, var(--ink) 20%, transparent); }
+.passport-cover.mexico { background: linear-gradient(135deg, #1d2722, #075c49); }
+.passport-cover.mexico::after { position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(255,255,255,.035) 0 12px, transparent 12px 24px); content: ""; }
+.passport-cover > * { z-index: 1; }
+.passport-cover-mark { display: grid; width: 94px; height: 118px; place-items: center; border: 2px solid color-mix(in srgb, var(--premium) 70%, white); border-radius: 50%; color: var(--premium); font-size: 36px; }
+.passport-cover h2 { margin: 8px 0; font-family: var(--font-display); font-size: clamp(30px, 5vw, 52px); font-weight: 450; line-height: 1; }
+.passport-cover p { max-width: 570px; margin: 0; color: color-mix(in srgb, var(--paper) 74%, transparent); }
+.passport-cover .collection-progress { max-width: 430px; margin-top: 24px; }
+.passport-owner { display: grid; gap: 4px; border-left: 1px solid color-mix(in srgb, var(--paper) 25%, transparent); padding-left: 22px; }
+.passport-owner small, .passport-owner span { color: color-mix(in srgb, var(--paper) 65%, transparent); font-size: 11px; }
+.passport-owner strong { font-size: 18px; }
+.passport-layout { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, .6fr); align-items: start; gap: 22px; }
+.passport-pages { display: grid; gap: 20px; min-width: 0; }
+.passport-city-page { display: grid; gap: 14px; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); padding: 22px; box-shadow: var(--shadow-soft); }
+.passport-city-page > header { display: flex; align-items: end; justify-content: space-between; gap: 12px; }
+.passport-city-page h3 { margin: 0; font-family: var(--font-display); font-size: 28px; font-weight: 500; }
+.passport-city-page > header > span { border-radius: 999px; background: var(--accent-soft); padding: 6px 10px; color: var(--accent-dark); font-size: 11px; font-weight: 800; }
+.stamp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
+.passport-stamp-card { position: relative; display: grid; min-width: 0; min-height: 180px; overflow: hidden; align-content: start; gap: 8px; border: 1px dashed color-mix(in srgb, var(--achievement-color) 35%, var(--line)); border-radius: 18px; background: var(--paper); padding: 15px; text-align: left; opacity: .72; }
+.passport-stamp-card.unlocked { border-style: solid; background: color-mix(in srgb, var(--achievement-color) 8%, var(--surface)); opacity: 1; animation: stamp-unlock 420ms ease both; }
+@keyframes stamp-unlock { 0% { transform: scale(.94) rotate(-2deg); } 65% { transform: scale(1.02) rotate(1deg); } 100% { transform: none; } }
+.passport-stamp-card .achievement-icon { margin: 0; }
+.passport-stamp-card > strong { padding-right: 24px; font-size: 13px; }
+.passport-stamp-card > small { color: var(--muted); font-size: 10px; }
+.stamp-photo-thumb { position: relative; overflow: hidden; width: 100%; aspect-ratio: 2 / 1; margin-top: auto; border-radius: 10px; }
+.stamp-photo-thumb img { object-fit: cover; }
+.companion-v2 { border-color: color-mix(in srgb, var(--highlight) 45%, var(--line)); background: color-mix(in srgb, var(--highlight) 14%, var(--surface)); }
+.companion-v2 .companion-portrait { display: grid; place-items: center; width: 110px; height: 110px; }
+.companion-v2 .companion-face { position: static; font-size: 38px; }
+.companion-xp { display: grid; gap: 8px; }
+.companion-xp > span { display: flex; justify-content: space-between; }
+.companion-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 16px; }
+.companion-actions button { display: flex; min-height: 44px; align-items: center; justify-content: center; gap: 5px; border: 1px solid color-mix(in srgb, var(--premium) 35%, var(--line)); border-radius: 11px; background: var(--surface); font-size: 11px; font-weight: 750; }
+.photo-grid figure { position: relative; overflow: hidden; min-height: 190px; margin: 0; border-radius: 16px; background: var(--ink); }
+.photo-grid figure img { object-fit: cover; }
+.photo-grid figcaption { position: absolute; inset: auto 0 0; z-index: 1; background: linear-gradient(transparent, rgba(0,0,0,.75)); padding: 28px 10px 9px; color: white; font-size: 11px; }
+.stamp-detail-seal { display: grid; width: 100px; height: 100px; place-items: center; margin: 20px auto; border: 2px dashed var(--line); border-radius: 50%; background: var(--paper); font-size: 38px; filter: grayscale(1); }
+.stamp-detail-seal.unlocked { border-color: var(--accent); filter: none; animation: stamp-unlock 420ms ease both; }
+.stamp-detail-modal dl { display: grid; gap: 9px; }
+.stamp-detail-modal dl > div { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.stamp-detail-modal dt { color: var(--muted); font-size: 12px; }
+.stamp-detail-modal dd { margin: 0; text-align: right; font-size: 12px; font-weight: 750; }
+.stamp-detail-photo { position: relative; overflow: hidden; min-height: 240px; margin: 16px 0; border-radius: 16px; }
+.stamp-detail-photo img { object-fit: cover; }
+.stamp-detail-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.floating-camera { position: fixed; z-index: 23; right: 92px; bottom: 28px; display: flex; min-height: 50px; align-items: center; gap: 7px; border: 2px solid white; border-radius: 999px; background: var(--accent); padding: 0 16px; color: white; box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 28%, transparent); font-weight: 800; }
+.camera-backdrop { padding: 12px; }
+.camera-modal.review { width: min(100%, 980px); }
+.camera-review-layout { display: grid; gap: 16px; }
+.camera-modal.review .camera-review-layout { grid-template-columns: minmax(0, 1.45fr) minmax(260px, .65fr); align-items: start; }
+.camera-modal.review .camera-viewport { min-height: min(64vh, 620px); }
+.review-fields { align-content: start; margin: 0; }
+.camera-meta textarea, .camera-meta select { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; background: #fbf8f3; padding: 10px; color: var(--ink); font-size: 13px; }
+.camera-modal > footer { margin-top: 16px; }
+.camera-modal > footer > * { min-width: 150px; justify-content: center; }
+.file-button { position: relative; overflow: hidden; }
+.file-button input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+
+@media (max-width: 920px) {
+  .passport-layout { grid-template-columns: 1fr; }
+  .companion-v2 { position: static; }
+  .trip-manager-grid { grid-template-columns: 1fr; }
+  .camera-modal.review .camera-review-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .trips-heading { align-items: stretch; flex-direction: column; }
+  .trips-heading .primary-button { width: 100%; justify-content: center; }
+  .trip-manager-card { min-height: 310px; padding: 18px; }
+  .heading-actions { width: 100%; justify-content: stretch; }
+  .heading-actions > * { flex: 1 1 130px; justify-content: center; }
+  .passport-cover { grid-template-columns: 1fr; padding: 25px; }
+  .passport-cover-mark { width: 70px; height: 84px; font-size: 27px; }
+  .passport-owner { border-top: 1px solid color-mix(in srgb, var(--paper) 25%, transparent); border-left: 0; padding-top: 16px; padding-left: 0; }
+  .stamp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .passport-stamp-card { min-height: 170px; }
+  .camera-backdrop { padding: 0; }
+  .camera-modal, .camera-modal.review { width: 100%; height: 100dvh; max-height: none; border: 0; border-radius: 0; padding: 16px; }
+  .camera-modal.review .camera-review-layout { display: grid; grid-template-rows: minmax(240px, 48vh) auto; overflow-y: auto; }
+  .camera-modal.review .camera-viewport { min-height: 240px; }
+  .camera-modal > footer { position: sticky; z-index: 3; bottom: 0; background: var(--surface); padding: 10px 0 max(10px, env(safe-area-inset-bottom)); }
+  .camera-modal > footer > * { min-width: 0; flex: 1; }
+  .floating-camera { right: 78px; bottom: 89px; min-width: 52px; min-height: 52px; justify-content: center; padding: 0; border-radius: 50%; }
+  .floating-camera span { display: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .expense-modal label, .camera-meta label { font-size: 13px; }
+  .expense-modal input, .expense-modal select { font-size: 16px; }
+  .traveler-stack > button { width: 44px; height: 44px; }
+  .country-trigger { min-width: 44px; min-height: 44px; }
+}
+
+@media (max-width: 390px) {
+  .stamp-grid { grid-template-columns: 1fr; }
+  .trip-manager-card > footer .primary-button { flex-basis: 100%; }
+  .passport-city-page { padding: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .passport-stamp-card.unlocked, .stamp-detail-seal.unlocked { animation: none; }
+}

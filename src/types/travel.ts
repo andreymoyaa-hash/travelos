@@ -1,4 +1,5 @@
 export type FeatureId =
+  | "trips"
   | "dashboard"
   | "itinerary"
   | "expenses"
@@ -7,7 +8,10 @@ export type FeatureId =
   | "adventure";
 
 export type CountryId = "japan" | "mexico" | "korea" | "usa" | "other";
-export type Currency = "JPY" | "CRC" | "USD";
+export type Currency = "JPY" | "CRC" | "USD" | "MXN" | "EUR";
+
+export type StorageMode = "local" | "cloud";
+export type TripMemberRole = "owner" | "editor" | "viewer";
 
 export interface CountryTheme {
   id: CountryId;
@@ -35,6 +39,18 @@ export interface CountryTheme {
     bases: string[];
   };
   categories: string[];
+  countryCode: string;
+  typographyAccent: string;
+  patterns: string[];
+  decorativeStyle: "japan" | "mexico" | "international";
+  iconTreatment: string;
+  passportStyle: string;
+  companionStyle: string;
+  labels: {
+    greeting: string;
+    route: string;
+    passport: string;
+  };
 }
 
 export interface Participant {
@@ -53,6 +69,8 @@ export interface Budget {
 }
 
 export interface TripLocation {
+  id?: string;
+  tripId?: string;
   name: string;
   address: string | null;
   latitude: number | null;
@@ -215,7 +233,7 @@ export interface Expense {
   icon: string;
 }
 
-export type ReservationType = "flight" | "hotel" | "train" | "ticket" | "restaurant";
+export type ReservationType = "flight" | "hotel" | "train" | "ticket" | "restaurant" | "transport" | "other";
 
 export interface Reservation {
   id: string;
@@ -261,6 +279,11 @@ export interface Achievement {
   geoTriggers?: GeoTrigger[];
   unlockedBy: string[];
   location: string;
+  city?: string;
+  rarity?: "common" | "special" | "rare";
+  custom?: boolean;
+  unlockedAt?: Record<string, string>;
+  unlockedPhotoIds?: Record<string, string>;
 }
 
 export interface GeoPosition {
@@ -274,11 +297,68 @@ export type LocationStatus = "idle" | "requesting" | "granted" | "denied" | "una
 
 export interface TravelPhoto {
   id: string;
+  tripId?: string;
   dataUrl: string;
   createdAt: string;
   participantId: string;
   location?: GeoPosition;
   achievementId?: string;
+  activityId?: string;
+  locationId?: string;
+  dayId?: string;
+  note?: string;
+}
+
+export interface TravelMemory {
+  id: string;
+  tripId: string;
+  participantId: string;
+  activityId?: string;
+  locationId?: string;
+  stampId?: string;
+  dayId?: string;
+  date: string;
+  image: string;
+  note?: string;
+  createdAt: string;
+  location?: GeoPosition;
+}
+
+export interface PassportTemplate {
+  id: "japan" | "mexico" | "generic";
+  name: string;
+  description: string;
+  categories: string[];
+  stamps: Achievement[];
+}
+
+export interface CompanionProfile {
+  id: "japan-geek" | "travel-os";
+  name: string;
+  icon: string;
+  countryId: CountryId | "international";
+  style: string;
+}
+
+export interface CompanionProgress {
+  level: number;
+  xp: number;
+  mood: "curious" | "happy" | "resting" | "excited";
+  enabled: boolean;
+  lastMessage?: string;
+  lastInteractionAt?: string;
+}
+
+export interface TripSettings {
+  creatorName: string;
+  destinationTimeZone: string;
+  initialCity?: string;
+  passportTemplateId: PassportTemplate["id"];
+  companionProfileId: CompanionProfile["id"];
+  storageMode: StorageMode;
+  protected?: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface RouteOption {
@@ -314,4 +394,16 @@ export interface Trip {
   achievements: Achievement[];
   photos: TravelPhoto[];
   routeOptions: RouteOption[];
+  settings?: TripSettings;
+  companionProgress?: CompanionProgress;
+}
+
+export interface TripInvite {
+  id: string;
+  tripId: string;
+  code: string;
+  role: TripMemberRole;
+  createdBy: string;
+  expiresAt?: string;
+  usedBy?: string;
 }

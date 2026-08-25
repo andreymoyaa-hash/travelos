@@ -16,7 +16,7 @@ interface ExpensesViewProps {
   onUpdateBudget: (budget: Budget) => void;
 }
 
-const currencies: Currency[] = ["JPY", "CRC", "USD"];
+const currencies: Currency[] = ["JPY", "MXN", "USD", "CRC", "EUR"];
 const categories: Array<{ id: ExpenseCategory; label: string; icon: string; color: string }> = [
   { id: "food", label: "Comida", icon: "🍜", color: "#dd6b54" },
   { id: "shopping", label: "Compras", icon: "🛍️", color: "#9b6ab1" },
@@ -102,7 +102,7 @@ export function ExpensesView({ trip, expenses, activeParticipant, onAddExpense, 
         </article>
 
         <article className="finance-stat-card"><span className="finance-stat-icon"><ArrowUpRight size={19} /></span><p>Gastado</p><strong>{formatMoney(spent, trip.budget.currency)}</strong><small>{Math.round(budgetPercent)}% del presupuesto</small></article>
-        <article className="finance-stat-card"><span className="finance-stat-icon purple"><Users size={19} /></span><p>Participantes</p><strong>{trip.participants.length}</strong><small>Andy y José, cuentas separadas</small></article>
+        <article className="finance-stat-card"><span className="finance-stat-icon purple"><Users size={19} /></span><p>Participantes</p><strong>{trip.participants.length}</strong><small>{trip.participants.map((participant) => participant.name).join(" y ") || "Sin participantes"}</small></article>
       </section>
 
       <div className="currency-summary" aria-label="Totales registrados por moneda">
@@ -135,7 +135,7 @@ export function ExpensesView({ trip, expenses, activeParticipant, onAddExpense, 
         <section className="surface-card expense-list-card">
           <header className="card-header-row"><div><p className="eyebrow">Actividad reciente</p><h2>Últimos gastos</h2></div><ReceiptText size={20} aria-hidden="true" /></header>
           {expenses.length === 0 ? (
-            <div className="empty-state compact"><span>¥</span><h2>No tienes gastos registrados</h2><p>Usa “Registrar gasto” cuando Andy o José hagan el primer pago.</p></div>
+            <div className="empty-state compact"><span>¤</span><h2>No tienes gastos registrados</h2><p>Usa “Registrar gasto” cuando alguien haga el primer pago.</p></div>
           ) : (
             <div className="expense-list">
               {expenses.map((expense) => {
@@ -163,7 +163,7 @@ export function ExpensesView({ trip, expenses, activeParticipant, onAddExpense, 
                 <label>Categoría<select name="category" defaultValue="food">{categories.map((category) => <option value={category.id} key={category.id}>{category.icon} {category.label}</option>)}</select></label>
                 <label>Pagó<select name="paidBy" defaultValue={activeParticipant.id}>{trip.participants.map((participant) => <option value={participant.id} key={participant.id}>{participant.name}</option>)}</select></label>
               </div>
-              <label>Tipo de gasto<select name="scope" defaultValue="shared"><option value="shared">Compartido entre Andy y José</option><option value="individual">Individual de quien pagó</option></select></label>
+              <label>Tipo de gasto<select name="scope" defaultValue="shared"><option value="shared">Compartido entre participantes</option><option value="individual">Individual de quien pagó</option></select></label>
               <button type="submit" className="primary-button full-width">Guardar gasto</button>
             </form>
           </section>

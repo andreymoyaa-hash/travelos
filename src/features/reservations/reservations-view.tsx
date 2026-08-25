@@ -1,7 +1,7 @@
 "use client";
 
 import { type FormEvent, useState } from "react";
-import { BedDouble, CalendarPlus, Check, ChevronRight, Plane, QrCode, Ticket, TrainFront, X } from "lucide-react";
+import { BedDouble, BusFront, CalendarPlus, Check, ChevronRight, MoreHorizontal, Plane, QrCode, Ticket, TrainFront, X } from "lucide-react";
 
 import { SectionHeading } from "@/components/ui/section-heading";
 import type { Reservation, ReservationType } from "@/types/travel";
@@ -12,6 +12,9 @@ const filters: Array<{ id: "all" | ReservationType; label: string }> = [
   { id: "hotel", label: "Hoteles" },
   { id: "train", label: "Trenes" },
   { id: "ticket", label: "Entradas" },
+  { id: "restaurant", label: "Restaurantes" },
+  { id: "transport", label: "Transporte" },
+  { id: "other", label: "Otros" },
 ];
 
 const reservationIcons = {
@@ -20,11 +23,15 @@ const reservationIcons = {
   train: TrainFront,
   ticket: Ticket,
   restaurant: Ticket,
+  transport: BusFront,
+  other: MoreHorizontal,
 };
 
 interface ReservationsViewProps {
   reservations: Reservation[];
   onAddReservation: (reservation: Reservation) => void;
+  startDate: string;
+  endDate: string;
 }
 
 const accentByType: Record<ReservationType, string> = {
@@ -33,6 +40,8 @@ const accentByType: Record<ReservationType, string> = {
   train: "#4c82a4",
   ticket: "#7357ad",
   restaurant: "#3f8a70",
+  transport: "#2d6685",
+  other: "#77716b",
 };
 
 const monthLabels = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
@@ -42,7 +51,7 @@ const formatReservationDate = (dateISO: string) => {
   return `${dateISO.slice(-2)} ${monthLabels[date.getUTCMonth()]}`;
 };
 
-export function ReservationsView({ reservations, onAddReservation }: ReservationsViewProps) {
+export function ReservationsView({ reservations, startDate, endDate, onAddReservation }: ReservationsViewProps) {
   const [filter, setFilter] = useState<(typeof filters)[number]["id"]>("all");
   const [formOpen, setFormOpen] = useState(false);
   const visibleReservations = filter === "all"
@@ -123,7 +132,7 @@ export function ReservationsView({ reservations, onAddReservation }: Reservation
             </header>
             <form onSubmit={handleSubmit}>
               <div className="form-grid">
-                <label>Tipo<select name="type" defaultValue="flight"><option value="flight">✈️ Vuelo</option><option value="hotel">🏨 Hotel</option><option value="train">🚄 Tren</option><option value="ticket">🎟️ Entrada</option><option value="restaurant">🍽️ Restaurante</option></select></label>
+                <label>Tipo<select name="type" defaultValue="flight"><option value="flight">✈️ Vuelo</option><option value="hotel">🏨 Hotel</option><option value="train">🚄 Tren</option><option value="ticket">🎟️ Entrada</option><option value="restaurant">🍽️ Restaurante</option><option value="transport">🚌 Transporte</option><option value="other">••• Otros</option></select></label>
                 <label>Estado<select name="status" defaultValue="confirmed"><option value="confirmed">Confirmada</option><option value="pending">Pendiente</option></select></label>
               </div>
               <label>Proveedor<input name="provider" placeholder="Ej. JR Central" required /></label>
@@ -131,7 +140,7 @@ export function ReservationsView({ reservations, onAddReservation }: Reservation
               <label>Detalle<input name="subtitle" placeholder="2 viajeros · asiento reservado" /></label>
               <div className="form-grid">
                 <label>Código<input name="code" placeholder="Pendiente si aún no existe" /></label>
-                <label>Fecha<input name="dateISO" type="date" min="2026-11-09" max="2026-11-30" required /></label>
+                <label>Fecha<input name="dateISO" type="date" min={startDate} max={endDate} required /></label>
               </div>
               <label>Hora<input name="time" type="time" required /></label>
               <button type="submit" className="primary-button full-width">Guardar reserva</button>

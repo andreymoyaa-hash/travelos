@@ -7,16 +7,19 @@ import {
   PlaneTakeoff,
   Sparkles,
   Stamp,
+  BaggageClaim,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
-import type { CountryTheme, FeatureId, Trip } from "@/types/travel";
+import type { CompanionProfile, CompanionProgress, CountryTheme, FeatureId, Trip } from "@/types/travel";
 
 interface SideNavigationProps {
   trip: Trip;
   theme: CountryTheme;
   active: FeatureId;
   companionEnabled: boolean;
+  companionProfile?: CompanionProfile;
+  companionProgress?: CompanionProgress;
   onNavigate: (feature: FeatureId) => void;
   onToggleCompanion: () => void;
 }
@@ -26,6 +29,7 @@ const navigationItems: Array<{
   label: string;
   icon: ComponentType<{ size?: number; strokeWidth?: number; "aria-hidden"?: boolean }>;
 }> = [
+  { id: "trips", label: "Mis viajes", icon: BaggageClaim },
   { id: "dashboard", label: "Inicio", icon: LayoutDashboard },
   { id: "itinerary", label: "Itinerario", icon: CalendarDays },
   { id: "expenses", label: "Finanzas", icon: CircleDollarSign },
@@ -39,12 +43,15 @@ export function SideNavigation({
   theme,
   active,
   companionEnabled,
+  companionProfile,
+  companionProgress,
   onNavigate,
   onToggleCompanion,
 }: SideNavigationProps) {
   const unlocked = trip.achievements.filter((achievement) => achievement.unlockedBy.length > 0).length;
-  const companionLevel = 1 + Math.floor(unlocked / 4);
-  const companionProgress = trip.achievements.length > 0 ? Math.round((unlocked / trip.achievements.length) * 100) : 0;
+  const companionLevel = companionProgress?.level ?? 1 + Math.floor(unlocked / 4);
+  const companionPercent = companionProgress ? companionProgress.xp % 100 : trip.achievements.length > 0 ? Math.round((unlocked / trip.achievements.length) * 100) : 0;
+  const companionName = companionProfile?.name ?? (trip.countryId === "japan" ? "Pikachu" : "Compañero Travel OS");
 
   return (
     <aside className="side-navigation">
@@ -96,9 +103,9 @@ export function SideNavigation({
         <span className="companion-bolt">⚡</span>
         <span className="companion-copy">
           <small>Compañero · nivel {companionLevel}</small>
-          <strong>{companionEnabled ? "Pikachu listo para explorar" : "Activar compañero"}</strong>
-          <i><b style={{ width: `${companionProgress}%` }} /></i>
-          <em>{unlocked} sellos desbloqueados</em>
+          <strong>{companionEnabled ? `${companionName} listo para explorar` : "Activar compañero"}</strong>
+          <i><b style={{ width: `${companionPercent}%` }} /></i>
+          <em>{companionProgress?.xp ?? unlocked * 25} XP · {unlocked} sellos</em>
         </span>
         {companionEnabled ? <BadgeCheck size={18} aria-label="Compañero activo" /> : <Sparkles size={18} aria-hidden="true" />}
       </button>

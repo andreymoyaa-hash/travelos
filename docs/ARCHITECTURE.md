@@ -1,55 +1,67 @@
-# Travel OS — arquitectura
+# Travel OS — arquitectura multi-viaje
 
-Travel OS usa Next.js App Router, React, TypeScript estricto y Tailwind CSS. `page.tsx` permanece como Server Component y entrega una plantilla serializable al shell cliente `TravelApp`, que coordina el estado temporal de la sesión.
+Travel OS usa Next.js App Router, React y TypeScript estricto. `page.tsx` continúa siendo un Server Component y entrega Japón 2026 como seed serializable a `TravelApp`. El shell cliente administra una colección de viajes independientes mediante un `tripId` estable.
 
-## Estructura
+## Límite de dominio
 
 ```text
-src/
-  app/                  # layout, metadata, errores y entrada RSC
-  components/           # navegación, tarjetas y primitivas visuales
-  data/
-    trips/
-      japan-2026.ts     # plantilla maestra: bases, vuelos y 22 días
-      validate-trip.ts  # invariantes de fechas e IDs estables
-    japan-trip.ts       # reexportación de compatibilidad
-    japan-itinerary.ts  # reexportación de compatibilidad
-    japan-achievements.ts
-    japan-demo-data.ts  # fixtures opcionales, nunca cargados por el viaje real
-  features/
-    trips/              # estado compartido y participante activo
-    dashboard/          # resumen personal del viaje
-    itinerary/          # edición, reordenamiento y traslado del plan
-    expenses/           # presupuesto, monedas, categorías y pagadores
-    reservations/       # reservas y estado vacío
-    maps/               # Google Maps, Places New, Routes y geolocalización consentida
-    photos/             # captura MediaDevices y metadatos
-    achievements/       # logros por persona y álbum
-  services/             # contrato para persistencia futura
-  types/                # modelos de dominio compartidos
+TravelApp
+  └─ TripRepository
+       ├─ LocalTripRepository (activo)
+       └─ CloudTripRepository (contrato futuro)
+
+Trip (tripId)
+  ├─ participantes
+  ├─ días / actividades / lugares
+  ├─ reservas / gastos
+  ├─ fotos / TravelMemory
+  ├─ PassportTemplate / stamps
+  └─ CompanionProfile / progreso
 ```
 
-## Decisiones clave
+Los componentes no acceden a `localStorage`. Todas las lecturas, escrituras, altas, cambios y eliminaciones pasan por `TripRepository`, ubicado en `src/repositories/trip-repository.ts`. La implementación local usa un sobre versionado (`travel-os:trips:v2`) y permite sustituir el almacenamiento sin reescribir las vistas.
 
-- **Datos reales y demo separados:** el viaje real no importa los fixtures de demostración.
-- **Viajes como datos:** la UI consume `Trip`; ningún día o vuelo vive dentro de componentes React.
-- **Referencias estables:** días y actividades tienen IDs propios; `reservationId` y `stampId` son referencias opcionales.
-- **Ubicaciones verificables:** nombre y dirección conviven con latitud, longitud y `placeId`; las coordenadas desconocidas son `null`.
-- **Movimientos explícitos:** intercambiar planes conserva las fechas/base logísticas y vuelve a fechar actividades; las reservas sólo cambian cuando el usuario lo acepta.
-- **Identidad por participante:** gastos usan `paidBy` y `scope`; logros usan `unlockedBy`; fotos usan `participantId`.
-- **Sin conversiones falsas:** cada gasto conserva su moneda y el presupuesto sólo se compara con gastos de la misma moneda.
-- **Permisos bajo acción explícita:** Geolocation se solicita desde “Usar mi ubicación” y MediaDevices desde “Tomar foto”.
-- **Google Maps cliente aislado:** el mapa se carga dinámicamente sin SSR y las bibliotecas `maps`, `marker` y `places` sólo se importan al abrir la vista.
-- **Servicios actuales:** Places usa `PlaceAutocompleteElement`; Routes usa `Route.computeRoutes`, sin `DirectionsService` ni respuestas simuladas.
-- **Costo honesto:** la opción más barata sólo compara alternativas cuando Google devuelve tarifas reales comparables; si no, explica la limitación. La caminata y los transbordos también muestran “No disponible” cuando faltan datos.
-- **Reloj reutilizable:** cada `Trip` declara origen, destino y zonas IANA; `Intl.DateTimeFormat` calcula fecha, hora y cambios de horario sin offsets fijos.
-- **Tema por país:** `CountryTheme` concentra tokens de color y semántica de rutas para evitar valores Japón-específicos dentro de componentes compartidos.
-- **Desbloqueo extensible:** los logros declaran métodos `manual`, `photo` y `gps`, además de radios geográficos opcionales.
-- **Persistencia sustituible:** `TravelService` define el límite para base de datos, almacenamiento de imágenes y sincronización.
+## Migración y snapshot de Japón
 
-## Pendiente de infraestructura
+- `LocalTripRepository` migra de forma idempotente claves legacy conocidas y asigna datos sin ID a `japan-2026`.
+- El seed Japón se inserta sólo si no existe; nunca se duplica.
+- `japan-2026-baseline.ts` comprueba en ejecución 22 días, 143 actividades, 3 bases, 2 vuelos, 17 sellos, Andy/José y la dirección real de Osaka.
+- `validate-trip.ts` conserva las invariantes de fechas e IDs únicos.
+- Japón 2026 está marcado como protegido y no puede eliminarse desde la interfaz.
 
-1. Implementar `TravelService` con autenticación y base de datos.
-2. Mover fotografías de data URLs de sesión a almacenamiento de objetos.
-3. Persistir los lugares de Google Places guardados durante la sesión mediante `TravelService`.
-4. Añadir caché offline de documentos respetando las políticas de Google Maps Platform; no almacenar contenido prohibido del proveedor.
+## CountryTheme
+
+`CountryTheme` ya no cambia una bandera sobre el viaje activo. El tema se resuelve desde `activeTrip.countryId` y define país, paleta, acento tipográfico, patrones, estilo decorativo, tratamiento de iconos, pasaporte, companion y etiquetas. Se implementan:
+
+- Japón: conserva Sumi, Washi, Torii, Aizome, Matcha, Sakura y Kin.
+- México: geometría urbana, azulejos y papel picado abstracto; no usa torii, sakura ni señalización japonesa.
+- Internacional: fallback neutral para otros destinos.
+
+## PassportTemplate y CompanionProfile
+
+Cada viaje selecciona su `PassportTemplate` al crearse. Japón conserva sus 17 sellos reales; México y el fallback internacional reciben únicamente sus plantillas propias y admiten sellos personalizados. Los desbloqueos, fotografías y fechas viven dentro del `Trip` activo.
+
+`CompanionProfile` elige Pikachu sólo para Japón/Geek Mode y un companion Travel OS neutral para los demás países. `CompanionProgress` persiste nivel, XP, mood, último mensaje e interacción por viaje.
+
+## Fotos y recuerdos
+
+`TravelPhoto` mantiene compatibilidad con las fotos existentes y agrega `tripId`, día, actividad, lugar, sello y nota opcionales. `TravelMemory` representa el modelo de dominio de la siguiente migración. La cámara abre una revisión modal/full-screen inmediata; al cerrar no navega ni modifica el scroll del módulo de origen.
+
+## Local Mode y Cloud Mode
+
+Local Mode funciona hoy sin cuentas ni backend: multi-viaje, edición, cámara, mapas, Passport y companion persisten en el navegador. Las imágenes siguen siendo data URLs; un volumen grande puede alcanzar la cuota del navegador y deberá migrarse a object storage.
+
+Cloud Mode es una base preparada, no una función simulada. El esquema propuesto está en `supabase/migrations/202608250001_travel_os_foundation.sql` y contempla usuarios, viajes, miembros, días, actividades, ubicaciones, reservas, gastos, fotos, sellos, desbloqueos, progreso e invitaciones. La UI informa que compartir requiere configurar Supabase y no genera enlaces falsos.
+
+Variables requeridas para implementar Cloud Mode:
+
+```dotenv
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Todavía falta instalar un cliente Supabase, implementar autenticación, `CloudTripRepository`, storage de fotos, aceptación de invitaciones y pruebas de permisos/RLS. La ausencia de esas variables no afecta Local Mode.
+
+## Google Maps
+
+El mapa mantiene lazy loading cliente, Places API (New), Advanced Markers, GPS consentido, enlaces a Google Maps y `Route.computeRoutes`. Transit solicita `travelAdvisory` y lee `route.travelAdvisory?.transitFare`; nunca inventa tarifas. La opción “Más barato” sólo compara rutas con tarifas suficientes.

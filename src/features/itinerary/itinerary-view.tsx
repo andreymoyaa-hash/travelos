@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { type FormEvent, useState } from "react";
 import {
   ArrowDown,
   ArrowRightLeft,
   ArrowUp,
   CalendarPlus,
+  Camera,
   ChevronLeft,
   ChevronRight,
   Clock3,
@@ -18,6 +19,7 @@ import {
   Plus,
   Trash2,
   WalletCards,
+  X,
 } from "lucide-react";
 
 import { FlightCard } from "@/components/cards/flight-card";
@@ -32,6 +34,7 @@ import type {
   Reservation,
   TripBase,
   TripDay,
+  Trip,
 } from "@/types/travel";
 
 const dayTypeLabels: Record<TripDay["dayType"], string> = {
@@ -46,11 +49,14 @@ const dayTypeLabels: Record<TripDay["dayType"], string> = {
 };
 
 interface ItineraryViewProps {
+  trip: Trip;
   itinerary: TripDay[];
   bases: TripBase[];
   flightSegments: FlightSegment[];
   reservations: Reservation[];
   onSaveActivity: (dayId: string, activity: Activity) => void;
+  onAddDay: (day: TripDay) => void;
+  onOpenCamera: (dayId: string) => void;
   onDeleteActivity: (dayId: string, activityId: string) => void;
   onReorderActivity: (dayId: string, activityId: string, direction: -1 | 1) => void;
   onUpdateDay: (dayId: string, update: Partial<TripDay>) => void;
@@ -60,11 +66,14 @@ interface ItineraryViewProps {
 }
 
 export function ItineraryView({
+  trip,
   itinerary,
   bases,
   flightSegments,
   reservations,
   onSaveActivity,
+  onAddDay,
+  onOpenCamera,
   onDeleteActivity,
   onReorderActivity,
   onUpdateDay,
@@ -72,11 +81,27 @@ export function ItineraryView({
   onMoveActivity,
   onSwapDayPlans,
 }: ItineraryViewProps) {
-  const [selectedDayId, setSelectedDayId] = useState(itinerary[0].id);
+  const [selectedDayId, setSelectedDayId] = useState(itinerary[0]?.id ?? "");
   const [editor, setEditor] = useState<ItineraryEditorState>();
   const [move, setMove] = useState<MovePlanState>();
   const [deleteTarget, setDeleteTarget] = useState<Activity>();
+  const [dayFormOpen, setDayFormOpen] = useState(false);
   const selectedDay = itinerary.find((day) => day.id === selectedDayId) ?? itinerary[0];
+  const addNewDay = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const date = String(form.get("date"));
+    if (itinerary.some((day) => day.date === date)) return;
+    const parsed = new Date(`${date}T12:00:00Z`);
+    const weekday = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][parsed.getUTCDay()];
+    const month = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"][parsed.getUTCMonth()];
+    const day: TripDay = { id: `day-${crypto.randomUUID()}`, date, weekday, dayNumber: date.slice(-2), month, city: String(form.get("city")).trim(), area: String(form.get("area")).trim(), dayType: "standard", activities: [] };
+    onAddDay(day); setSelectedDayId(day.id); setDayFormOpen(false);
+  };
+
+  const dayForm = dayFormOpen ? <div className="modal-backdrop" role="presentation" onMouseDown={() => setDayFormOpen(false)}><section className="expense-modal" role="dialog" aria-modal="true" aria-labelledby="new-day-title" onMouseDown={(event) => event.stopPropagation()}><header><div><p className="eyebrow">Itinerario independiente</p><h2 id="new-day-title">Agregar día</h2></div><button type="button" className="icon-button" onClick={() => setDayFormOpen(false)} aria-label="Cerrar"><X size={20} /></button></header><form onSubmit={addNewDay}><label>Fecha<input name="date" type="date" min={trip.startDate} max={trip.endDate} required autoFocus /></label><div className="form-grid"><label>Ciudad<input name="city" placeholder="Ciudad" required /></label><label>Área o plan<input name="area" placeholder="Área o idea principal" required /></label></div><button type="submit" className="primary-button full-width">Guardar día</button></form></section></div> : null;
+
+  if (!selectedDay) return <div className="view-stack"><SectionHeading eyebrow={`${trip.name} · plan editable`} title="Itinerario" description="Este viaje comienza vacío. Agrega un día dentro del rango del viaje y después crea actividades." action={<button type="button" className="primary-button" onClick={() => setDayFormOpen(true)}><CalendarPlus size={17} /> Agregar primer día</button>} /><div className="empty-state"><span>＋</span><h2>Todavía no hay días planificados</h2><p>No se copiaron fechas, lugares ni actividades de Japón.</p></div>{dayForm}</div>;
   const selectedBase = bases.find((base) => base.id === selectedDay.baseId);
   const previousBase = bases.find((base) => base.id === selectedDay.previousBaseId);
   const dailyEstimate = selectedDay.activities.reduce((sum, item) => sum + (item.estimatedCost ?? 0), 0);
@@ -94,10 +119,10 @@ export function ItineraryView({
   return (
     <div className="view-stack">
       <SectionHeading
-        eyebrow="Japón 2026 · plan maestro editable"
+        eyebrow={`${trip.name} · plan editable`}
         title="Itinerario"
-        description="22 días reales con bases, vuelos, lugares y referencias que puedes reorganizar sin editar código."
-        action={<button type="button" className="primary-button" onClick={() => setEditor({ kind: "activity", dayId: selectedDay.id })}><CalendarPlus size={17} aria-hidden="true" /> Nueva actividad</button>}
+        description={`${itinerary.length} días con lugares y referencias que puedes reorganizar sin editar código.`}
+        action={<div className="heading-actions"><button type="button" className="secondary-button" onClick={() => onOpenCamera(selectedDay.id)}><Camera size={17} /> Foto</button><button type="button" className="secondary-button" onClick={() => setDayFormOpen(true)}><CalendarPlus size={17} /> Añadir día</button><button type="button" className="primary-button" onClick={() => setEditor({ kind: "activity", dayId: selectedDay.id })}><Plus size={17} aria-hidden="true" /> Nueva actividad</button></div>}
       />
 
       <div className="date-strip day-card-strip" aria-label="Seleccionar día">
@@ -126,7 +151,7 @@ export function ItineraryView({
           </header>
 
           <div className="day-detail-ribbon">
-            <span><small>Fecha</small><strong>{selectedDay.weekday} {selectedDay.dayNumber} NOV</strong></span>
+            <span><small>Fecha</small><strong>{selectedDay.weekday} {selectedDay.dayNumber} {selectedDay.month}</strong></span>
             <span><small>Base</small><strong>{previousBase ? `${previousBase.city} → ` : ""}{selectedBase?.city ?? "Travel / Flight"}</strong></span>
             <span><small>Ciudad visitada</small><strong>{selectedDay.visitedCity ?? selectedDay.city}</strong></span>
             <div><button type="button" className="secondary-button" onClick={() => setEditor({ kind: "day", dayId: selectedDay.id })}><Pencil size={14} /> Editar día</button><button type="button" className="secondary-button" onClick={() => setMove({ kind: "day", dayId: selectedDay.id })}><ArrowRightLeft size={14} /> Mover plan</button></div>
@@ -172,7 +197,7 @@ export function ItineraryView({
           <article className="surface-card day-stats-card">
             <p className="eyebrow">Resumen del día</p>
             <div><Clock3 size={18} aria-hidden="true" /><span><strong>{selectedDay.activities.length}</strong> actividades</span></div>
-            <div><WalletCards size={18} aria-hidden="true" /><span><strong>{dailyEstimate ? formatMoney(dailyEstimate, "JPY") : "Sin costos"}</strong> registrados</span></div>
+            <div><WalletCards size={18} aria-hidden="true" /><span><strong>{dailyEstimate ? formatMoney(dailyEstimate, trip.budget.currency) : "Sin costos"}</strong> registrados</span></div>
             <div><MapPin size={18} aria-hidden="true" /><span><strong>{selectedBase?.city ?? selectedDay.city}</strong> base logística</span></div>
             <div><Link2 size={18} aria-hidden="true" /><span><strong>{linkedReservationCount}</strong> reservas vinculadas</span></div>
             <div><Gem size={18} aria-hidden="true" /><span><strong>{hiddenGemCount}</strong> hidden gems</span></div>
@@ -196,17 +221,18 @@ export function ItineraryView({
         </aside>
       </div>
 
-      {editor ? <ItineraryEditorModal key={`${editor.kind}-${editor.kind === "base" ? editor.baseId : editor.dayId}-${editor.kind === "activity" ? editor.activity?.id ?? "new" : ""}`} editor={editor} itinerary={itinerary} bases={bases} reservations={reservations} onClose={() => setEditor(undefined)} onSaveActivity={onSaveActivity} onSaveDay={onUpdateDay} onSaveBase={onUpdateBase} /> : null}
+      {editor ? <ItineraryEditorModal key={`${editor.kind}-${editor.kind === "base" ? editor.baseId : editor.dayId}-${editor.kind === "activity" ? editor.activity?.id ?? "new" : ""}`} editor={editor} itinerary={itinerary} bases={bases} reservations={reservations} defaultCurrency={trip.budget.currency} onClose={() => setEditor(undefined)} onSaveActivity={onSaveActivity} onSaveDay={onUpdateDay} onSaveBase={onUpdateBase} /> : null}
       {move ? <MovePlanModal move={move} itinerary={itinerary} reservations={reservations} onClose={() => setMove(undefined)} onMoveActivity={onMoveActivity} onSwapDayPlans={onSwapDayPlans} /> : null}
       {deleteTarget ? (
         <div className="modal-backdrop" role="presentation" onMouseDown={() => setDeleteTarget(undefined)}>
           <section className="expense-modal confirmation-modal" role="alertdialog" aria-modal="true" aria-labelledby="delete-activity-title" onMouseDown={(event) => event.stopPropagation()}>
             <header><div><p className="eyebrow">Confirmar cambio</p><h2 id="delete-activity-title">Eliminar actividad</h2></div><span className="danger-icon"><Trash2 size={21} aria-hidden="true" /></span></header>
-            <p>“{deleteTarget.title}” se eliminará del {selectedDay.weekday} {selectedDay.dayNumber} NOV. Sus reservas independientes no se borrarán.</p>
+            <p>“{deleteTarget.title}” se eliminará del {selectedDay.weekday} {selectedDay.dayNumber} {selectedDay.month}. Sus reservas independientes no se borrarán.</p>
             <div className="modal-actions"><button type="button" className="secondary-button" onClick={() => setDeleteTarget(undefined)}>Cancelar</button><button type="button" className="danger-button" onClick={() => { onDeleteActivity(selectedDay.id, deleteTarget.id); setDeleteTarget(undefined); }}>Eliminar actividad</button></div>
           </section>
         </div>
       ) : null}
+      {dayForm}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, CircleDollarSign, Clock3, Globe2, Hotel, MapPin, Navigation, Plane, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, Camera, CircleDollarSign, Clock3, Globe2, Hotel, MapPin, Navigation, Plane, Sparkles } from "lucide-react";
 
 import { MetricCard } from "@/components/cards/metric-card";
 import { FlightCard } from "@/components/cards/flight-card";
@@ -14,9 +14,10 @@ interface DashboardViewProps {
   participant: Participant;
   spent: number;
   onNavigate: (feature: FeatureId) => void;
+  onOpenCamera: () => void;
 }
 
-export function DashboardView({ trip, theme, participant, spent, onNavigate }: DashboardViewProps) {
+export function DashboardView({ trip, theme, participant, spent, onNavigate, onOpenCamera }: DashboardViewProps) {
   const remaining = trip.budget.amount - spent;
   const budgetPercent = trip.budget.amount > 0 ? (spent / trip.budget.amount) * 100 : 0;
   const nextReservation = trip.reservations[0];
@@ -28,21 +29,21 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate }: D
       <header className="welcome-row">
         <div>
           <p className="eyebrow">Panel personal</p>
-          <h1>Konnichiwa, {participant.name} <span aria-hidden="true">👋</span></h1>
+          <h1>{theme.labels.greeting}, {participant.name} <span aria-hidden="true">👋</span></h1>
           <p>Tu aventura toma forma. Esto es lo que sigue.</p>
         </div>
-        <button type="button" className="quiet-button" onClick={() => onNavigate("itinerary")}>Ver plan completo <ArrowRight size={16} aria-hidden="true" /></button>
+        <div className="heading-actions"><button type="button" className="quiet-button" onClick={onOpenCamera}><Camera size={16} /> Tomar foto</button><button type="button" className="quiet-button" onClick={() => onNavigate("itinerary")}>Ver plan completo <ArrowRight size={16} aria-hidden="true" /></button></div>
       </header>
 
       <section className="trip-hero" aria-labelledby="trip-hero-title">
-        <div className="hero-pattern" aria-hidden="true"><span className="sun-disc" /><span className="mountain mountain-one" /><span className="mountain mountain-two" /><span className="torii-gate"><i /><b /></span></div>
+        <div className={`hero-pattern ${theme.decorativeStyle}`} aria-hidden="true"><span className="sun-disc" /><span className="mountain mountain-one" /><span className="mountain mountain-two" />{theme.decorativeStyle === "japan" ? <span className="torii-gate"><i /><b /></span> : <span className="destination-geometry">{theme.landmark}</span>}</div>
         <div className="trip-hero-content">
           <div className="hero-kicker"><span>{theme.flag}</span> Tu próxima aventura</div>
           <h2 id="trip-hero-title">{trip.name}</h2>
           <p>{trip.dateRange} · {trip.participants.length} participantes</p>
           <div className="route-line" aria-label={`Ruta: ${trip.route.join(", ")}`}>
             {trip.route.map((place, index) => (
-              <div key={place} className="route-stop"><span className={index === trip.route.length - 1 ? "route-dot destination" : "route-dot"} /><small>{place}</small>{index < trip.route.length - 1 ? <i /> : null}</div>
+              <div key={`${place}-${index}`} className="route-stop"><span className={index === trip.route.length - 1 ? "route-dot destination" : "route-dot"} /><small>{place}</small>{index < trip.route.length - 1 ? <i /> : null}</div>
             ))}
           </div>
         </div>
@@ -51,18 +52,18 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate }: D
 
       <WorldClock config={trip.worldClock} startDate={trip.startDate} endDate={trip.endDate} />
 
-      <section className="flight-section" aria-labelledby="outbound-flights-title">
-        <div className="subsection-heading"><div><p className="eyebrow">Ruta aérea confirmada</p><h2 id="outbound-flights-title">Costa Rica → México → Japón</h2></div><span className="transport-chip"><Plane size={16} aria-hidden="true" /> Aeroméxico</span></div>
-        <div className="international-date-line" aria-label="Cambio internacional de fecha">
+      {trip.flightSegments.length ? <section className="flight-section" aria-labelledby="outbound-flights-title">
+        <div className="subsection-heading"><div><p className="eyebrow">Ruta aérea confirmada</p><h2 id="outbound-flights-title">{trip.countryId === "japan" ? "Costa Rica → México → Japón" : trip.route.join(" → ")}</h2></div><span className="transport-chip"><Plane size={16} aria-hidden="true" /> {trip.flightSegments[0]?.airline}</span></div>
+        {trip.countryId === "japan" ? <div className="international-date-line" aria-label="Cambio internacional de fecha">
           <span><strong>09 NOV</strong><small>Salida Costa Rica</small></span>
           <i />
           <span><strong>10 NOV</strong><small>En vuelo</small></span>
           <span className="date-change-note"><Globe2 size={17} aria-hidden="true" /> Cruce de zona horaria / cambio internacional de fecha</span>
           <i />
           <span><strong>11 NOV</strong><small>Llegada Japón</small></span>
-        </div>
+        </div> : null}
         <div className="flight-card-grid">{trip.flightSegments.map((flight) => <FlightCard flight={flight} key={flight.id} />)}</div>
-      </section>
+      </section> : null}
 
       <div className="dashboard-grid primary-dashboard-grid">
         <article className="surface-card next-event-card">
@@ -101,27 +102,28 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate }: D
 
       <div className="dashboard-grid lower-dashboard-grid">
         <article className="surface-card day-preview-card">
-          <header className="card-header-row"><div><p className="eyebrow">Inicio del viaje · {featuredDay.weekday} {featuredDay.dayNumber}</p><h2>{featuredDay.area}</h2></div>{featuredDay.weather ? <span className="weather-pill">{featuredDay.weather}</span> : null}</header>
+          {featuredDay ? <><header className="card-header-row"><div><p className="eyebrow">Inicio del viaje · {featuredDay.weekday} {featuredDay.dayNumber}</p><h2>{featuredDay.area}</h2></div>{featuredDay.weather ? <span className="weather-pill">{featuredDay.weather}</span> : null}</header>
           <div className="mini-timeline">
             {featuredDay.activities.slice(0, 3).map((activity) => (
               <div key={activity.id} className="mini-timeline-item"><time>{activity.startTime ?? "Flexible"}</time><ActivityIcon category={activity.category} size={17} className="mini-activity-icon" /><div><strong>{activity.title}</strong><small><MapPin size={12} aria-hidden="true" /> {activity.location.name}</small></div></div>
             ))}
-          </div>
+          </div></> : <div className="dashboard-empty"><CalendarDays size={28} /><div><strong>Itinerario vacío</strong><p>Añade el primer día y después crea actividades independientes para este viaje.</p></div></div>}
           <button type="button" className="secondary-button full-width" onClick={() => onNavigate("itinerary")}>Abrir itinerario <ArrowRight size={16} aria-hidden="true" /></button>
         </article>
 
         <article className="surface-card bases-card">
-          <header><p className="eyebrow">Tu ruta en Japón</p><h2>Tres bases, mil historias</h2></header>
+          <header><p className="eyebrow">{theme.labels.route}</p><h2>{trip.bases.length ? `${trip.bases.length} bases, muchas historias` : "Alojamientos por organizar"}</h2></header>
           <div className="bases-list">
             {trip.bases.map((base, index) => (
               <div className={`base-item route-base-${index + 1}`} key={base.city}>
                 <span className="base-number">0{index + 1}</span><span className="base-emoji"><Hotel size={19} aria-hidden="true" /></span>
-                <div><strong>{base.city}</strong><small>{base.checkInDate.slice(8)}–{base.checkOutDate.slice(8)} NOV · {base.nights} noches</small><em>{base.area ?? "Alojamiento pendiente de agregar"}</em></div>
+                <div><strong>{base.city}</strong><small>{base.checkInDate} → {base.checkOutDate} · {base.nights} noches</small><em>{base.area ?? "Alojamiento pendiente de agregar"}</em></div>
                 <span className={base.status === "confirmed" ? "base-route-status confirmed" : "base-route-status"}>{base.status === "confirmed" ? "Confirmado" : "Pendiente"}</span>
                 <Navigation size={16} aria-hidden="true" />
               </div>
             ))}
           </div>
+          {!trip.bases.length ? <p className="data-note">No se copiarán alojamientos de otros viajes. Agrégalos cuando tengas información real.</p> : null}
           <button type="button" className="text-link" onClick={() => onNavigate("map")}>Explorar mapa <ArrowRight size={15} aria-hidden="true" /></button>
         </article>
       </div>

@@ -1,5 +1,6 @@
 import { japanAchievements } from "@/data/japan-achievements";
 import { assertTripTemplate } from "@/data/trips/validate-trip";
+import { assertJapan2026Baseline } from "@/data/trips/japan-2026-baseline";
 import type { Activity, ActivityCategory, Trip, TripDay, TripLocation } from "@/types/travel";
 
 type ActivityOptions = Partial<Omit<Activity, "id" | "title" | "date" | "category" | "categories" | "location">> & {
@@ -597,6 +598,7 @@ export const japan2026Trip: Trip = {
 };
 
 assertTripTemplate(japan2026Trip);
+assertJapan2026Baseline(japan2026Trip);
 
 const expectedBaseWindows = [
   ["osaka", "2026-11-11", "2026-11-15"],

@@ -27,6 +27,7 @@ interface ItineraryEditorModalProps {
   onSaveActivity: (dayId: string, activity: Activity) => void;
   onSaveDay: (dayId: string, update: Partial<TripDay>) => void;
   onSaveBase: (base: TripBase) => void;
+  defaultCurrency: Currency;
 }
 
 const categories: Array<{ id: ActivityCategory; label: string }> = [
@@ -57,7 +58,7 @@ const dayTypes: Array<{ id: TripDayType; label: string }> = [
   { id: "recovery", label: "Recovery Day" },
 ];
 
-const currencies: Currency[] = ["JPY", "CRC", "USD"];
+const currencies: Currency[] = ["JPY", "MXN", "USD", "CRC", "EUR"];
 
 const daysBetween = (start: string, end: string) => Math.max(
   0,
@@ -73,6 +74,7 @@ export function ItineraryEditorModal({
   onSaveActivity,
   onSaveDay,
   onSaveBase,
+  defaultCurrency,
 }: ItineraryEditorModalProps) {
   const [error, setError] = useState<string>();
   const day = editor.kind !== "base" ? itinerary.find((item) => item.id === editor.dayId) : undefined;
@@ -142,7 +144,7 @@ export function ItineraryEditorModal({
           </div>
           <div className="form-grid">
             <label>Precio<input name="price" type="number" min="0" step="0.01" defaultValue={base.price ?? ""} /></label>
-            <label>Moneda<select name="currency" defaultValue={base.currency ?? "JPY"}>{currencies.map((currency) => <option key={currency}>{currency}</option>)}</select></label>
+            <label>Moneda<select name="currency" defaultValue={base.currency ?? defaultCurrency}>{currencies.map((currency) => <option key={currency}>{currency}</option>)}</select></label>
           </div>
           <label>Vincular reserva<select name="reservationId" defaultValue={base.reservationId ?? ""}><option value="">Sin reserva vinculada</option>{reservations.filter((reservation) => reservation.type === "hotel").map((reservation) => <option value={reservation.id} key={reservation.id}>{reservation.title} · {reservation.date}</option>)}</select></label>
           {error ? <p className="form-error">{error}</p> : null}
@@ -260,7 +262,7 @@ export function ItineraryEditorModal({
           <label>Dirección<input name="address" defaultValue={current?.location.address ?? ""} placeholder="Opcional; coordenadas quedan pendientes" /></label>
           <div className="form-grid">
             <label>Costo estimado<input name="estimatedCost" type="number" min="0" step="0.01" defaultValue={current?.estimatedCost ?? ""} /></label>
-            <label>Moneda<select name="currency" defaultValue={current?.currency ?? "JPY"}>{currencies.map((currency) => <option key={currency}>{currency}</option>)}</select></label>
+            <label>Moneda<select name="currency" defaultValue={current?.currency ?? defaultCurrency}>{currencies.map((currency) => <option key={currency}>{currency}</option>)}</select></label>
           </div>
           <label>Nota<textarea name="notes" defaultValue={current?.notes ?? ""} rows={3} /></label>
           <label>Vincular reserva<select name="reservationId" defaultValue={current?.reservationId ?? ""}><option value="">Sin reserva vinculada</option>{reservations.map((reservation) => <option value={reservation.id} key={reservation.id}>{reservation.title} · {reservation.date}</option>)}</select></label>

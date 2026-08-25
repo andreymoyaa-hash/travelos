@@ -21,7 +21,7 @@ export function TopBar({ trip, theme, activeParticipantId, onSelectParticipant, 
 
       <button type="button" className="country-trigger" onClick={onOpenCountries}>
         <span>{theme.flag}</span>
-        <span><small>Destino</small><strong>{theme.name}</strong></span>
+        <span><small>Viaje activo</small><strong>{trip.name}</strong></span>
         <ChevronDown size={16} aria-hidden="true" />
       </button>
 
