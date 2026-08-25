@@ -22,7 +22,7 @@ src/
     itinerary/          # edición, reordenamiento y traslado del plan
     expenses/           # presupuesto, monedas, categorías y pagadores
     reservations/       # reservas y estado vacío
-    maps/               # geolocalización y mapa Leaflet/OpenStreetMap
+    maps/               # Google Maps, Places New, Routes y geolocalización consentida
     photos/             # captura MediaDevices y metadatos
     achievements/       # logros por persona y álbum
   services/             # contrato para persistencia futura
@@ -39,7 +39,11 @@ src/
 - **Identidad por participante:** gastos usan `paidBy` y `scope`; logros usan `unlockedBy`; fotos usan `participantId`.
 - **Sin conversiones falsas:** cada gasto conserva su moneda y el presupuesto sólo se compara con gastos de la misma moneda.
 - **Permisos bajo acción explícita:** Geolocation se solicita desde “Usar mi ubicación” y MediaDevices desde “Tomar foto”.
-- **Mapa cliente aislado:** Leaflet se carga dinámicamente sin SSR; OpenStreetMap mantiene atribución visible y no se precargan teselas.
+- **Google Maps cliente aislado:** el mapa se carga dinámicamente sin SSR y las bibliotecas `maps`, `marker` y `places` sólo se importan al abrir la vista.
+- **Servicios actuales:** Places usa `PlaceAutocompleteElement`; Routes usa `Route.computeRoutes`, sin `DirectionsService` ni respuestas simuladas.
+- **Costo honesto:** la opción más barata sólo compara alternativas cuando Google devuelve tarifas reales comparables; si no, explica la limitación. La caminata y los transbordos también muestran “No disponible” cuando faltan datos.
+- **Reloj reutilizable:** cada `Trip` declara origen, destino y zonas IANA; `Intl.DateTimeFormat` calcula fecha, hora y cambios de horario sin offsets fijos.
+- **Tema por país:** `CountryTheme` concentra tokens de color y semántica de rutas para evitar valores Japón-específicos dentro de componentes compartidos.
 - **Desbloqueo extensible:** los logros declaran métodos `manual`, `photo` y `gps`, además de radios geográficos opcionales.
 - **Persistencia sustituible:** `TravelService` define el límite para base de datos, almacenamiento de imágenes y sincronización.
 
@@ -47,5 +51,5 @@ src/
 
 1. Implementar `TravelService` con autenticación y base de datos.
 2. Mover fotografías de data URLs de sesión a almacenamiento de objetos.
-3. Conectar un proveedor de geocodificación y rutas para duración, costo y navegación guiada.
-4. Añadir caché offline de documentos respetando las políticas del proveedor de mapas.
+3. Persistir los lugares de Google Places guardados durante la sesión mediante `TravelService`.
+4. Añadir caché offline de documentos respetando las políticas de Google Maps Platform; no almacenar contenido prohibido del proveedor.

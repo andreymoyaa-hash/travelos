@@ -9,6 +9,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
+  Gem,
+  GripVertical,
   Link2,
   MapPin,
   NotebookPen,
@@ -18,35 +20,19 @@ import {
   WalletCards,
 } from "lucide-react";
 
+import { FlightCard } from "@/components/cards/flight-card";
+import { ActivityIcon } from "@/components/ui/activity-icon";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ItineraryEditorModal, type ItineraryEditorState } from "@/features/itinerary/itinerary-editor-modal";
 import { MovePlanModal, type MovePlanState } from "@/features/itinerary/move-plan-modal";
 import { formatMoney } from "@/lib/format";
 import type {
   Activity,
-  ActivityCategory,
   FlightSegment,
   Reservation,
   TripBase,
   TripDay,
 } from "@/types/travel";
-
-const categoryIcon: Record<ActivityCategory, string> = {
-  travel: "✈️",
-  transport: "🚄",
-  food: "🍜",
-  geek: "👾",
-  shopping: "🛍️",
-  culture: "⛩️",
-  temple: "🏯",
-  photography: "📷",
-  nature: "🌿",
-  viewpoint: "🌇",
-  gaming: "🎮",
-  anime: "✨",
-  "theme-park": "🎢",
-  leisure: "☕",
-};
 
 const dayTypeLabels: Record<TripDay["dayType"], string> = {
   standard: "Día estándar",
@@ -89,23 +75,20 @@ export function ItineraryView({
   const [selectedDayId, setSelectedDayId] = useState(itinerary[0].id);
   const [editor, setEditor] = useState<ItineraryEditorState>();
   const [move, setMove] = useState<MovePlanState>();
+  const [deleteTarget, setDeleteTarget] = useState<Activity>();
   const selectedDay = itinerary.find((day) => day.id === selectedDayId) ?? itinerary[0];
   const selectedBase = bases.find((base) => base.id === selectedDay.baseId);
   const previousBase = bases.find((base) => base.id === selectedDay.previousBaseId);
   const dailyEstimate = selectedDay.activities.reduce((sum, item) => sum + (item.estimatedCost ?? 0), 0);
   const flightIds = new Set(selectedDay.activities.map((item) => item.flightSegmentId).filter(Boolean));
   const relatedFlights = flightSegments.filter((flight) => flightIds.has(flight.id));
+  const linkedReservationCount = selectedDay.activities.filter((activity) => activity.reservationId).length;
+  const hiddenGemCount = selectedDay.activities.filter((activity) => activity.hiddenGem).length;
 
   const selectAdjacentDay = (direction: -1 | 1) => {
     const currentIndex = itinerary.findIndex((day) => day.id === selectedDay.id);
     const nextIndex = Math.min(itinerary.length - 1, Math.max(0, currentIndex + direction));
     setSelectedDayId(itinerary[nextIndex].id);
-  };
-
-  const deleteActivity = (activity: Activity) => {
-    if (window.confirm(`¿Eliminar “${activity.title}” del itinerario?`)) {
-      onDeleteActivity(selectedDay.id, activity.id);
-    }
   };
 
   return (
@@ -117,12 +100,21 @@ export function ItineraryView({
         action={<button type="button" className="primary-button" onClick={() => setEditor({ kind: "activity", dayId: selectedDay.id })}><CalendarPlus size={17} aria-hidden="true" /> Nueva actividad</button>}
       />
 
-      <div className="date-strip" aria-label="Seleccionar día">
-        {itinerary.map((day) => (
-          <button type="button" key={day.id} className={day.id === selectedDay.id ? "date-chip active" : "date-chip"} onClick={() => setSelectedDayId(day.id)}>
-            <small>{day.weekday}</small><strong>{day.dayNumber}</strong><span>{day.month}</span><i aria-hidden="true" />
-          </button>
-        ))}
+      <div className="date-strip day-card-strip" aria-label="Seleccionar día">
+        {itinerary.map((day) => {
+          const baseIndex = bases.findIndex((base) => base.id === day.baseId);
+          const routeClass = day.dayType === "travel" ? "route-travel" : day.dayType === "base-transition" ? "route-transition" : `route-base-${Math.max(1, baseIndex + 1)}`;
+          const dayReservationCount = day.activities.filter((activity) => activity.reservationId).length;
+          const dayHiddenGemCount = day.activities.filter((activity) => activity.hiddenGem).length;
+          return (
+            <button type="button" key={day.id} className={`${day.id === selectedDay.id ? "date-chip active" : "date-chip"} ${routeClass}`} onClick={() => setSelectedDayId(day.id)}>
+              <span className="date-chip-date"><small>{day.weekday}</small><strong>{day.dayNumber}</strong><span>{day.month}</span></span>
+              <span className="date-chip-copy"><b>{day.area}</b><small>{bases[baseIndex]?.city ?? day.city}</small></span>
+              <span className="date-chip-meta"><small>{day.activities.length} actividades</small><small>{dayHiddenGemCount ? `${dayHiddenGemCount} hidden gem${dayHiddenGemCount > 1 ? "s" : ""}` : "Sin hidden gems"}</small><small>{dayReservationCount ? `${dayReservationCount} reservas` : "Sin reservas"}</small></span>
+              <i className="date-chip-marker" aria-hidden="true" />
+            </button>
+          );
+        })}
       </div>
 
       <div className="itinerary-layout">
@@ -148,7 +140,7 @@ export function ItineraryView({
               return (
                 <article key={activity.id} className="timeline-activity">
                   <div className="timeline-time"><strong>{activity.startTime ?? "Flexible"}</strong>{index < selectedDay.activities.length - 1 ? <span /> : null}</div>
-                  <div className={`activity-marker marker-${activity.category}`}>{categoryIcon[activity.category]}</div>
+                  <ActivityIcon category={activity.category} className={`activity-marker marker-${activity.category}`} />
                   <div className="activity-card activity-card-editable">
                     <div className="activity-main-copy">
                       <div className="activity-title-row"><h3>{activity.title}</h3><div className="activity-flags">{activity.optional ? <span>Opcional</span> : null}{activity.hiddenGem ? <span className="hidden-gem-flag">Hidden gem</span> : null}</div></div>
@@ -160,11 +152,12 @@ export function ItineraryView({
                     {linkedReservation ? <div className="activity-reservation"><Link2 size={13} /><span><strong>{linkedReservation.title}</strong> · {linkedReservation.status === "confirmed" ? "Confirmada" : "Pendiente"}</span></div> : null}
                     {activity.stampId ? <small className="stamp-reference">Travel Passport · {activity.stampId}</small> : null}
                     <div className="activity-actions" aria-label={`Acciones para ${activity.title}`}>
+                      <span className="activity-grip" title="Orden de la actividad"><GripVertical size={17} aria-hidden="true" /></span>
                       <button type="button" className="icon-button" disabled={index === 0} onClick={() => onReorderActivity(selectedDay.id, activity.id, -1)} aria-label={`Subir ${activity.title}`}><ArrowUp size={14} /></button>
                       <button type="button" className="icon-button" disabled={index === selectedDay.activities.length - 1} onClick={() => onReorderActivity(selectedDay.id, activity.id, 1)} aria-label={`Bajar ${activity.title}`}><ArrowDown size={14} /></button>
                       <button type="button" className="icon-button" onClick={() => setEditor({ kind: "activity", dayId: selectedDay.id, activity })} aria-label={`Editar ${activity.title}`}><Pencil size={14} /></button>
                       <button type="button" className="icon-button" onClick={() => setMove({ kind: "activity", dayId: selectedDay.id, activityId: activity.id })} aria-label={`Mover ${activity.title}`}><ArrowRightLeft size={14} /></button>
-                      <button type="button" className="icon-button danger" onClick={() => deleteActivity(activity)} aria-label={`Eliminar ${activity.title}`}><Trash2 size={14} /></button>
+                      <button type="button" className="icon-button danger" onClick={() => setDeleteTarget(activity)} aria-label={`Eliminar ${activity.title}`}><Trash2 size={14} /></button>
                     </div>
                   </div>
                 </article>
@@ -181,6 +174,8 @@ export function ItineraryView({
             <div><Clock3 size={18} aria-hidden="true" /><span><strong>{selectedDay.activities.length}</strong> actividades</span></div>
             <div><WalletCards size={18} aria-hidden="true" /><span><strong>{dailyEstimate ? formatMoney(dailyEstimate, "JPY") : "Sin costos"}</strong> registrados</span></div>
             <div><MapPin size={18} aria-hidden="true" /><span><strong>{selectedBase?.city ?? selectedDay.city}</strong> base logística</span></div>
+            <div><Link2 size={18} aria-hidden="true" /><span><strong>{linkedReservationCount}</strong> reservas vinculadas</span></div>
+            <div><Gem size={18} aria-hidden="true" /><span><strong>{hiddenGemCount}</strong> hidden gems</span></div>
           </article>
 
           {selectedBase ? (
@@ -193,15 +188,7 @@ export function ItineraryView({
             </article>
           ) : null}
 
-          {relatedFlights.map((flight) => (
-            <article className="surface-card flight-detail-card" key={flight.id}>
-              <p className="eyebrow">{flight.airline} · {flight.aircraft}</p>
-              <h3>{flight.flightNumber}</h3>
-              <div><span><strong>{flight.departure.airportCode}</strong><small>{flight.departure.dateTime.slice(11, 16)} · {flight.departure.timezone}</small></span><ArrowRightLeft size={17} /><span><strong>{flight.arrival.airportCode}</strong><small>{flight.arrival.dateTime.slice(0, 10)} · {flight.arrival.dateTime.slice(11, 16)} · {flight.arrival.timezone}</small></span></div>
-              <p>{Math.floor(flight.durationMinutes / 60)}h {flight.durationMinutes % 60}m{flight.arrival.terminal ? ` · ${flight.arrival.terminal}` : ""}</p>
-              {flight.layoverAfter ? <small>Escala en {flight.layoverAfter.city}: {Math.floor(flight.layoverAfter.durationMinutes / 60)}h {String(flight.layoverAfter.durationMinutes % 60).padStart(2, "0")}m</small> : null}
-            </article>
-          ))}
+          {relatedFlights.map((flight) => <FlightCard flight={flight} compact key={flight.id} />)}
 
           <article className="travel-tip-card">
             <span>知</span><p className="eyebrow">{selectedDay.hiddenGem ? "Hidden gem" : "Plan flexible"}</p><h3>{selectedDay.area}</h3><p>{selectedDay.hiddenGem ?? "Los horarios, notas, costos, lugares y reservas pueden modificarse desde este día."}</p>
@@ -211,6 +198,15 @@ export function ItineraryView({
 
       {editor ? <ItineraryEditorModal key={`${editor.kind}-${editor.kind === "base" ? editor.baseId : editor.dayId}-${editor.kind === "activity" ? editor.activity?.id ?? "new" : ""}`} editor={editor} itinerary={itinerary} bases={bases} reservations={reservations} onClose={() => setEditor(undefined)} onSaveActivity={onSaveActivity} onSaveDay={onUpdateDay} onSaveBase={onUpdateBase} /> : null}
       {move ? <MovePlanModal move={move} itinerary={itinerary} reservations={reservations} onClose={() => setMove(undefined)} onMoveActivity={onMoveActivity} onSwapDayPlans={onSwapDayPlans} /> : null}
+      {deleteTarget ? (
+        <div className="modal-backdrop" role="presentation" onMouseDown={() => setDeleteTarget(undefined)}>
+          <section className="expense-modal confirmation-modal" role="alertdialog" aria-modal="true" aria-labelledby="delete-activity-title" onMouseDown={(event) => event.stopPropagation()}>
+            <header><div><p className="eyebrow">Confirmar cambio</p><h2 id="delete-activity-title">Eliminar actividad</h2></div><span className="danger-icon"><Trash2 size={21} aria-hidden="true" /></span></header>
+            <p>“{deleteTarget.title}” se eliminará del {selectedDay.weekday} {selectedDay.dayNumber} NOV. Sus reservas independientes no se borrarán.</p>
+            <div className="modal-actions"><button type="button" className="secondary-button" onClick={() => setDeleteTarget(undefined)}>Cancelar</button><button type="button" className="danger-button" onClick={() => { onDeleteActivity(selectedDay.id, deleteTarget.id); setDeleteTarget(undefined); }}>Eliminar actividad</button></div>
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }

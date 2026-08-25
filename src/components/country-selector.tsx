@@ -60,7 +60,7 @@ export function CountrySelector({ activeCountry, open, onClose, onSelect }: Coun
         </div>
 
         <p className="country-modal-note">
-          La plantilla Japón incluye datos de muestra. Los demás destinos aplican su identidad visual sin alterar el viaje activo.
+          Japón conserva el itinerario maestro editable. Los demás destinos aplican su identidad visual sin alterar el viaje activo.
         </p>
       </section>
     </div>

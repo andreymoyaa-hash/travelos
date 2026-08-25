@@ -480,6 +480,10 @@ export const japan2026Trip: Trip = {
     origin: "America/Costa_Rica",
     destination: "Asia/Tokyo",
   },
+  worldClock: {
+    origin: { city: "San José", countryCode: "CR", timeZone: "America/Costa_Rica" },
+    destination: { city: "Tokio", countryCode: "JP", timeZone: "Asia/Tokyo" },
+  },
   participants: [
     { id: "andy", name: "Andy", initials: "AN", color: "#6f56b7" },
     { id: "jose", name: "José", initials: "JO", color: "#df5753" },
@@ -546,6 +550,7 @@ export const japan2026Trip: Trip = {
       arrival: {
         airportCode: "MEX",
         city: "Ciudad de México",
+        terminal: "Terminal 2",
         dateTime: "2026-11-09T16:40:00-06:00",
         timezone: "America/Mexico_City",
       },
@@ -577,6 +582,7 @@ export const japan2026Trip: Trip = {
       aircraft: "787-9 Dreamliner",
     },
   ],
+  savedPlaces: [],
   budget: { amount: 0, currency: "JPY" },
   itinerary,
   expenses: [],

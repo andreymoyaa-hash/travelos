@@ -9,14 +9,14 @@ Aplicación mobile-first para organizar el viaje **Japón 2026** de Andy y José
 - Presupuesto editable, categorías completas y totales pagados por participante.
 - Datos reales vacíos al iniciar; fixtures de demostración aislados y no cargados.
 - Itinerario maestro editable con los 22 días del 9 al 30 de noviembre de 2026.
-- Bases Osaka → Kyoto → Tokyo, vuelos de ida con zonas horarias y ubicaciones preparadas para Google Places.
+- Bases Osaka → Kyoto → Tokyo, vuelos de ida enriquecidos y reloj mundial en tiempo real con zonas horarias legibles.
 - Edición de días, actividades, alojamientos, horarios, notas, costos y vínculos a reservas.
 - Reordenamiento y traslado de actividades e intercambio de planes con control explícito de reservas vinculadas.
 - Geolocalización consentida con coordenadas, precisión y disparadores de logros cercanos.
 - Cámara del navegador, fotos geolocalizadas, vínculo con logros y álbum por participante.
 - 17 logros agrupados con desbloqueo independiente, manual, por foto o preparado por GPS.
-- Mapa Leaflet con teselas de OpenStreetMap y modos de ruta sin estimaciones inventadas.
-- Layout responsive con navegación lateral y barra móvil.
+- Google Maps Platform con Maps JavaScript API, Places API (New), rutas reales, lugares guardados y fallback seguro cuando falta configuración.
+- Sistema visual Japan 2026 con tokens Washi, Sumi, Torii, Indigo, Matcha, Sakura y Kin; layout responsive desde 320 px.
 
 ## Ejecutar localmente
 
@@ -29,6 +29,22 @@ pnpm dev
 
 Abre [http://localhost:3000](http://localhost:3000). La cámara y la ubicación requieren permiso del navegador; fuera de `localhost`, normalmente también requieren HTTPS.
 
+## Configurar Google Maps
+
+1. En Google Cloud habilita **Maps JavaScript API**, **Places API (New)** y **Routes API** en un proyecto con facturación activa.
+2. Crea una API key para navegador y restríngela por los referrers HTTP exactos de desarrollo y producción.
+3. Restringe esa key para que sólo pueda usar las tres APIs anteriores.
+4. Copia `.env.example` a `.env.local` y completa:
+
+```bash
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=tu_key_restringida
+NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=tu_map_id_opcional
+```
+
+Reinicia `pnpm dev` después de cambiar variables. La key de navegador es pública por naturaleza: su protección depende de las restricciones de sitio y API, no de ocultarla en el bundle. Sin key, Travel OS muestra un estado de configuración pendiente y conserva operativos itinerario, GPS, reservas, fotos y finanzas.
+
+Consulta [docs/GOOGLE_MAPS.md](docs/GOOGLE_MAPS.md) para la lista completa de APIs, restricciones y comportamiento de rutas.
+
 ## Validación
 
 ```bash
@@ -38,7 +54,7 @@ pnpm build
 node scripts/visual-check.mjs
 ```
 
-La prueba de navegador usa Chrome instalado localmente, recorre los flujos principales y guarda capturas responsive en `artifacts/`.
+La prueba de navegador usa Chrome instalado localmente, recorre los flujos principales, valida anchos 320/375/390/430 px y guarda capturas responsive en `artifacts/`. Sin una key local, verifica explícitamente el fallback de Google Maps; las respuestas reales de Places y Routes requieren una key válida.
 
 ## Editar viajes y reservas
 

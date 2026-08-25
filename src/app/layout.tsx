@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Serif_Display, Geist } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
-import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const geist = Geist({
@@ -11,10 +10,9 @@ const geist = Geist({
   display: "swap",
 });
 
-const display = DM_Serif_Display({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-display",
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -36,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="es" className={`${geist.variable} ${display.variable}`}>
+    <html lang="es" className={`${geist.variable} ${geistMono.variable}`}>
       <body>{children}</body>
     </html>
   );

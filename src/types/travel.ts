@@ -21,6 +21,18 @@ export interface CountryTheme {
     accentDark: string;
     soft: string;
     highlight: string;
+    ink: string;
+    paper: string;
+    surface: string;
+    secondary: string;
+    nature: string;
+    cultural: string;
+    premium: string;
+  };
+  routeColors: {
+    travel: string;
+    transition: string;
+    bases: string[];
   };
   categories: string[];
 }
@@ -46,6 +58,17 @@ export interface TripLocation {
   latitude: number | null;
   longitude: number | null;
   placeId: string | null;
+}
+
+export interface WorldClockLocation {
+  city: string;
+  countryCode: string;
+  timeZone: string;
+}
+
+export interface WorldClockConfig {
+  origin: WorldClockLocation;
+  destination: WorldClockLocation;
 }
 
 export interface ReservationReference {
@@ -278,10 +301,12 @@ export interface Trip {
     origin: string;
     destination: string;
   };
+  worldClock: WorldClockConfig;
   participants: Participant[];
   route: string[];
   bases: TripBase[];
   flightSegments: FlightSegment[];
+  savedPlaces: TripLocation[];
   budget: Budget;
   itinerary: TripDay[];
   expenses: Expense[];

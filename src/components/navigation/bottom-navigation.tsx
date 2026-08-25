@@ -1,10 +1,10 @@
 import {
-  CalendarDays,
-  CircleDollarSign,
-  Compass,
   LayoutDashboard,
   Map,
   PlaneTakeoff,
+  Route,
+  Stamp,
+  WalletCards,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -21,11 +21,11 @@ const items: Array<{
   icon: ComponentType<{ size?: number; strokeWidth?: number; "aria-hidden"?: boolean }>;
 }> = [
   { id: "dashboard", label: "Inicio", icon: LayoutDashboard },
-  { id: "itinerary", label: "Plan", icon: CalendarDays },
-  { id: "expenses", label: "Gastos", icon: CircleDollarSign },
+  { id: "itinerary", label: "Ruta", icon: Route },
+  { id: "expenses", label: "Wallet", icon: WalletCards },
   { id: "reservations", label: "Reservas", icon: PlaneTakeoff },
   { id: "map", label: "Mapa", icon: Map },
-  { id: "adventure", label: "Logros", icon: Compass },
+  { id: "adventure", label: "Passport", icon: Stamp },
 ];
 
 export function BottomNavigation({ active, onNavigate }: BottomNavigationProps) {

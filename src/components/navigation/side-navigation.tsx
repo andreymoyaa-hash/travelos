@@ -1,18 +1,20 @@
 import {
+  BadgeCheck,
   CalendarDays,
   CircleDollarSign,
-  Compass,
   LayoutDashboard,
   Map,
   PlaneTakeoff,
   Sparkles,
+  Stamp,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
-import type { FeatureId, Trip } from "@/types/travel";
+import type { CountryTheme, FeatureId, Trip } from "@/types/travel";
 
 interface SideNavigationProps {
   trip: Trip;
+  theme: CountryTheme;
   active: FeatureId;
   companionEnabled: boolean;
   onNavigate: (feature: FeatureId) => void;
@@ -29,16 +31,21 @@ const navigationItems: Array<{
   { id: "expenses", label: "Finanzas", icon: CircleDollarSign },
   { id: "reservations", label: "Reservas", icon: PlaneTakeoff },
   { id: "map", label: "Mapa", icon: Map },
-  { id: "adventure", label: "Aventura", icon: Compass },
+  { id: "adventure", label: "Travel Passport", icon: Stamp },
 ];
 
 export function SideNavigation({
   trip,
+  theme,
   active,
   companionEnabled,
   onNavigate,
   onToggleCompanion,
 }: SideNavigationProps) {
+  const unlocked = trip.achievements.filter((achievement) => achievement.unlockedBy.length > 0).length;
+  const companionLevel = 1 + Math.floor(unlocked / 4);
+  const companionProgress = trip.achievements.length > 0 ? Math.round((unlocked / trip.achievements.length) * 100) : 0;
+
   return (
     <aside className="side-navigation">
       <div className="brand-lockup">
@@ -52,7 +59,7 @@ export function SideNavigation({
       </div>
 
       <div className="trip-mini-card">
-        <span className="trip-mini-flag">🇯🇵</span>
+        <span className="trip-mini-flag">{theme.flag}</span>
         <span>
           <small>Viaje activo</small>
           <strong>{trip.name}</strong>
@@ -87,11 +94,13 @@ export function SideNavigation({
         onClick={onToggleCompanion}
       >
         <span className="companion-bolt">⚡</span>
-        <span>
-          <small>Compañero de viaje</small>
-          <strong>{companionEnabled ? "Pikachu activo" : "Activar compañero"}</strong>
+        <span className="companion-copy">
+          <small>Compañero · nivel {companionLevel}</small>
+          <strong>{companionEnabled ? "Pikachu listo para explorar" : "Activar compañero"}</strong>
+          <i><b style={{ width: `${companionProgress}%` }} /></i>
+          <em>{unlocked} sellos desbloqueados</em>
         </span>
-        <Sparkles size={16} aria-hidden="true" />
+        {companionEnabled ? <BadgeCheck size={18} aria-label="Compañero activo" /> : <Sparkles size={18} aria-hidden="true" />}
       </button>
     </aside>
   );

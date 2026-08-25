@@ -27,6 +27,7 @@ import type {
   Trip,
   TripBase,
   TripDay,
+  TripLocation,
 } from "@/types/travel";
 
 const isInJapan = ({ latitude, longitude }: GeoPosition) =>
@@ -68,6 +69,7 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
   const [expenses, setExpenses] = useState<Expense[]>(initialTrip.expenses);
   const [itinerary, setItinerary] = useState(initialTrip.itinerary);
   const [bases, setBases] = useState(initialTrip.bases);
+  const [savedPlaces, setSavedPlaces] = useState(initialTrip.savedPlaces);
   const [reservations, setReservations] = useState(initialTrip.reservations);
   const [achievements, setAchievements] = useState<Achievement[]>(initialTrip.achievements);
   const [photos, setPhotos] = useState<TravelPhoto[]>(initialTrip.photos);
@@ -78,13 +80,26 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
   const spentInBudgetCurrency = expenses
     .filter((expense) => expense.currency === budget.currency)
     .reduce((sum, expense) => sum + expense.amount, 0);
-  const trip: Trip = { ...initialTrip, budget, expenses, itinerary, bases, reservations, achievements, photos };
+  const trip: Trip = { ...initialTrip, budget, expenses, itinerary, bases, savedPlaces, reservations, achievements, photos };
 
   const themeStyle = {
     "--accent": theme.colors.accent,
     "--accent-dark": theme.colors.accentDark,
     "--accent-soft": theme.colors.soft,
     "--highlight": theme.colors.highlight,
+    "--ink": theme.colors.ink,
+    "--paper": theme.colors.paper,
+    "--surface": theme.colors.surface,
+    "--secondary": theme.colors.secondary,
+    "--nature": theme.colors.nature,
+    "--cultural": theme.colors.cultural,
+    "--premium": theme.colors.premium,
+    "--route-travel": theme.routeColors.travel,
+    "--route-transition": theme.routeColors.transition,
+    "--route-base-1": theme.routeColors.bases[0],
+    "--route-base-2": theme.routeColors.bases[1],
+    "--route-base-3": theme.routeColors.bases[2],
+    "--route-base-4": theme.colors.cultural,
   } as CSSProperties;
 
   const navigate = (feature: FeatureId) => {
@@ -240,10 +255,21 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
     }
   };
 
+  const savePlace = (place: TripLocation) => {
+    setSavedPlaces((currentPlaces) => {
+      const existingIndex = currentPlaces.findIndex((item) =>
+        place.placeId ? item.placeId === place.placeId : item.name === place.name,
+      );
+      if (existingIndex < 0) return [...currentPlaces, place];
+      return currentPlaces.map((item, index) => index === existingIndex ? place : item);
+    });
+  };
+
   return (
     <div className="travel-shell" style={themeStyle}>
       <SideNavigation
         trip={trip}
+        theme={theme}
         active={activeFeature}
         companionEnabled={companionEnabled}
         onNavigate={navigate}
@@ -305,6 +331,8 @@ export function TravelApp({ initialTrip }: { initialTrip: Trip }) {
               locationStatus={locationStatus}
               locationError={locationError}
               onRequestLocation={requestCurrentLocation}
+              savedPlaces={savedPlaces}
+              onSavePlace={savePlace}
             />
           ) : null}
           {activeFeature === "adventure" ? (
