@@ -1,4 +1,4 @@
-# Travel OS
+# NIOLI
 
 Plataforma mobile-first para organizar múltiples viajes independientes. **Japón 2026** de Andy y José permanece como el primer viaje real y protegido del sistema.
 
@@ -19,8 +19,8 @@ Plataforma mobile-first para organizar múltiples viajes independientes. **Japó
 - Sistema visual Japan 2026 con tokens Washi, Sumi, Torii, Indigo, Matcha, Sakura y Kin; layout responsive desde 320 px.
 - Pantalla **Mis viajes**, creación/edición/cambio de viaje y persistencia local mediante `TripRepository`.
 - Tema México propio, sin datos ni decoración japonesa, y fallback internacional.
-- Travel Passport V2 por viaje, sellos personalizados, detalle, fotos, fecha, GPS/manual y XP.
-- Companion V2 por viaje; Pikachu sólo en Japón y companion Travel OS neutral para otros destinos.
+- Nioli Passport V2 por viaje, sellos personalizados, detalle, fotos, fecha, GPS/manual y XP.
+- Brady como compañero de viaje con contexto propio para cada destino.
 - Revisión de cámara inmediata con nota y asociaciones a día, actividad, lugar o sello.
 
 ## Ejecutar localmente
@@ -46,7 +46,7 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=tu_key_restringida
 NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=tu_map_id_opcional
 ```
 
-Reinicia `pnpm dev` después de cambiar variables. La key de navegador es pública por naturaleza: su protección depende de las restricciones de sitio y API, no de ocultarla en el bundle. Sin key, Travel OS muestra un estado de configuración pendiente y conserva operativos itinerario, GPS, reservas, fotos y finanzas.
+Reinicia `pnpm dev` después de cambiar variables. La key de navegador es pública por naturaleza: su protección depende de las restricciones de sitio y API, no de ocultarla en el bundle. Sin key, NIOLI muestra un estado de configuración pendiente y conserva operativos itinerario, GPS, reservas, fotos y finanzas.
 
 Consulta [docs/GOOGLE_MAPS.md](docs/GOOGLE_MAPS.md) para la lista completa de APIs, restricciones y comportamiento de rutas.
 
@@ -65,7 +65,7 @@ La prueba de navegador usa Chrome instalado localmente, recorre los flujos princ
 
 La plantilla de Japón vive en `src/data/trips/japan-2026.ts`, fuera de los componentes React. Para ajustar el plan inicial, edita sus `bases`, `flightSegments` o `itinerary`; los IDs de días y actividades deben mantenerse únicos y las coordenadas no verificadas deben seguir como `null`.
 
-Durante una sesión, abre **Itinerario** para editar días, alojamientos y actividades, o para mover e intercambiar planes. Abre **Reservas** para registrar una reserva independiente y después vincúlala desde el editor de una actividad o alojamiento. Al mover contenido vinculado, Travel OS pregunta si también debe mover la fecha de la reserva.
+Durante una sesión, abre **Itinerario** para editar días, alojamientos y actividades, o para mover e intercambiar planes. Abre **Reservas** para registrar una reserva independiente y después vincúlala desde el editor de una actividad o alojamiento. Al mover contenido vinculado, NIOLI pregunta si también debe mover la fecha de la reserva.
 
 Abre **Mis viajes** y usa **Crear viaje**. El formulario solicita nombre, país, ciudad opcional, fechas, moneda, zona horaria, participantes y creador. El viaje recibe un `tripId` estable y comienza sin datos de Japón. Puedes volver a Mis viajes desde la navegación lateral o pulsando el viaje activo en la barra superior.
 

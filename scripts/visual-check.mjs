@@ -100,9 +100,9 @@ try {
   await openFeature(page, "Itinerario");
   check("japan_22_day_cards", await page.locator(".date-chip").count() === 22);
   check("japan_unique_day_ids", await page.locator(".date-chip").evaluateAll((nodes) => new Set(nodes.map((node) => node.textContent)).size) === 22);
-  await openFeature(page, "Travel Passport");
+  await openFeature(page, "Nioli Passport");
   check("japan_17_stamps", await page.locator(".passport-stamp-card").count() === 17);
-  check("japan_companion_profile", await page.getByRole("heading", { name: "Pikachu" }).isVisible());
+  check("japan_companion_profile", await page.getByRole("heading", { name: "Brady · Geek Mode" }).isVisible());
   await page.screenshot({ path: join(artifacts, "travel-os-v1.2-adventure.png"), fullPage: true });
 
   await page.locator(".country-trigger").click();
@@ -211,9 +211,9 @@ try {
   await uploadReview(page, { note: "Recuerdo QA" });
   check("camera_returns_to_itinerary", await page.getByText("Museo QA editado", { exact: true }).isVisible());
 
-  await openFeature(page, "Travel Passport");
+  await openFeature(page, "Nioli Passport");
   check("mexico_has_no_japan_stamps", await page.getByText("Fushimi Inari", { exact: true }).count() === 0 && await page.getByText("Primer Shinkansen", { exact: true }).count() === 0);
-  check("mexico_generic_companion_ui", await page.getByRole("heading", { name: "Compañero Travel OS" }).isVisible());
+  check("mexico_generic_companion_ui", await page.getByRole("heading", { name: "Brady" }).isVisible());
   await page.getByRole("button", { name: "Sello personalizado" }).click();
   await page.getByLabel("Nombre").fill("Recuerdo especial QA");
   await page.getByLabel("Ciudad o región").fill("Ciudad de México");

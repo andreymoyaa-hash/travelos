@@ -1,8 +1,8 @@
-# Google Maps Platform en Travel OS
+# Google Maps Platform en NIOLI
 
 ## APIs y credenciales
 
-Travel OS usa una API key de navegador en `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` y, opcionalmente, un Cloud Map ID en `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID`.
+NIOLI usa una API key de navegador en `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` y, opcionalmente, un Cloud Map ID en `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID`.
 
 Activa en el mismo proyecto de Google Cloud:
 

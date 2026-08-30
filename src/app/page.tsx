@@ -1,6 +1,7 @@
+import { TravelAuthGate } from "@/features/auth/travel-auth-gate";
 import { japan2026Trip } from "@/data/trips/japan-2026";
-import { TravelApp } from "@/features/trips/travel-app";
+import { isSupabaseConfigured } from "@/lib/supabase/server";
 
 export default function HomePage() {
-  return <TravelApp initialTrip={japan2026Trip} />;
+  return <TravelAuthGate cloudConfigured={isSupabaseConfigured()} localSeedTrip={japan2026Trip} />;
 }

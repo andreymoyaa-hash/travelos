@@ -8,7 +8,7 @@ export default function NotFoundPage() {
       <h1>Este lugar aún no está en el mapa.</h1>
       <p>Regresa al centro de operaciones para continuar tu aventura.</p>
       <Link href="/" className="primary-button">
-        Volver a Travel OS
+        Volver a NIOLI
       </Link>
     </main>
   );

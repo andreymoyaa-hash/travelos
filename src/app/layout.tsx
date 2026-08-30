@@ -18,12 +18,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Travel OS · Tu viaje, bien pensado",
-    template: "%s · Travel OS",
+    default: "NIOLI · Tu viaje, bien pensado",
+    template: "%s · NIOLI",
   },
   description:
     "Planifica rutas, reservas, presupuesto y recuerdos en un solo lugar.",
-  applicationName: "Travel OS",
+  applicationName: "NIOLI",
+  icons: {
+    icon: [
+      { url: "/brand/favicon.ico", type: "image/x-icon" },
+      { url: "/brand/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/brand/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/brand/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
+    ],
+    shortcut: ["/brand/favicon.ico"],
+  },
 };
 
 export const viewport: Viewport = {

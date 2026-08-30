@@ -32,6 +32,7 @@ interface ReservationsViewProps {
   onAddReservation: (reservation: Reservation) => void;
   startDate: string;
   endDate: string;
+  canManage?: boolean;
 }
 
 const accentByType: Record<ReservationType, string> = {
@@ -51,7 +52,7 @@ const formatReservationDate = (dateISO: string) => {
   return `${dateISO.slice(-2)} ${monthLabels[date.getUTCMonth()]}`;
 };
 
-export function ReservationsView({ reservations, startDate, endDate, onAddReservation }: ReservationsViewProps) {
+export function ReservationsView({ reservations, startDate, endDate, onAddReservation, canManage = true }: ReservationsViewProps) {
   const [filter, setFilter] = useState<(typeof filters)[number]["id"]>("all");
   const [formOpen, setFormOpen] = useState(false);
   const visibleReservations = filter === "all"
@@ -76,7 +77,7 @@ export function ReservationsView({ reservations, startDate, endDate, onAddReserv
       time: String(form.get("time") || ""),
       status: form.get("status") as Reservation["status"],
       accent: accentByType[type],
-      meta: "Añadida desde Travel OS",
+      meta: "Añadida desde NIOLI",
     });
     setFilter("all");
     setFormOpen(false);
@@ -88,7 +89,7 @@ export function ReservationsView({ reservations, startDate, endDate, onAddReserv
         eyebrow="Todo listo para despegar"
         title="Reservas"
         description="Vuelos, noches y entradas; accesibles incluso cuando el wifi no acompaña."
-        action={<button type="button" className="primary-button" onClick={() => setFormOpen(true)}><CalendarPlus size={17} /> Añadir reserva</button>}
+        action={canManage ? <button type="button" className="primary-button" onClick={() => setFormOpen(true)}><CalendarPlus size={17} /> Añadir reserva</button> : undefined}
       />
 
       <div className="filter-tabs" role="tablist" aria-label="Filtrar reservas">

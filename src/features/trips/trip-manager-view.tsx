@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { type FormEvent, useState } from "react";
 import { CalendarDays, Cloud, Edit3, MapPin, Plus, ShieldCheck, Trash2, Users, X } from "lucide-react";
 
 import { countryThemeById } from "@/data/countries";
+import { getCountryExperience } from "@/lib/nioli/country-experience";
 import type { CreateTripInput } from "@/repositories/trip-repository";
 import type { CountryId, Currency, Trip } from "@/types/travel";
 
@@ -17,8 +19,8 @@ interface TripManagerViewProps {
 }
 
 type ModalState = { kind: "create" } | { kind: "edit"; trip: Trip } | { kind: "delete"; trip: Trip } | { kind: "sharing"; trip: Trip };
-const selectableCountries: CountryId[] = ["japan", "mexico", "other"];
-const currencies: Currency[] = ["JPY", "MXN", "USD", "CRC", "EUR"];
+const selectableCountries: CountryId[] = ["japan", "mexico", "colombia", "usa", "spain", "chile", "argentina", "korea", "costa-rica", "other"];
+const currencies: Currency[] = ["JPY", "MXN", "COP", "USD", "EUR", "CLP", "ARS", "KRW", "CRC"];
 
 export function TripManagerView({ trips, activeTripId, onOpenTrip, onCreateTrip, onUpdateTrip, onDeleteTrip }: TripManagerViewProps) {
   const [modal, setModal] = useState<ModalState>();
@@ -54,6 +56,7 @@ export function TripManagerView({ trips, activeTripId, onOpenTrip, onCreateTrip,
           creatorName: String(form.get("creatorName")).trim(),
           initialCity: String(form.get("initialCity") || "").trim() || undefined,
           destinationTimeZone: String(form.get("destinationTimeZone")),
+          mapProvider: form.get("mapProvider") === "open" ? "open" : "google",
         } : modal.trip.settings,
       }, participantNames);
     } else {
@@ -67,6 +70,7 @@ export function TripManagerView({ trips, activeTripId, onOpenTrip, onCreateTrip,
         destinationTimeZone: String(form.get("destinationTimeZone")),
         participantNames,
         creatorName: String(form.get("creatorName")).trim(),
+        mapProvider: form.get("mapProvider") === "open" ? "open" : "google",
       });
     }
     setModal(undefined);
@@ -75,7 +79,7 @@ export function TripManagerView({ trips, activeTripId, onOpenTrip, onCreateTrip,
   return (
     <div className="view-stack trips-view">
       <header className="trips-heading">
-        <div><p className="eyebrow">Travel OS · Local Mode</p><h1>Mis viajes</h1><p>Cada viaje tiene su propio itinerario, presupuesto, pasaporte, fotos y companion.</p></div>
+        <div><p className="eyebrow">NIOLI · Local Mode</p><h1>Mis viajes</h1><p>Cada viaje tiene su propio itinerario, presupuesto, pasaporte, fotos y Brady.</p></div>
         <button type="button" className="primary-button" onClick={() => setModal({ kind: "create" })}><Plus size={18} /> Crear viaje</button>
       </header>
 
@@ -84,9 +88,10 @@ export function TripManagerView({ trips, activeTripId, onOpenTrip, onCreateTrip,
       <section className="trip-manager-grid" aria-label="Viajes disponibles">
         {trips.map((trip) => {
           const theme = countryThemeById[trip.countryId] ?? countryThemeById.other;
+          const passportCover = getCountryExperience(trip.countryId).assets.passport.cover;
           return (
             <article className={trip.id === activeTripId ? "trip-manager-card active" : "trip-manager-card"} key={trip.id} style={{ "--trip-card-accent": theme.colors.accent } as React.CSSProperties}>
-              <div className={`trip-card-pattern ${theme.decorativeStyle}`} aria-hidden="true"><span>{theme.landmark}</span></div>
+              <div className={`trip-card-pattern ${theme.decorativeStyle} ${passportCover ? "has-asset" : ""}`} aria-hidden="true">{passportCover ? <Image className="trip-card-passport-art" src={passportCover} alt="" width={90} height={130} /> : <span>{theme.landmark}</span>}</div>
               <header><span className="trip-card-flag">{theme.flag}</span><span className="storage-pill">Local</span></header>
               <h2>{trip.name}</h2><p>{trip.dateRange}</p>
               <div className="trip-card-facts"><span><MapPin size={15} /> {trip.settings?.initialCity ?? trip.currentCity}</span><span><CalendarDays size={15} /> {trip.itinerary.length} días planificados</span><span><Users size={15} /> {trip.participants.length} participantes</span></div>
@@ -107,7 +112,7 @@ export function TripManagerView({ trips, activeTripId, onOpenTrip, onCreateTrip,
       ) : null}
 
       {modal?.kind === "sharing" ? (
-        <div className="modal-backdrop" role="presentation" onMouseDown={() => setModal(undefined)}><section className="expense-modal cloud-modal" role="dialog" aria-modal="true" aria-labelledby="cloud-title" onMouseDown={(event) => event.stopPropagation()}><header><div><p className="eyebrow">Cloud Mode</p><h2 id="cloud-title">Invitar participante</h2></div><button type="button" className="icon-button" onClick={() => setModal(undefined)} aria-label="Cerrar"><X size={20} /></button></header><div className="cloud-explanation"><Cloud size={32} /><p><strong>Compartir entre dispositivos requiere configurar Cloud Sync.</strong></p><p>Travel OS no generará códigos ni enlaces falsos. Configura Supabase, autenticación y las políticas de acceso documentadas para habilitar invitaciones reales.</p></div><button type="button" className="secondary-button full-width" onClick={() => setModal(undefined)}>Entendido</button></section></div>
+        <div className="modal-backdrop" role="presentation" onMouseDown={() => setModal(undefined)}><section className="expense-modal cloud-modal" role="dialog" aria-modal="true" aria-labelledby="cloud-title" onMouseDown={(event) => event.stopPropagation()}><header><div><p className="eyebrow">Cloud Mode</p><h2 id="cloud-title">Invitar participante</h2></div><button type="button" className="icon-button" onClick={() => setModal(undefined)} aria-label="Cerrar"><X size={20} /></button></header><div className="cloud-explanation"><Cloud size={32} /><p><strong>Compartir entre dispositivos requiere configurar Cloud Sync.</strong></p><p>NIOLI no generará códigos ni enlaces falsos. Configura Supabase, autenticación y las políticas de acceso documentadas para habilitar invitaciones reales.</p></div><button type="button" className="secondary-button full-width" onClick={() => setModal(undefined)}>Entendido</button></section></div>
       ) : null}
 
       {modal?.kind === "delete" ? (
@@ -123,6 +128,7 @@ function TripForm({ trip, onClose, onSubmit }: { trip?: Trip; onClose: () => voi
       <div className="form-grid"><label>País<select name="countryId" defaultValue={trip?.countryId ?? "mexico"}>{selectableCountries.map((id) => <option value={id} key={id}>{countryThemeById[id].flag} {countryThemeById[id].name}</option>)}</select></label><label>Ciudad inicial (opcional)<input name="initialCity" defaultValue={trip?.settings?.initialCity ?? ""} placeholder="Ej. Ciudad de México" /></label></div>
       <div className="form-grid"><label>Fecha inicio<input name="startDate" type="date" defaultValue={trip?.startDate} required /></label><label>Fecha final<input name="endDate" type="date" defaultValue={trip?.endDate} min={trip?.startDate} required /></label></div>
       <div className="form-grid"><label>Moneda principal<select name="currency" defaultValue={trip?.budget.currency ?? "MXN"}>{currencies.map((currency) => <option value={currency} key={currency}>{currency}</option>)}</select></label><label>Zona horaria de destino<input name="destinationTimeZone" defaultValue={trip?.settings?.destinationTimeZone ?? "America/Mexico_City"} placeholder="America/Mexico_City" required /></label></div>
+      <label>Proveedor de mapa<select name="mapProvider" defaultValue={trip?.settings?.mapProvider ?? "google"}><option value="google">Google Maps · Places y Routes</option><option value="open">OpenStreetMap · mapa abierto</option></select></label>
       <label>Participantes <small>Separados por coma</small><input name="participants" defaultValue={trip?.participants.map((participant) => participant.name).join(", ")} placeholder="Andy, Ana" required /></label>
       <label>Nombre del usuario creador<input name="creatorName" defaultValue={trip?.settings?.creatorName ?? "Andy"} required /></label>
       <p className="data-note">El viaje nuevo comienza sin itinerario, gastos, reservas, fotos ni datos de Japón.</p>

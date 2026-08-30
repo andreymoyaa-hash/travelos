@@ -7,11 +7,12 @@ export type FeatureId =
   | "map"
   | "adventure";
 
-export type CountryId = "japan" | "mexico" | "korea" | "usa" | "other";
-export type Currency = "JPY" | "CRC" | "USD" | "MXN" | "EUR";
+export type CountryId = "japan" | "mexico" | "colombia" | "usa" | "spain" | "chile" | "argentina" | "korea" | "costa-rica" | "other";
+export type Currency = "JPY" | "CRC" | "USD" | "MXN" | "EUR" | "COP" | "CLP" | "ARS" | "KRW";
+export type MapProvider = "google" | "open";
 
 export type StorageMode = "local" | "cloud";
-export type TripMemberRole = "owner" | "editor" | "viewer";
+export type TripMemberRole = "owner" | "editor" | "participant" | "viewer";
 
 export interface CountryTheme {
   id: CountryId;
@@ -258,7 +259,44 @@ export type AchievementCategory =
   | "kyoto"
   | "food"
   | "geek"
-  | "entertainment";
+  | "entertainment"
+  | "culture"
+  | "landmark"
+  | "museum"
+  | "market"
+  | "nature"
+  | "neighborhood";
+
+export type PassportStampShape =
+  | "round"
+  | "oval"
+  | "rectangle"
+  | "square"
+  | "arch"
+  | "ticket"
+  | "hanko";
+
+export interface PassportStampVisual {
+  shape: PassportStampShape;
+  ink: string;
+  motif: string;
+  label: string;
+  rotationDeg?: number;
+  assetPath?: string;
+}
+
+export interface AchievementSource {
+  label: string;
+  url: string;
+}
+
+export interface AchievementCatalog {
+  countryId: CountryId;
+  countryCode: string;
+  version: number;
+  categories: AchievementCategory[];
+  achievements: Achievement[];
+}
 
 export type AchievementUnlockMethod = "manual" | "gps" | "photo";
 
@@ -280,6 +318,11 @@ export interface Achievement {
   unlockedBy: string[];
   location: string;
   city?: string;
+  region?: string;
+  hint?: string;
+  discovery?: "visible" | "hinted" | "secret";
+  stamp?: PassportStampVisual;
+  source?: AchievementSource;
   rarity?: "common" | "special" | "rare";
   custom?: boolean;
   unlockedAt?: Record<string, string>;
@@ -299,6 +342,7 @@ export interface TravelPhoto {
   id: string;
   tripId?: string;
   dataUrl: string;
+  storagePath?: string;
   createdAt: string;
   participantId: string;
   location?: GeoPosition;
@@ -325,7 +369,7 @@ export interface TravelMemory {
 }
 
 export interface PassportTemplate {
-  id: "japan" | "mexico" | "generic";
+  id: "japan" | "mexico" | "colombia" | "korea" | "usa" | "generic";
   name: string;
   description: string;
   categories: string[];
@@ -356,6 +400,16 @@ export interface TripSettings {
   passportTemplateId: PassportTemplate["id"];
   companionProfileId: CompanionProfile["id"];
   storageMode: StorageMode;
+  mapProvider?: MapProvider;
+  lastPdfImport?: {
+    fileName: string;
+    checksum: string;
+    standardVersion: string;
+    importedAt: string;
+    daysChanged: number;
+    activitiesChanged: number;
+    reservationsChanged: number;
+  };
   protected?: boolean;
   createdAt: string;
   updatedAt: string;

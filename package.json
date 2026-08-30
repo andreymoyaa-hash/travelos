@@ -7,12 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:invitations": "node --test scripts/test-private-invitations.mjs",
+    "test:branding": "node --test scripts/test-nioli-branding.mjs",
+    "test:experience": "node --test scripts/test-nioli-experience.mjs",
+    "test:visual-v2": "node --test scripts/test-visual-system-v2.mjs",
+    "test:official-assets": "node --test scripts/test-official-assets.mjs"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.1",
+    "@supabase/supabase-js": "^2.112.4",
     "lucide-react": "1.33.0",
     "next": "16.3.2",
+    "pdfjs-dist": "^6.2.108",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

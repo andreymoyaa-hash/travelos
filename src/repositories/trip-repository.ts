@@ -1,7 +1,8 @@
 import { companionProfileForCountry } from "@/data/companion-profiles";
 import { countryThemeById } from "@/data/countries";
 import { passportTemplateForCountry } from "@/data/passport-templates";
-import type { CountryId, Currency, Participant, Trip, TripSettings } from "@/types/travel";
+import { withOfficialPassportCatalog } from "@/lib/nioli/passport-catalog";
+import type { CountryId, Currency, MapProvider, Participant, Trip, TripSettings } from "@/types/travel";
 
 const STORAGE_KEY = "travel-os:trips:v2";
 const ACTIVE_TRIP_KEY = "travel-os:active-trip:v2";
@@ -23,6 +24,7 @@ export interface CreateTripInput {
   destinationTimeZone: string;
   participantNames: string[];
   creatorName: string;
+  mapProvider?: MapProvider;
 }
 
 export interface TripRepository {
@@ -67,6 +69,7 @@ export const createEmptyTrip = (input: CreateTripInput): Trip => {
     passportTemplateId: template.id,
     companionProfileId: companion.id,
     storageMode: "local",
+    mapProvider: input.mapProvider ?? "google",
     createdAt: now,
     updatedAt: now,
   };
@@ -110,7 +113,7 @@ const normalizeTrip = (trip: Trip): Trip => {
   const template = passportTemplateForCountry(trip.countryId);
   const companion = companionProfileForCountry(trip.countryId);
   const now = new Date().toISOString();
-  return {
+  return withOfficialPassportCatalog({
     ...trip,
     savedPlaces: trip.savedPlaces ?? [],
     itinerary: trip.itinerary ?? [],
@@ -130,7 +133,7 @@ const normalizeTrip = (trip: Trip): Trip => {
       updatedAt: now,
     },
     companionProgress: trip.companionProgress ?? { level: 1, xp: 0, mood: "curious", enabled: true },
-  };
+  });
 };
 
 export class LocalTripRepository implements TripRepository {

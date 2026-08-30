@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
+  FileUp,
   Gem,
   GripVertical,
   Link2,
@@ -27,7 +28,9 @@ import { ActivityIcon } from "@/components/ui/activity-icon";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ItineraryEditorModal, type ItineraryEditorState } from "@/features/itinerary/itinerary-editor-modal";
 import { MovePlanModal, type MovePlanState } from "@/features/itinerary/move-plan-modal";
+import { PdfImportModal } from "@/features/itinerary/pdf-import-modal";
 import { formatMoney } from "@/lib/format";
+import type { TravelPdfImportPreview } from "@/lib/imports/travel-os-pdf";
 import type {
   Activity,
   FlightSegment,
@@ -63,6 +66,8 @@ interface ItineraryViewProps {
   onUpdateBase: (base: TripBase) => void;
   onMoveActivity: (sourceDayId: string, targetDayId: string, activityId: string, moveReservation: boolean) => void;
   onSwapDayPlans: (sourceDayId: string, targetDayId: string, moveReservations: boolean) => void;
+  canImportPdf: boolean;
+  onImportPdf: (preview: TravelPdfImportPreview) => void;
 }
 
 export function ItineraryView({
@@ -80,12 +85,15 @@ export function ItineraryView({
   onUpdateBase,
   onMoveActivity,
   onSwapDayPlans,
+  canImportPdf,
+  onImportPdf,
 }: ItineraryViewProps) {
   const [selectedDayId, setSelectedDayId] = useState(itinerary[0]?.id ?? "");
   const [editor, setEditor] = useState<ItineraryEditorState>();
   const [move, setMove] = useState<MovePlanState>();
   const [deleteTarget, setDeleteTarget] = useState<Activity>();
   const [dayFormOpen, setDayFormOpen] = useState(false);
+  const [pdfOpen, setPdfOpen] = useState(false);
   const selectedDay = itinerary.find((day) => day.id === selectedDayId) ?? itinerary[0];
   const addNewDay = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -101,7 +109,7 @@ export function ItineraryView({
 
   const dayForm = dayFormOpen ? <div className="modal-backdrop" role="presentation" onMouseDown={() => setDayFormOpen(false)}><section className="expense-modal" role="dialog" aria-modal="true" aria-labelledby="new-day-title" onMouseDown={(event) => event.stopPropagation()}><header><div><p className="eyebrow">Itinerario independiente</p><h2 id="new-day-title">Agregar día</h2></div><button type="button" className="icon-button" onClick={() => setDayFormOpen(false)} aria-label="Cerrar"><X size={20} /></button></header><form onSubmit={addNewDay}><label>Fecha<input name="date" type="date" min={trip.startDate} max={trip.endDate} required autoFocus /></label><div className="form-grid"><label>Ciudad<input name="city" placeholder="Ciudad" required /></label><label>Área o plan<input name="area" placeholder="Área o idea principal" required /></label></div><button type="submit" className="primary-button full-width">Guardar día</button></form></section></div> : null;
 
-  if (!selectedDay) return <div className="view-stack"><SectionHeading eyebrow={`${trip.name} · plan editable`} title="Itinerario" description="Este viaje comienza vacío. Agrega un día dentro del rango del viaje y después crea actividades." action={<button type="button" className="primary-button" onClick={() => setDayFormOpen(true)}><CalendarPlus size={17} /> Agregar primer día</button>} /><div className="empty-state"><span>＋</span><h2>Todavía no hay días planificados</h2><p>No se copiaron fechas, lugares ni actividades de Japón.</p></div>{dayForm}</div>;
+  if (!selectedDay) return <div className="view-stack"><SectionHeading eyebrow={`${trip.name} · plan editable`} title="Itinerario" description="Este viaje comienza vacío. Agrega un día o importa PlannedData validado desde un PDF estándar." action={<div className="heading-actions"><button type="button" className="secondary-button" disabled={!canImportPdf} onClick={() => setPdfOpen(true)}><FileUp size={17} /> Importar PDF</button><button type="button" className="primary-button" onClick={() => setDayFormOpen(true)}><CalendarPlus size={17} /> Agregar primer día</button></div>} /><div className="empty-state"><span>＋</span><h2>Todavía no hay días planificados</h2><p>No se copiaron fechas, lugares ni actividades de Japón.</p></div>{dayForm}{pdfOpen ? <PdfImportModal trip={trip} onClose={() => setPdfOpen(false)} onApply={(preview) => { onImportPdf(preview); setPdfOpen(false); }} /> : null}</div>;
   const selectedBase = bases.find((base) => base.id === selectedDay.baseId);
   const previousBase = bases.find((base) => base.id === selectedDay.previousBaseId);
   const dailyEstimate = selectedDay.activities.reduce((sum, item) => sum + (item.estimatedCost ?? 0), 0);
@@ -122,7 +130,7 @@ export function ItineraryView({
         eyebrow={`${trip.name} · plan editable`}
         title="Itinerario"
         description={`${itinerary.length} días con lugares y referencias que puedes reorganizar sin editar código.`}
-        action={<div className="heading-actions"><button type="button" className="secondary-button" onClick={() => onOpenCamera(selectedDay.id)}><Camera size={17} /> Foto</button><button type="button" className="secondary-button" onClick={() => setDayFormOpen(true)}><CalendarPlus size={17} /> Añadir día</button><button type="button" className="primary-button" onClick={() => setEditor({ kind: "activity", dayId: selectedDay.id })}><Plus size={17} aria-hidden="true" /> Nueva actividad</button></div>}
+        action={<div className="heading-actions"><button type="button" className="secondary-button" disabled={!canImportPdf} title={canImportPdf ? "Importar PlannedData" : "Tu acceso no permite importar PDF"} onClick={() => setPdfOpen(true)}><FileUp size={17} /> Importar PDF</button><button type="button" className="secondary-button" onClick={() => onOpenCamera(selectedDay.id)}><Camera size={17} /> Foto</button><button type="button" className="secondary-button" onClick={() => setDayFormOpen(true)}><CalendarPlus size={17} /> Añadir día</button><button type="button" className="primary-button" onClick={() => setEditor({ kind: "activity", dayId: selectedDay.id })}><Plus size={17} aria-hidden="true" /> Nueva actividad</button></div>}
       />
 
       <div className="date-strip day-card-strip" aria-label="Seleccionar día">
@@ -175,7 +183,7 @@ export function ItineraryView({
                     {activity.estimatedCost !== undefined && activity.currency ? <span className="activity-cost">{formatMoney(activity.estimatedCost, activity.currency)}</span> : null}
                     {activity.notes ? <div className="activity-note"><NotebookPen size={14} aria-hidden="true" /> {activity.notes}</div> : null}
                     {linkedReservation ? <div className="activity-reservation"><Link2 size={13} /><span><strong>{linkedReservation.title}</strong> · {linkedReservation.status === "confirmed" ? "Confirmada" : "Pendiente"}</span></div> : null}
-                    {activity.stampId ? <small className="stamp-reference">Travel Passport · {activity.stampId}</small> : null}
+                    {activity.stampId ? <small className="stamp-reference">Nioli Passport · {activity.stampId}</small> : null}
                     <div className="activity-actions" aria-label={`Acciones para ${activity.title}`}>
                       <span className="activity-grip" title="Orden de la actividad"><GripVertical size={17} aria-hidden="true" /></span>
                       <button type="button" className="icon-button" disabled={index === 0} onClick={() => onReorderActivity(selectedDay.id, activity.id, -1)} aria-label={`Subir ${activity.title}`}><ArrowUp size={14} /></button>
@@ -233,6 +241,7 @@ export function ItineraryView({
         </div>
       ) : null}
       {dayForm}
+      {pdfOpen ? <PdfImportModal trip={trip} onClose={() => setPdfOpen(false)} onApply={(preview) => { onImportPdf(preview); setPdfOpen(false); }} /> : null}
     </div>
   );
 }

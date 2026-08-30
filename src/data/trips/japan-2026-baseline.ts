@@ -9,7 +9,7 @@ export const japan2026Baseline = {
   baseIds: ["osaka", "kyoto", "tokyo"],
   flightIds: ["am0691-2026-11-09", "am0058-2026-11-09"],
   participantIds: ["andy", "jose"],
-  stampCount: 17,
+  stampCount: 20,
   reservationCount: 0,
   expenseCount: 0,
   photoCount: 0,
@@ -35,3 +35,4 @@ export function assertJapan2026Baseline(trip: Trip): void {
   const failed = checks.find(([valid]) => !valid);
   if (failed) throw new Error(`japan-2026: el snapshot lógico no coincide en ${failed[1]}.`);
 }
+

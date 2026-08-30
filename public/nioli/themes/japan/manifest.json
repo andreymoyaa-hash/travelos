@@ -1,0 +1,269 @@
+{
+  "collection": "NIOLI Japan theme approved assets",
+  "status": "approved assets prepared for theme implementation",
+  "notes": [
+    "Only Japan assets are included.",
+    "The logo/seal was also prepared with a transparent background for page use.",
+    "Achievement and city stamps were cropped individually from the approved Japan master sheet.",
+    "Reference-only folder contains originals/master and should not be rendered directly in production when individual files exist."
+  ],
+  "asset_count": 51,
+  "assets": [
+    {
+      "file": "stamps/jp_nioli_postmark.png",
+      "source": "2f3280d1-8ded-5bde-95e1-4eb6600a479f.png",
+      "category": "stamps"
+    },
+    {
+      "file": "stamps/jp_immigration_stamp.png",
+      "source": "766e6878-e1de-5eff-8d85-ed8caad8ae69.png",
+      "category": "stamps"
+    },
+    {
+      "file": "tickets/jp_japan_rail_pass.png",
+      "source": "892f659d-481b-5601-8bd1-b3d98b4235d5.png",
+      "category": "tickets"
+    },
+    {
+      "file": "labels/jp_country_code_label.png",
+      "source": "8bf0814a-7529-542f-9fdd-a5fb2a27be0a.png",
+      "category": "labels"
+    },
+    {
+      "file": "labels/jp_luggage_tag.png",
+      "source": "ff67acc5-c858-5f24-beeb-a612b6ef5b20.png",
+      "category": "labels"
+    },
+    {
+      "file": "tickets/jp_boarding_pass.png",
+      "source": "b14dbea7-b162-5364-92da-ed3c37a46c4c.png",
+      "category": "tickets"
+    },
+    {
+      "file": "decor/jp_torii.png",
+      "source": "17959cf8-6e97-5b2d-b38d-540016ca23d7.png",
+      "category": "decor"
+    },
+    {
+      "file": "decor/jp_koi.png",
+      "source": "f9afdbbc-b6bf-5211-8922-b1ed952338e3.png",
+      "category": "decor"
+    },
+    {
+      "file": "brady/jp_brady_yawn.png",
+      "source": "b8383091-eec1-5124-a563-9d359afd22fa.png",
+      "category": "brady"
+    },
+    {
+      "file": "brady/jp_brady_map.png",
+      "source": "841a4c34-53a2-5a25-af7e-7c0725d207cf.png",
+      "category": "brady"
+    },
+    {
+      "file": "brady/jp_brady_stand.png",
+      "source": "1c397367-a664-5cc3-a66f-9c188eff1b02.png",
+      "category": "brady"
+    },
+    {
+      "file": "brady/jp_brady_tag.png",
+      "source": "b0bea1d3-d1ca-56b7-aa81-b9c1872325f7.png",
+      "category": "brady"
+    },
+    {
+      "file": "brady/jp_brady_point.png",
+      "source": "bf65c282-9f13-59b7-a0ac-011dfed85493.png",
+      "category": "brady"
+    },
+    {
+      "file": "brady/jp_brady_celebrate.png",
+      "source": "6d3c6cd8-972a-5965-9ec4-c9149b8fefca.png",
+      "category": "brady"
+    },
+    {
+      "file": "brady/jp_brady_walk.png",
+      "source": "950a8d46-e6ca-5131-b444-de5b406b767e.png",
+      "category": "brady"
+    },
+    {
+      "file": "brady/jp_brady_japan_happi.png",
+      "source": "d64437fa-8647-5f66-a70d-51c75f1b4f88.png",
+      "category": "brady"
+    },
+    {
+      "file": "branding/jp_nioli_sloth_seal_transparent.png",
+      "source": "e4c0e814-d10d-586a-87d6-79e17ad556e6.png",
+      "category": "branding",
+      "note": "background removed to transparency"
+    },
+    {
+      "file": "reference_only/jp_nioli_sloth_seal_original.png",
+      "source": "e4c0e814-d10d-586a-87d6-79e17ad556e6.png",
+      "category": "reference_only"
+    },
+    {
+      "file": "achievements/jp_achievement_01_viaje_en_shinkansen.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_02_probe_ramen.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_03_comi_sushi.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_04_visite_un_templo.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_05_fui_a_un_onsen.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_06_cruce_shibuya.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_07_vi_flores_de_sakura.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_08_explore_akihabara.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_09_subi_a_una_torre.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_10_disfrute_un_festival.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_11_tome_te_matcha.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_12_visite_un_castillo.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_13_pasee_por_gion.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_14_conoci_un_jardin_japones.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_15_comi_en_un_konbini.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_16_navegue_por_un_canal.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_17_vi_el_monte_fuji.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_18_probe_mochi.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_19_fui_a_un_mercado_local.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "achievements/jp_achievement_20_disfrute_la_comida_callejera.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "achievements"
+    },
+    {
+      "file": "cities/jp_city_01_tokyo.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_02_kyoto.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_03_osaka.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_04_nara.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_05_yokohama.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_06_hakone.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_07_hiroshima.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_08_kamakura.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_09_nikko.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_10_sapporo.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_11_fukuoka.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "cities/jp_city_12_okinawa.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "cities"
+    },
+    {
+      "file": "reference_only/jp_master_sheet.png",
+      "source": "ad270fa2-3274-5b1a-85a5-3852378840fb.png",
+      "category": "reference_only"
+    }
+  ]
+}

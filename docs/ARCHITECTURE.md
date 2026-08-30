@@ -1,67 +1,82 @@
-# Travel OS — arquitectura multi-viaje
+# NIOLI — multi-trip architecture
 
-Travel OS usa Next.js App Router, React y TypeScript estricto. `page.tsx` continúa siendo un Server Component y entrega Japón 2026 como seed serializable a `TravelApp`. El shell cliente administra una colección de viajes independientes mediante un `tripId` estable.
+NIOLI uses Next.js App Router, React, strict TypeScript, a repository boundary, and a real Supabase backend. `page.tsx` remains a Server Component: it decides whether Supabase is configured and passes only serializable configuration/seed data to the client login gate.
 
-## Límite de dominio
+## Access boundary
+
+When Supabase is configured, the first screen is always the six-digit PIN gate. The PIN is sent only to the server route and then to the Supabase `access-login` Edge Function. It is never stored in localStorage, sessionStorage, IndexedDB, cookies, or application logs.
+
+Successful access returns one of two server-authorized session types:
+
+```text
+PIN
+├─ trip session      → one participant + one trip
+└─ guest workspace   → isolated list of workspace_trips
+                         └─ open/create issues a scoped trip session
+```
+
+Tokens live in HTTP-only, same-site cookies. Data requests use `x-travel-session`; guest workspace RPCs use `x-workspace-session`. User-supplied trip IDs never decide authorization. A missing or expired `/api/travel-session` is represented as HTTP 204 and is a normal signed-out state, not a login error.
+
+## Domain and persistence
 
 ```text
 TravelApp
   └─ TripRepository
-       ├─ LocalTripRepository (activo)
-       └─ CloudTripRepository (contrato futuro)
+       ├─ LocalTripRepository
+       └─ CloudTripRepository
 
-Trip (tripId)
-  ├─ participantes
-  ├─ días / actividades / lugares
-  ├─ reservas / gastos
-  ├─ fotos / TravelMemory
-  ├─ PassportTemplate / stamps
-  └─ CompanionProfile / progreso
+Trip (stable tripId)
+  ├─ participants
+  ├─ PlannedData: days, activities, bases, reservations, places
+  ├─ LiveData: expenses, photos/memories, unlocked stamps, XP
+  ├─ PassportTemplate / achievements
+  └─ CompanionProfile / progress
 ```
 
-Los componentes no acceden a `localStorage`. Todas las lecturas, escrituras, altas, cambios y eliminaciones pasan por `TripRepository`, ubicado en `src/repositories/trip-repository.ts`. La implementación local usa un sobre versionado (`travel-os:trips:v2`) y permite sustituir el almacenamiento sin reescribir las vistas.
+Local Mode uses the versioned `travel-os:trips:v2` store behind `LocalTripRepository`. Cloud Mode uses Supabase as primary storage and keeps a trip-scoped browser backup only as outage protection. Components do not query protected access/session tables or store a PIN.
 
-## Migración y snapshot de Japón
+## Japan 2026 preservation
 
-- `LocalTripRepository` migra de forma idempotente claves legacy conocidas y asigna datos sin ID a `japan-2026`.
-- El seed Japón se inserta sólo si no existe; nunca se duplica.
-- `japan-2026-baseline.ts` comprueba en ejecución 22 días, 143 actividades, 3 bases, 2 vuelos, 17 sellos, Andy/José y la dirección real de Osaka.
-- `validate-trip.ts` conserva las invariantes de fechas e IDs únicos.
-- Japón 2026 está marcado como protegido y no puede eliminarse desde la interfaz.
+- The local migration assigns legacy data without a `tripId` to `japan-2026` idempotently.
+- The remote migration runs only for the owner and only when the remote trip has no days.
+- `japan-2026-baseline.ts` checks 22 unique days, 143 activities, three bases, two flights, 17 stamps, Andy/José, and the known Osaka address.
+- Japan is protected from local deletion.
 
-## CountryTheme
+## CountryExperience and NIOLI
 
-`CountryTheme` ya no cambia una bandera sobre el viaje activo. El tema se resuelve desde `activeTrip.countryId` y define país, paleta, acento tipográfico, patrones, estilo decorativo, tratamiento de iconos, pasaporte, companion y etiquetas. Se implementan:
+`CountryExperience` resolves the theme, Passport template, Brady profile, ISO country code, and a production-safe NIOLI Country Pack. JP, MX, CO, US, ES, CL, AR, KR, and CR have explicit themes; unknown countries use the international fallback and never borrow Japan.
 
-- Japón: conserva Sumi, Washi, Torii, Aizome, Matcha, Sakura y Kin.
-- México: geometría urbana, azulejos y papel picado abstracto; no usa torii, sakura ni señalización japonesa.
-- Internacional: fallback neutral para otros destinos.
+Country artwork must pass `docs/NIOLI_ASSET_VISUAL_QA.md`. Main UI code reads `getProductionReadyCountryAssetPack`; a blocking asset becomes `null` and falls back to the existing CSS/text treatment or a transparent Brady core action. Reference boards remain under `/public/nioli/refs` and are QA-only.
 
-## PassportTemplate y CompanionProfile
+## Passport, Brady, photos, and memories
 
-Cada viaje selecciona su `PassportTemplate` al crearse. Japón conserva sus 17 sellos reales; México y el fallback internacional reciben únicamente sus plantillas propias y admiten sellos personalizados. Los desbloqueos, fotografías y fechas viven dentro del `Trip` activo.
+Each trip owns its Passport template, stamps, unlocks, photos, and Brady progress. Photo capture uses an immediate review modal/full-screen layout with note/day/activity/place/stamp associations. GPS is requested only after an explicit user action. Cloud photos use the required `{tripId}/{participantId}/{filename}` Storage path.
 
-`CompanionProfile` elige Pikachu sólo para Japón/Geek Mode y un companion Travel OS neutral para los demás países. `CompanionProgress` persiste nivel, XP, mood, último mensaje e interacción por viaje.
+## Legacy Travel OS PDF Standard
 
-## Fotos y recuerdos
+The itinerary screen implements the complete local pipeline:
 
-`TravelPhoto` mantiene compatibilidad con las fotos existentes y agrega `tripId`, día, actividad, lugar, sello y nota opcionales. `TravelMemory` representa el modelo de dominio de la siguiente migración. La cámara abre una revisión modal/full-screen inmediata; al cerrar no navega ni modifica el scroll del módulo de origen.
+```text
+PDF → parse (PDF.js) → preview → validate → normalize → merge PlannedData
+```
 
-## Local Mode y Cloud Mode
+For backward compatibility, the internal wire format still accepts the legacy declaration `TRAVEL OS PDF STANDARD` and markers `BEGIN_TRAVEL_OS_JSON` / `END_TRAVEL_OS_JSON`. New public-facing documents may declare `NIOLI PDF STANDARD`; both names resolve to the same version 1 format with `plannedData.days`, `plannedData.reservations`, and `plannedData.bases`.
 
-Local Mode funciona hoy sin cuentas ni backend: multi-viaje, edición, cámara, mapas, Passport y companion persisten en el navegador. Las imágenes siguen siendo data URLs; un volumen grande puede alcanzar la cuota del navegador y deberá migrarse a object storage.
+Importing merges by stable ID/date and never deletes or replaces LiveData: photos, expenses, unlocked stamps, XP, memories, participants, and companion progress remain untouched. Cloud users also require the applicable itinerary and PDF permissions.
 
-Cloud Mode es una base preparada, no una función simulada. El esquema propuesto está en `supabase/migrations/202608250001_travel_os_foundation.sql` y contempla usuarios, viajes, miembros, días, actividades, ubicaciones, reservas, gastos, fotos, sellos, desbloqueos, progreso e invitaciones. La UI informa que compartir requiere configurar Supabase y no genera enlaces falsos.
+## Map providers
 
-Variables requeridas para implementar Cloud Mode:
+- `google`: lazy Maps JavaScript API, Places (New), Advanced Markers, explicit GPS, Google Maps links, and `Route.computeRoutes`.
+- `open`: lazy OpenStreetMap embed and explicit GPS without pretending that Places or Routes are available.
+
+Transit requests ask for `travelAdvisory` and then read `route.travelAdvisory?.transitFare`. “Más barato” compares only compatible fares actually returned by Google; “Menos caminata” uses transit `LESS_WALKING` and real leg steps.
+
+## Environment variables
 
 ```dotenv
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ```
 
-Todavía falta instalar un cliente Supabase, implementar autenticación, `CloudTripRepository`, storage de fotos, aceptación de invitaciones y pruebas de permisos/RLS. La ausencia de esas variables no afecta Local Mode.
-
-## Google Maps
-
-El mapa mantiene lazy loading cliente, Places API (New), Advanced Markers, GPS consentido, enlaces a Google Maps y `Route.computeRoutes`. Transit solicita `travelAdvisory` y lee `route.travelAdvisory?.transitFare`; nunca inventa tarifas. La opción “Más barato” sólo compara rutas con tarifas suficientes.
+Real values belong only in ignored local/Vercel environment configuration. The service-role key is never present in frontend files or bundles.

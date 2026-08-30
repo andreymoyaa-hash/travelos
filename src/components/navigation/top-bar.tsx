@@ -1,5 +1,7 @@
-import { Bell, ChevronDown, Menu } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
+import Image from "next/image";
 
+import type { NioliBrandAssets } from "@/lib/nioli/brand";
 import type { CountryTheme, Trip } from "@/types/travel";
 
 interface TopBarProps {
@@ -7,26 +9,27 @@ interface TopBarProps {
   theme: CountryTheme;
   activeParticipantId: string;
   onSelectParticipant: (participantId: string) => void;
-  onOpenCountries: () => void;
+  onOpenCountries?: () => void;
+  participantLocked?: boolean;
+  onLogout?: () => Promise<void>;
+  brand: NioliBrandAssets;
 }
 
-export function TopBar({ trip, theme, activeParticipantId, onSelectParticipant, onOpenCountries }: TopBarProps) {
+export function TopBar({ trip, theme, activeParticipantId, onSelectParticipant, onOpenCountries, participantLocked, onLogout, brand }: TopBarProps) {
   return (
     <header className="top-bar">
       <div className="mobile-brand">
-        <button type="button" className="icon-button menu-button" aria-label="Abrir navegación"><Menu size={20} aria-hidden="true" /></button>
-        <span className="brand-mark small" aria-hidden="true">旅</span>
-        <strong>Travel OS</strong>
+        <Image className="mobile-brand-seal" src={brand.seal} alt="" width={320} height={320} sizes="38px" aria-hidden="true" />
+        <span><strong>NIOLI</strong><small>Tu pasaporte al mundo</small></span>
       </div>
 
-      <button type="button" className="country-trigger" onClick={onOpenCountries}>
-        <span>{theme.flag}</span>
+      <button type="button" className="country-trigger" onClick={onOpenCountries} disabled={!onOpenCountries}>
+        <span className="country-code-chip">{theme.countryCode}</span>
         <span><small>Viaje activo</small><strong>{trip.name}</strong></span>
-        <ChevronDown size={16} aria-hidden="true" />
+        {onOpenCountries ? <ChevronDown size={17} aria-hidden="true" /> : null}
       </button>
 
       <div className="top-actions">
-        <button type="button" className="icon-button notification-button" aria-label="Notificaciones"><Bell size={19} aria-hidden="true" /></button>
         <div className="traveler-stack" aria-label="Participante activo">
           {trip.participants.map((participant) => (
             <button
@@ -34,15 +37,17 @@ export function TopBar({ trip, theme, activeParticipantId, onSelectParticipant, 
               key={participant.id}
               className={participant.id === activeParticipantId ? "active" : ""}
               style={{ backgroundColor: participant.color }}
-              title={`Usar Travel OS como ${participant.name}`}
+              title={`Usar NIOLI como ${participant.name}`}
               aria-label={`Cambiar a ${participant.name}`}
               aria-pressed={participant.id === activeParticipantId}
-              onClick={() => onSelectParticipant(participant.id)}
+              onClick={() => { if (!participantLocked) onSelectParticipant(participant.id); }}
+              disabled={participantLocked && participant.id !== activeParticipantId}
             >
               {participant.initials}
             </button>
           ))}
         </div>
+        {onLogout ? <button type="button" className="icon-button topbar-logout" aria-label="Cambiar usuario" title="Cambiar usuario" onClick={() => void onLogout()}><LogOut size={19} /></button> : null}
       </div>
     </header>
   );

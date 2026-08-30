@@ -1,6 +1,8 @@
 import { ArrowRight, CalendarDays, Camera, CircleDollarSign, Clock3, Globe2, Hotel, MapPin, Navigation, Plane, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 import { MetricCard } from "@/components/cards/metric-card";
+import { RouteMemoryTicket } from "@/components/cards/route-memory-ticket";
 import { FlightCard } from "@/components/cards/flight-card";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { ActivityIcon } from "@/components/ui/activity-icon";
@@ -15,9 +17,11 @@ interface DashboardViewProps {
   spent: number;
   onNavigate: (feature: FeatureId) => void;
   onOpenCamera: () => void;
+  bradyAsset?: string | null;
+  stampAsset?: string | null;
 }
 
-export function DashboardView({ trip, theme, participant, spent, onNavigate, onOpenCamera }: DashboardViewProps) {
+export function DashboardView({ trip, theme, participant, spent, onNavigate, onOpenCamera, bradyAsset, stampAsset }: DashboardViewProps) {
   const remaining = trip.budget.amount - spent;
   const budgetPercent = trip.budget.amount > 0 ? (spent / trip.budget.amount) * 100 : 0;
   const nextReservation = trip.reservations[0];
@@ -29,16 +33,18 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate, onO
       <header className="welcome-row">
         <div>
           <p className="eyebrow">Panel personal</p>
-          <h1>{theme.labels.greeting}, {participant.name} <span aria-hidden="true">👋</span></h1>
+          <h1>{theme.labels.greeting}, {participant.name} <Sparkles className="greeting-spark" size={27} aria-hidden="true" /></h1>
           <p>Tu aventura toma forma. Esto es lo que sigue.</p>
         </div>
         <div className="heading-actions"><button type="button" className="quiet-button" onClick={onOpenCamera}><Camera size={16} /> Tomar foto</button><button type="button" className="quiet-button" onClick={() => onNavigate("itinerary")}>Ver plan completo <ArrowRight size={16} aria-hidden="true" /></button></div>
       </header>
 
-      <section className="trip-hero" aria-labelledby="trip-hero-title">
-        <div className={`hero-pattern ${theme.decorativeStyle}`} aria-hidden="true"><span className="sun-disc" /><span className="mountain mountain-one" /><span className="mountain mountain-two" />{theme.decorativeStyle === "japan" ? <span className="torii-gate"><i /><b /></span> : <span className="destination-geometry">{theme.landmark}</span>}</div>
+      <section className={`trip-hero trip-hero-${theme.decorativeStyle}`} aria-labelledby="trip-hero-title">
+        <div className="hero-paper-texture" aria-hidden="true" />
+        <span className="hero-postmark hero-postmark-one" aria-hidden="true">NIOLI · {theme.countryCode}</span>
+        <span className="hero-postmark hero-postmark-two" aria-hidden="true">TRAVEL PASS</span>
         <div className="trip-hero-content">
-          <div className="hero-kicker"><span>{theme.flag}</span> Tu próxima aventura</div>
+          <div className="hero-kicker"><Plane size={15} aria-hidden="true" /> NIOLI TRAVEL PASS <b>{theme.countryCode}</b></div>
           <h2 id="trip-hero-title">{trip.name}</h2>
           <p>{trip.dateRange} · {trip.participants.length} participantes</p>
           <div className="route-line" aria-label={`Ruta: ${trip.route.join(", ")}`}>
@@ -47,10 +53,22 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate, onO
             ))}
           </div>
         </div>
-        <div className="countdown-block"><span>Faltan</span><strong>{trip.countdownDays}</strong><small>días</small><div className="countdown-plane"><Plane size={22} aria-hidden="true" /></div></div>
+        <div className="trip-hero-side">
+          <div className="hero-visual-stack" aria-hidden="true">
+            {stampAsset ? <Image className="hero-country-stamp" src={stampAsset} alt="" width={180} height={220} sizes="120px" /> : <span className="hero-fallback-stamp">{theme.countryCode}</span>}
+            {bradyAsset ? <Image className="hero-brady" src={bradyAsset} alt="" width={420} height={520} sizes="190px" /> : null}
+          </div>
+          <div className="countdown-block"><span>Faltan</span><strong>{trip.countdownDays}</strong><small>días</small><div className="countdown-plane"><Plane size={22} aria-hidden="true" /></div></div>
+        </div>
+        <span className="hero-ticket-code" aria-hidden="true">{theme.countryCode} · {new Date(`${trip.startDate}T12:00:00Z`).getUTCFullYear()}</span>
       </section>
 
       <WorldClock config={trip.worldClock} startDate={trip.startDate} endDate={trip.endDate} />
+
+      <section className="route-memory-section" aria-labelledby="route-memory-title">
+        <div className="subsection-heading"><div><p className="eyebrow">Coleccionable NIOLI</p><h2 id="route-memory-title">Recuerdo de ruta</h2></div></div>
+        <RouteMemoryTicket trip={trip} />
+      </section>
 
       {trip.flightSegments.length ? <section className="flight-section" aria-labelledby="outbound-flights-title">
         <div className="subsection-heading"><div><p className="eyebrow">Ruta aérea confirmada</p><h2 id="outbound-flights-title">{trip.countryId === "japan" ? "Costa Rica → México → Japón" : trip.route.join(" → ")}</h2></div><span className="transport-chip"><Plane size={16} aria-hidden="true" /> {trip.flightSegments[0]?.airline}</span></div>

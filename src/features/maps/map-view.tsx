@@ -24,6 +24,11 @@ const GoogleMap = dynamic(() => import("@/features/maps/google-map"), {
   loading: () => <div className="map-loading"><span /><strong>Cargando Google Maps…</strong></div>,
 });
 
+const OpenMap = dynamic(() => import("@/features/maps/open-map"), {
+  ssr: false,
+  loading: () => <div className="map-loading"><span /><strong>Cargando OpenStreetMap…</strong></div>,
+});
+
 interface MapViewProps {
   trip: Trip;
   position?: GeoPosition;
@@ -40,7 +45,7 @@ const routeIcons = {
   walking: Footprints,
 };
 
-const regionByCountry = { japan: "jp", mexico: "mx", korea: "kr", usa: "us", other: undefined } as const;
+const regionByCountry = { japan: "jp", mexico: "mx", colombia: "co", korea: "kr", usa: "us", spain: "es", chile: "cl", argentina: "ar", "costa-rica": "cr", other: undefined } as const;
 
 const hasCoordinates = (location: TripLocation) => location.latitude !== null && location.longitude !== null;
 
@@ -55,9 +60,15 @@ const createGoogleMapsUrl = (origin: GeoPosition, destination: TripLocation) => 
   return `https://www.google.com/maps/dir/?${query.toString()}`;
 };
 
+const createOpenStreetMapUrl = (position: GeoPosition, destination?: TripLocation) => {
+  const latitude = destination?.latitude ?? position.latitude;
+  const longitude = destination?.longitude ?? position.longitude;
+  return `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=16/${latitude}/${longitude}`;
+};
+
 export function MapView({ trip, position, locationStatus, locationError, savedPlaces, onRequestLocation, onSavePlace }: MapViewProps) {
   const [selectedRoute, setSelectedRoute] = useState<RouteOption["id"]>("fastest");
-  const [selectedDayId, setSelectedDayId] = useState(trip.itinerary[0].id);
+  const [selectedDayId, setSelectedDayId] = useState(trip.itinerary[0]?.id ?? "");
   const [destination, setDestination] = useState<TripLocation>();
   const [routeRequest, setRouteRequest] = useState<GoogleRouteRequest>();
   const [routeResult, setRouteResult] = useState<GoogleRouteSummary>();
@@ -65,15 +76,16 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
   const [preparingRoute, setPreparingRoute] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim() ?? "";
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID?.trim();
+  const provider = trip.settings?.mapProvider ?? "google";
   const selectedDay = trip.itinerary.find((day) => day.id === selectedDayId) ?? trip.itinerary[0];
   const requesting = locationStatus === "requesting";
   const currentRoute = trip.routeOptions.find((route) => route.id === selectedRoute) ?? trip.routeOptions[0];
 
   const points = useMemo<GoogleMapPoint[]>(() => [
     ...trip.bases.map((base) => ({ id: `base-${base.id}`, label: `Base · ${base.city}`, location: base.location, kind: "base" as const })),
-    ...selectedDay.activities.map((activity) => ({ id: activity.id, label: activity.title, location: activity.location, kind: "activity" as const })),
+    ...(selectedDay?.activities ?? []).map((activity) => ({ id: activity.id, label: activity.title, location: activity.location, kind: "activity" as const })),
     ...savedPlaces.map((place, index) => ({ id: place.placeId ?? `saved-${index}-${place.name}`, label: place.name, location: place, kind: "saved" as const })),
-  ], [savedPlaces, selectedDay.activities, trip.bases]);
+  ], [savedPlaces, selectedDay?.activities, trip.bases]);
 
   const validPointCount = points.filter((point) => hasCoordinates(point.location)).length;
   const handlePlaceSelect = (place: TripLocation) => {
@@ -105,9 +117,9 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
   return (
     <div className="view-stack">
       <SectionHeading
-        eyebrow="Google Maps · datos reales"
+        eyebrow={provider === "google" ? "Google Maps · datos reales" : "OpenStreetMap · mapa abierto"}
         title="Explorar y preparar rutas"
-        description="Busca lugares con Google Places, guarda su información verificada y calcula rutas sin estimaciones inventadas."
+        description={provider === "google" ? "Busca lugares con Google Places, guarda su información verificada y calcula rutas sin estimaciones inventadas." : "Consulta el mapa abierto y usa el GPS explícitamente. Places y Routes sólo aparecen en viajes configurados con Google Maps."}
         action={<button type="button" className="primary-button" disabled={requesting} onClick={() => void onRequestLocation()}><LocateFixed size={18} aria-hidden="true" /> {requesting ? "Buscando…" : "Usar mi ubicación"}</button>}
       />
 
@@ -121,14 +133,14 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
       </div>
 
       <div className="map-toolbar surface-card">
-        <label>Día visible<select value={selectedDayId} onChange={(event) => setSelectedDayId(event.target.value)}>{trip.itinerary.map((day) => <option value={day.id} key={day.id}>{day.dayNumber} {day.month} · {day.area}</option>)}</select></label>
+        <label>Día visible<select value={selectedDayId} onChange={(event) => setSelectedDayId(event.target.value)} disabled={!trip.itinerary.length}>{trip.itinerary.length ? trip.itinerary.map((day) => <option value={day.id} key={day.id}>{day.dayNumber} {day.month} · {day.area}</option>) : <option value="">Sin días planificados</option>}</select></label>
         <div><MapPinned size={18} aria-hidden="true" /><span><strong>{validPointCount}</strong> ubicaciones verificadas</span><small>{points.length - validPointCount} pendientes de coordenadas o placeId</small></div>
         <div><Search size={18} aria-hidden="true" /><span><strong>{destination?.name ?? "Sin destino"}</strong><small>{destination?.address ?? "Selecciona un resultado real de Google Places"}</small></span></div>
       </div>
 
       <div className="map-layout google-map-layout">
         <section className="map-canvas google-map-canvas">
-          {apiKey ? (
+          {provider === "open" ? <OpenMap position={position} points={points} /> : apiKey ? (
             <GoogleMap
               apiKey={apiKey}
               mapId={mapId}
@@ -146,7 +158,7 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
               <p className="eyebrow">Configuración pendiente</p>
               <h2>Google Maps aún no está configurado.</h2>
               <p>Agrega la variable <code>NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> para habilitar el mapa, Places y rutas reales.</p>
-              <small>Travel OS sigue funcionando: GPS, itinerario, reservas y demás módulos permanecen disponibles.</small>
+              <small>NIOLI sigue funcionando: GPS, itinerario, reservas y demás módulos permanecen disponibles.</small>
             </div>
           )}
           <button type="button" className="map-location-button" aria-label="Usar mi ubicación y centrar mapa" disabled={requesting} onClick={() => void onRequestLocation()}><LocateFixed size={20} aria-hidden="true" /></button>
@@ -181,9 +193,10 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
           ) : <div className="route-ready-state"><Navigation size={22} aria-hidden="true" /><div><strong>{currentRoute.label}</strong><p>Tiempo, distancia, transbordos, tarifa y caminata aparecerán sólo si Google los proporciona.</p></div></div>}
 
           {routeError ? <p className="route-error" role="alert">{routeError}</p> : null}
-          <button type="button" className="primary-button full-width" disabled={!apiKey || !position || !destination || preparingRoute} onClick={prepareRoute}><Navigation size={18} aria-hidden="true" /> {preparingRoute ? "Calculando…" : "Calcular ruta"}</button>
-          {position && destination ? <a className="secondary-button full-width google-maps-link" href={createGoogleMapsUrl(position, destination)} target="_blank" rel="noreferrer">Abrir en Google Maps <ExternalLink size={16} aria-hidden="true" /></a> : null}
-          {!apiKey ? <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Places y Routes se activarán al configurar la key restringida.</p> : null}
+          <button type="button" className="primary-button full-width" disabled={provider !== "google" || !apiKey || !position || !destination || preparingRoute} onClick={prepareRoute}><Navigation size={18} aria-hidden="true" /> {preparingRoute ? "Calculando…" : "Calcular ruta"}</button>
+          {provider === "google" && position && destination ? <a className="secondary-button full-width google-maps-link" href={createGoogleMapsUrl(position, destination)} target="_blank" rel="noreferrer">Abrir en Google Maps <ExternalLink size={16} aria-hidden="true" /></a> : null}
+          {provider === "open" && position ? <a className="secondary-button full-width google-maps-link" href={createOpenStreetMapUrl(position, destination)} target="_blank" rel="noreferrer">Abrir en OpenStreetMap <ExternalLink size={16} aria-hidden="true" /></a> : null}
+          {provider === "open" ? <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Este viaje usa OpenStreetMap. Cambia el proveedor en la configuración del viaje para habilitar Places y Routes.</p> : !apiKey ? <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Places y Routes se activarán al configurar la key restringida.</p> : null}
         </aside>
       </div>
     </div>

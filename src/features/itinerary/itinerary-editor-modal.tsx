@@ -266,7 +266,7 @@ export function ItineraryEditorModal({
           </div>
           <label>Nota<textarea name="notes" defaultValue={current?.notes ?? ""} rows={3} /></label>
           <label>Vincular reserva<select name="reservationId" defaultValue={current?.reservationId ?? ""}><option value="">Sin reserva vinculada</option>{reservations.map((reservation) => <option value={reservation.id} key={reservation.id}>{reservation.title} · {reservation.date}</option>)}</select></label>
-          <label>Travel Passport stamp ID<input name="stampId" defaultValue={current?.stampId ?? ""} placeholder="Ej. jp-kyoto-fushimi-inari" /></label>
+          <label>Nioli Passport stamp ID<input name="stampId" defaultValue={current?.stampId ?? ""} placeholder="Ej. jp-kyoto-fushimi-inari" /></label>
           <div className="checkbox-row">
             <label className="checkbox-label"><input name="optional" type="checkbox" defaultChecked={current?.optional} /> Actividad opcional</label>
             <label className="checkbox-label"><input name="hiddenGem" type="checkbox" defaultChecked={current?.hiddenGem} /> Hidden gem</label>
