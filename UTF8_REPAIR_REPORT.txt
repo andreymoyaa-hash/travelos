@@ -1,0 +1,11 @@
+NIOLI UTF-8 FORCE REPAIR
+Fecha: 2026-08-29T23:48:50.4643261-06:00
+Archivos reparados: 4
+
+REPARADOS:
+src\app\error.tsx
+src\app\globals.css
+src\features\auth\setup-access-view.tsx
+src\features\auth\travel-auth-gate.tsx
+
+SOSPECHOSOS RESTANTES:

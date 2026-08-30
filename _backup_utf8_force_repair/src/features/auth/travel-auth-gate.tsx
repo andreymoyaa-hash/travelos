@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { type ClipboardEvent, type FormEvent, type KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
@@ -50,8 +50,8 @@ export function TravelAuthGate({ cloudConfigured, localSeedTrip }: { cloudConfig
     setPayload(undefined);
 
     const tripLoad = (async () => {
-      await withTimeout(cloudTripRepository.prepare(nextSession), 20_000, "La preparación del viaje tardó demasiado.");
-      return withTimeout(cloudTripRepository.load(nextSession), 20_000, "La carga del viaje tardó demasiado.");
+      await withTimeout(cloudTripRepository.prepare(nextSession), 20_000, "La preparaciÃ³n del viaje tardÃ³ demasiado.");
+      return withTimeout(cloudTripRepository.load(nextSession), 20_000, "La carga del viaje tardÃ³ demasiado.");
     })();
 
     setPhase("welcome");
@@ -107,11 +107,11 @@ export function TravelAuthGate({ cloudConfigured, localSeedTrip }: { cloudConfig
       });
       const result = await response.json().catch(() => ({})) as TravelAccessSession & { error?: string };
       setDigits(["", "", "", "", "", ""]);
-      if (!response.ok) throw new Error(result.error ?? "No se pudo iniciar sesión.");
+      if (!response.ok) throw new Error(result.error ?? "No se pudo iniciar sesiÃ³n.");
       await restoreAccess(result);
     } catch (reason) {
       setPhase("login");
-      setError(reason instanceof Error ? reason.message : "No se pudo iniciar sesión.");
+      setError(reason instanceof Error ? reason.message : "No se pudo iniciar sesiÃ³n.");
       window.requestAnimationFrame(() => inputs.current[0]?.focus());
     } finally {
       setSubmitting(false);
@@ -164,20 +164,20 @@ export function TravelAuthGate({ cloudConfigured, localSeedTrip }: { cloudConfig
           <Image className="auth-brand-seal" src="/brand/nioli-seal-transparent-v2.png" alt="NIOLI" width={320} height={320} sizes="92px" priority />
           <Image className="auth-welcome-brady" src="/nioli/official/brady/master.png" alt="" width={480} height={560} sizes="170px" priority />
           <p className="eyebrow">Brady te da la bienvenida</p>
-          <h1>¡Qué bueno verte, {travelerName}!</h1>
-          <p>{destination ? `Todo listo para abrir ${destination}.` : "Tu espacio de NIOLI está listo."}</p>
+          <h1>Â¡QuÃ© bueno verte, {travelerName}!</h1>
+          <p>{destination ? `Todo listo para abrir ${destination}.` : "Tu espacio de NIOLI estÃ¡ listo."}</p>
         </section>
       </main>
     );
   }
 
-  if (phase === "checking") return <NioliLoadingScreen title="Abriendo NIOLI…" detail="Preparando un inicio privado para ti." />;
-  if (phase === "loading") return <NioliLoadingScreen title="Preparando tu aventura…" detail="Brady está organizando tu viaje." />;
+  if (phase === "checking") return <NioliLoadingScreen title="Abriendo NIOLIâ€¦" detail="Preparando un inicio privado para ti." />;
+  if (phase === "loading") return <NioliLoadingScreen title="Preparando tu aventuraâ€¦" detail="Brady estÃ¡ organizando tu viaje." />;
 
   return (
     <main className="auth-screen">
       <section className="login-card" aria-labelledby="login-title">
-        <Image className="auth-brand-logo" src="/brand/nioli-logo-horizontal-transparent-v2.png" alt="NIOLI · Tu pasaporte al mundo" width={700} height={225} sizes="(max-width: 620px) calc(100vw - 60px), 350px" priority />
+        <Image className="auth-brand-logo" src="/brand/nioli-logo-horizontal-transparent-v2.png" alt="NIOLI Â· Tu pasaporte al mundo" width={700} height={225} sizes="(max-width: 620px) calc(100vw - 60px), 350px" priority />
         <div className="auth-login-layout">
           <div className="auth-login-visual" aria-hidden="true">
             <span className="auth-route-line"><Plane size={20} /></span>
@@ -186,19 +186,19 @@ export function TravelAuthGate({ cloudConfigured, localSeedTrip }: { cloudConfig
           </div>
           <div className="auth-login-copy">
             <p className="eyebrow">Bienvenido a NIOLI</p>
-            <h1 id="login-title">Tu viaje comienza aquí</h1>
-            <p className="login-intro"><LockKeyhole size={18} /> Ingresa tu PIN personal de seis dígitos.</p>
+            <h1 id="login-title">Tu viaje comienza aquÃ­</h1>
+            <p className="login-intro"><LockKeyhole size={18} /> Ingresa tu PIN personal de seis dÃ­gitos.</p>
             <form onSubmit={submit}>
-              <div className="pin-inputs" aria-label="PIN de 6 dígitos">
-                {digits.map((digit, index) => <input key={index} ref={(element) => { inputs.current[index] = element; }} value={digit} onChange={(event) => setDigit(index, event.target.value)} onKeyDown={(event) => keyDown(index, event)} onPaste={paste} inputMode="numeric" autoComplete="off" pattern="[0-9]" maxLength={1} aria-label={`Dígito ${index + 1}`} autoFocus={index === 0} disabled={submitting} />)}
+              <div className="pin-inputs" aria-label="PIN de 6 dÃ­gitos">
+                {digits.map((digit, index) => <input key={index} ref={(element) => { inputs.current[index] = element; }} value={digit} onChange={(event) => setDigit(index, event.target.value)} onKeyDown={(event) => keyDown(index, event)} onPaste={paste} inputMode="numeric" autoComplete="off" pattern="[0-9]" maxLength={1} aria-label={`DÃ­gito ${index + 1}`} autoFocus={index === 0} disabled={submitting} />)}
               </div>
               {error ? <p className="auth-error" role="alert">{error}</p> : null}
-              <button type="submit" className="primary-button auth-submit" disabled={submitting || digits.some((digit) => !digit)}>{submitting ? <><LoaderCircle className="auth-spinner" size={18} /> Entrando…</> : "Entrar"}</button>
+              <button type="submit" className="primary-button auth-submit" disabled={submitting || digits.some((digit) => !digit)}>{submitting ? <><LoaderCircle className="auth-spinner" size={18} /> Entrandoâ€¦</> : "Entrar"}</button>
             </form>
             <small>Tu PIN no se guarda en este dispositivo. Cada nueva apertura de NIOLI requiere autenticarte.</small>
           </div>
         </div>
-        <p className="auth-motto">Diferente país, misma esencia. Viaja ligero. Vive profundo.</p>
+        <p className="auth-motto">Diferente paÃ­s, misma esencia. Viaja ligero. Vive profundo.</p>
       </section>
     </main>
   );

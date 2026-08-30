@@ -2097,7 +2097,7 @@ button:disabled {
   .modal-actions button { width: 100%; }
 }
 
-/* Travel OS v1.2 — Japan visual system and functional UX refinements */
+/* Travel OS v1.2 â€” Japan visual system and functional UX refinements */
 .travel-shell {
   --shadow-soft: 0 16px 42px color-mix(in srgb, var(--ink) 9%, transparent);
   --shadow-raised: 0 22px 58px color-mix(in srgb, var(--ink) 13%, transparent);
@@ -2954,7 +2954,7 @@ textarea { font: inherit; }
 }
 
 /* ==========================================================================
-   NIOLI VISUAL SYSTEM V2 · PRIORITY 1
+   NIOLI VISUAL SYSTEM V2 Â· PRIORITY 1
    Mobile-first editorial travel language: readable type, ticket surfaces,
    ordered navigation and destination accents. The approved NIOLI identity
    remains canonical; country color only appears inside an active trip.
@@ -4104,7 +4104,7 @@ body {
 }
 
 /* ========================================================================== 
-   NIOLI · JAPAN SKIN — APPROVED ASSETS LOCK
+   NIOLI Â· JAPAN SKIN â€” APPROVED ASSETS LOCK
    Visual-only country skin. The underlying page/component structure remains
    unchanged; these rules are scoped exclusively to an active Japan trip.
    ========================================================================== */
@@ -4165,7 +4165,7 @@ body {
 }
 
 
-/* Japan brand — transparent logo on every page */
+/* Japan brand â€” transparent logo on every page */
 [data-country-id="japan"] .brand-lockup-image,
 [data-country-id="japan"] .mobile-brand-seal {
   mix-blend-mode: normal;
@@ -4263,7 +4263,7 @@ body {
   color: var(--jp-vermillion-dark);
 }
 
-/* Main cards — washi paper without changing layout */
+/* Main cards â€” washi paper without changing layout */
 [data-country-id="japan"] .surface-card,
 [data-country-id="japan"] .world-clock-card,
 [data-country-id="japan"] .passport-city-page,

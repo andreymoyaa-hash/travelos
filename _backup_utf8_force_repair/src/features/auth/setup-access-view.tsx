@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -15,24 +15,24 @@ interface InvitationDetails {
 }
 
 function SetupBrand() {
-  return <Image className="auth-brand-logo" src="/brand/nioli-logo-horizontal-transparent-v2.png" alt="NIOLI · Tu pasaporte al mundo" width={700} height={225} sizes="(max-width: 620px) calc(100vw - 60px), 350px" priority />;
+  return <Image className="auth-brand-logo" src="/brand/nioli-logo-horizontal-transparent-v2.png" alt="NIOLI Â· Tu pasaporte al mundo" width={700} height={225} sizes="(max-width: 620px) calc(100vw - 60px), 350px" priority />;
 }
 
 const statusCopy: Partial<Record<InvitationStatus, { title: string; detail: string }>> = {
-  expired: { title: "Esta invitación venció", detail: "Solicita una nueva invitación." },
-  used: { title: "Esta invitación ya fue utilizada", detail: "Puedes iniciar sesión con el PIN que elegiste." },
-  revoked: { title: "Esta invitación ya no es válida", detail: "Solicita una nueva invitación." },
-  invalid: { title: "No encontramos esta invitación", detail: "Revisa que el enlace esté completo o solicita uno nuevo." },
-  unavailable: { title: "No pudimos revisar la invitación", detail: "Intenta de nuevo en unos minutos." },
+  expired: { title: "Esta invitaciÃ³n venciÃ³", detail: "Solicita una nueva invitaciÃ³n." },
+  used: { title: "Esta invitaciÃ³n ya fue utilizada", detail: "Puedes iniciar sesiÃ³n con el PIN que elegiste." },
+  revoked: { title: "Esta invitaciÃ³n ya no es vÃ¡lida", detail: "Solicita una nueva invitaciÃ³n." },
+  invalid: { title: "No encontramos esta invitaciÃ³n", detail: "Revisa que el enlace estÃ© completo o solicita uno nuevo." },
+  unavailable: { title: "No pudimos revisar la invitaciÃ³n", detail: "Intenta de nuevo en unos minutos." },
 };
 
 function pinError(code: string | undefined) {
-  if (code === "weak_pin") return "Elige un PIN menos fácil de adivinar.";
-  if (code === "pin_in_use") return "Ese PIN ya está en uso. Elige uno diferente.";
-  if (code === "used") return "Esta invitación ya fue utilizada.";
-  if (code === "expired") return "Esta invitación venció. Solicita una nueva.";
-  if (code === "revoked") return "Esta invitación ya no es válida.";
-  if (code === "unavailable") return "NIOLI no está disponible en este momento.";
+  if (code === "weak_pin") return "Elige un PIN menos fÃ¡cil de adivinar.";
+  if (code === "pin_in_use") return "Ese PIN ya estÃ¡ en uso. Elige uno diferente.";
+  if (code === "used") return "Esta invitaciÃ³n ya fue utilizada.";
+  if (code === "expired") return "Esta invitaciÃ³n venciÃ³. Solicita una nueva.";
+  if (code === "revoked") return "Esta invitaciÃ³n ya no es vÃ¡lida.";
+  if (code === "unavailable") return "NIOLI no estÃ¡ disponible en este momento.";
   return "No se pudo activar el acceso. Revisa el PIN e intenta de nuevo.";
 }
 
@@ -90,7 +90,7 @@ export function SetupAccessView() {
     event.preventDefault();
     setError(undefined);
     if (!/^\d{6}$/.test(pin)) {
-      setError("El PIN debe tener exactamente 6 dígitos.");
+      setError("El PIN debe tener exactamente 6 dÃ­gitos.");
       return;
     }
     if (pin !== confirmation) {
@@ -122,11 +122,11 @@ export function SetupAccessView() {
   };
 
   if (status === "loading") {
-    return <main className="auth-screen"><section className="login-card setup-card" aria-live="polite"><SetupBrand /><LoaderCircle className="auth-spinner" size={30} /><h1>Preparando tu invitación</h1></section></main>;
+    return <main className="auth-screen"><section className="login-card setup-card" aria-live="polite"><SetupBrand /><LoaderCircle className="auth-spinner" size={30} /><h1>Preparando tu invitaciÃ³n</h1></section></main>;
   }
 
   if (status === "complete") {
-    return <main className="auth-screen"><section className="login-card setup-card"><SetupBrand /><CheckCircle2 size={42} className="setup-success" /><h1>Tu acceso está activo</h1><p>Ya puedes iniciar sesión normalmente con el PIN que elegiste.</p><Link href="/" className="primary-button">Ir a iniciar sesión</Link></section></main>;
+    return <main className="auth-screen"><section className="login-card setup-card"><SetupBrand /><CheckCircle2 size={42} className="setup-success" /><h1>Tu acceso estÃ¡ activo</h1><p>Ya puedes iniciar sesiÃ³n normalmente con el PIN que elegiste.</p><Link href="/" className="primary-button">Ir a iniciar sesiÃ³n</Link></section></main>;
   }
 
   if (status !== "ready" || !details) {
@@ -135,8 +135,8 @@ export function SetupAccessView() {
   }
 
   const welcome = details.type === "trip_companion"
-    ? `${details.inviterName} te invitó a acompañarle en ${details.tripName ?? "su viaje"}.`
-    : "Tu espacio de NIOLI está listo.";
+    ? `${details.inviterName} te invitÃ³ a acompaÃ±arle en ${details.tripName ?? "su viaje"}.`
+    : "Tu espacio de NIOLI estÃ¡ listo.";
 
   return (
     <main className="auth-screen">
@@ -145,14 +145,14 @@ export function SetupAccessView() {
         <p className="eyebrow">Bienvenido a NIOLI</p>
         <h1 id="setup-title">Hola, {details.targetName}</h1>
         <p>{welcome}</p>
-        <p className="login-intro"><KeyRound size={16} /> Crea tu PIN personal de 6 dígitos.</p>
+        <p className="login-intro"><KeyRound size={16} /> Crea tu PIN personal de 6 dÃ­gitos.</p>
         <form onSubmit={submit}>
-          <label>Crea tu PIN de 6 dígitos<input className="setup-pin-field" type="password" inputMode="numeric" autoComplete="new-password" pattern="[0-9]{6}" maxLength={6} value={pin} onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 6))} required autoFocus /></label>
+          <label>Crea tu PIN de 6 dÃ­gitos<input className="setup-pin-field" type="password" inputMode="numeric" autoComplete="new-password" pattern="[0-9]{6}" maxLength={6} value={pin} onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 6))} required autoFocus /></label>
           <label>Confirmar PIN<input className="setup-pin-field" type="password" inputMode="numeric" autoComplete="new-password" pattern="[0-9]{6}" maxLength={6} value={confirmation} onChange={(event) => setConfirmation(event.target.value.replace(/\D/g, "").slice(0, 6))} required /></label>
           {error ? <p className="auth-error" role="alert">{error}</p> : null}
-          <button type="submit" className="primary-button auth-submit" disabled={submitting}>{submitting ? <><LoaderCircle className="auth-spinner" size={17} /> Activando…</> : "Activar mi acceso"}</button>
+          <button type="submit" className="primary-button auth-submit" disabled={submitting}>{submitting ? <><LoaderCircle className="auth-spinner" size={17} /> Activandoâ€¦</> : "Activar mi acceso"}</button>
         </form>
-        <small>Tu PIN no se comparte con quien te invitó.</small>
+        <small>Tu PIN no se comparte con quien te invitÃ³.</small>
       </section>
     </main>
   );
