@@ -4778,3 +4778,5136 @@ body {
   }
 }
 /* END NIOLI JP active trip UI patch */
+
+/* ========================================================================== */
+/* NIOLI JP COMPANION REDESIGN V1                                             */
+/* ========================================================================== */
+
+@media (min-width: 921px) {
+  [data-country-id="japan"] .passport-layout {
+    grid-template-columns: minmax(0, 1.48fr) minmax(340px, .72fr);
+    gap: 30px;
+  }
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 {
+  position: sticky;
+  top: 86px;
+  overflow: hidden;
+  border: 1px solid rgba(126, 47, 42, .22);
+  border-radius: 30px 30px 30px 12px;
+  background:
+    radial-gradient(circle at 86% 7%, rgba(173, 64, 56, .10), transparent 8rem),
+    radial-gradient(circle at 8% 94%, rgba(67, 92, 61, .09), transparent 9rem),
+    linear-gradient(145deg, #fff9e9 0%, #fff5dc 52%, #f7ead9 100%);
+  padding: 27px 27px 25px;
+  box-shadow:
+    0 24px 58px rgba(74, 52, 31, .11),
+    inset 0 0 0 1px rgba(255, 255, 255, .55);
+}
+
+[data-country-id="japan"] .companion-card.companion-v2::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(92, 68, 43, .045) 0 1px, transparent 1.45px),
+    linear-gradient(120deg, rgba(255,255,255,.38), transparent 38%);
+  background-size: 15px 15px, auto;
+  content: "";
+}
+
+[data-country-id="japan"] .companion-card.companion-v2::after {
+  position: absolute;
+  right: -28px;
+  bottom: 155px;
+  z-index: 0;
+  width: 150px;
+  height: 86px;
+  pointer-events: none;
+  background: url('/nioli/themes/japan/stamps/jp_nioli_postmark.png') center / contain no-repeat;
+  content: "";
+  opacity: .07;
+  transform: rotate(-8deg);
+}
+
+[data-country-id="japan"] .companion-v2 > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-country-id="japan"] .companion-v2 .companion-portrait {
+  position: relative;
+  width: 100%;
+  height: 330px;
+  margin: -10px 0 8px;
+  overflow: visible;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 50% 46%,
+      rgba(223, 173, 58, .92) 0 28%,
+      rgba(223, 173, 58, .23) 28.5% 35%,
+      transparent 35.5%),
+    radial-gradient(circle at 50% 48%, rgba(173, 64, 56, .08), transparent 62%);
+  box-shadow: none;
+}
+
+[data-country-id="japan"] .companion-v2 .companion-portrait::before {
+  position: absolute;
+  inset: 27px 15px 19px;
+  border: 1px solid rgba(126, 47, 42, .10);
+  border-radius: 50%;
+  content: "";
+  opacity: .7;
+}
+
+[data-country-id="japan"] .companion-v2 .companion-portrait::after {
+  position: absolute;
+  right: 17%;
+  bottom: 18px;
+  left: 17%;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(70, 48, 29, .14);
+  filter: blur(13px);
+  content: "";
+}
+
+[data-country-id="japan"] .companion-v2 .companion-brady {
+  z-index: 2;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: none !important;
+  transform: scale(1.03);
+  transform-origin: center bottom;
+}
+
+[data-country-id="japan"] .companion-v2 > .eyebrow {
+  margin: 3px 0 5px;
+  color: #314a62;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+[data-country-id="japan"] .companion-v2 h2 {
+  margin: 0;
+  color: var(--jp-ink);
+  font-family: var(--font-display);
+  font-size: clamp(30px, 2vw, 36px);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  line-height: 1.03;
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 > p:nth-of-type(2) {
+  min-height: 42px;
+  margin: 10px 0 18px;
+  color: #71665c;
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.55;
+}
+
+[data-country-id="japan"] .companion-mood {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-top: 1px solid rgba(126, 47, 42, .14);
+  border-bottom: 1px solid rgba(126, 47, 42, .14);
+  margin: 0 0 18px;
+  padding: 14px 0;
+}
+
+[data-country-id="japan"] .companion-mood span {
+  color: #85796e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .companion-mood strong {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  border: 1px solid rgba(67, 92, 61, .18);
+  border-radius: 999px;
+  background: rgba(67, 92, 61, .10);
+  padding: 0 11px;
+  color: var(--jp-matcha);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+[data-country-id="japan"] .companion-xp {
+  display: grid;
+  gap: 10px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.38);
+  padding: 13px 14px 14px;
+}
+
+[data-country-id="japan"] .companion-xp > span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+[data-country-id="japan"] .companion-xp small {
+  color: #756b62;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .companion-xp strong {
+  color: var(--jp-vermillion-dark);
+  font-size: 21px;
+  font-weight: 950;
+}
+
+[data-country-id="japan"] .companion-xp .progress-track {
+  height: 10px;
+  border: 1px solid rgba(126, 47, 42, .08);
+  background: #eee5db;
+  box-shadow: inset 0 1px 2px rgba(73, 53, 35, .08);
+}
+
+[data-country-id="japan"] .companion-xp .progress-fill {
+  box-shadow: 0 0 0 1px rgba(255,255,255,.25) inset;
+}
+
+[data-country-id="japan"] .companion-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 17px;
+}
+
+[data-country-id="japan"] .companion-actions button {
+  min-height: 53px;
+  gap: 8px;
+  border: 1px solid rgba(126, 47, 42, .17);
+  border-radius: 15px;
+  background: rgba(255, 253, 247, .82);
+  color: var(--jp-ink);
+  font-size: 12px;
+  font-weight: 850;
+  box-shadow: 0 4px 12px rgba(75, 55, 37, .035);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+[data-country-id="japan"] .companion-actions button:hover {
+  border-color: rgba(126, 47, 42, .30);
+  background: #fffdf8;
+  box-shadow: 0 8px 18px rgba(75, 55, 37, .08);
+  transform: translateY(-2px);
+}
+
+[data-country-id="japan"] .companion-actions button:last-child {
+  border-color: var(--jp-vermillion-dark);
+  background: var(--jp-vermillion-dark);
+  color: #fffaf2;
+  box-shadow: 0 9px 20px rgba(126, 47, 42, .20);
+}
+
+[data-country-id="japan"] .companion-actions button:last-child:hover {
+  background: #6d2b27;
+}
+
+[data-country-id="japan"] .floating-companion {
+  right: 24px;
+  bottom: 25px;
+  width: 78px;
+  height: 78px;
+  overflow: visible;
+  border: 3px solid #fffaf0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #e0ad39 0 64%, #cf9930 65% 100%);
+  box-shadow:
+    0 14px 30px rgba(85, 59, 30, .24),
+    0 0 0 1px rgba(126, 47, 42, .10);
+}
+
+[data-country-id="japan"] .floating-companion .floating-brady {
+  display: grid;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+[data-country-id="japan"] .floating-companion .floating-brady img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: scale(1.18);
+  transform-origin: center bottom;
+}
+
+[data-country-id="japan"] .floating-companion small {
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  min-width: 58px;
+  border: 1px solid rgba(126, 47, 42, .16);
+  border-radius: 999px;
+  background: #fffaf0;
+  padding: 3px 8px;
+  color: var(--jp-ink);
+  font-size: 8px;
+  font-weight: 950;
+  line-height: 1;
+  box-shadow: 0 5px 12px rgba(75,55,37,.12);
+  transform: translateX(-50%);
+}
+
+[data-country-id="japan"] .floating-companion:hover {
+  transform: translateY(-4px) rotate(2deg) scale(1.03);
+}
+
+@media (max-width: 1120px) {
+  [data-country-id="japan"] .floating-companion {
+    bottom: 105px;
+  }
+}
+
+@media (max-width: 920px) {
+  [data-country-id="japan"] .companion-card.companion-v2 {
+    position: static;
+    width: 100%;
+  }
+
+  [data-country-id="japan"] .companion-v2 .companion-portrait {
+    height: min(390px, 68vw);
+  }
+}
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .companion-card.companion-v2 {
+    border-radius: 24px 24px 24px 10px;
+    padding: 20px 18px 21px;
+  }
+
+  [data-country-id="japan"] .companion-v2 .companion-portrait {
+    height: 290px;
+    margin-top: -7px;
+  }
+
+  [data-country-id="japan"] .companion-v2 h2 {
+    font-size: 30px;
+  }
+
+  [data-country-id="japan"] .companion-card.companion-v2 > p:nth-of-type(2) {
+    font-size: 13px;
+  }
+
+  [data-country-id="japan"] .companion-actions button {
+    min-height: 52px;
+    font-size: 11px;
+  }
+
+  [data-country-id="japan"] .floating-companion {
+    right: 16px;
+    bottom: 98px;
+    width: 70px;
+    height: 70px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady {
+    width: 60px;
+    height: 60px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady img {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+/* END NIOLI JP COMPANION REDESIGN V1 */
+
+/* ========================================================================== */
+/* NIOLI JP PASSPORT + COMPANION POLISH V2                                   */
+/* ========================================================================== */
+
+/* 1) Passport banner: Japanese paper instead of dark generic block */
+[data-country-id="japan"] .passport-cover {
+  position: relative;
+  isolation: isolate;
+  min-height: 220px;
+  overflow: hidden;
+  border: 1px solid rgba(126, 47, 42, .20);
+  border-radius: 28px 28px 28px 10px;
+  background:
+    radial-gradient(circle at 15% 18%, rgba(92, 68, 43, .035) 0 1px, transparent 1.45px),
+    linear-gradient(118deg, #fffaf1 0%, #f8edde 58%, #f1dfd8 100%);
+  background-size: 16px 16px, auto;
+  color: var(--jp-ink);
+  box-shadow: 0 20px 48px rgba(76, 54, 34, .09);
+}
+
+[data-country-id="japan"] .passport-cover::before {
+  position: absolute;
+  z-index: -1;
+  right: 9%;
+  bottom: -50px;
+  width: 250px;
+  height: 250px;
+  pointer-events: none;
+  background: url('/nioli/themes/japan/decor/jp_torii.png') center / contain no-repeat;
+  content: "";
+  opacity: .055;
+  transform: rotate(-3deg);
+}
+
+[data-country-id="japan"] .passport-cover::after {
+  position: absolute;
+  z-index: -1;
+  right: 28px;
+  top: 18px;
+  width: 150px;
+  height: 82px;
+  pointer-events: none;
+  background: url('/nioli/themes/japan/stamps/jp_nioli_postmark.png') center / contain no-repeat;
+  content: "";
+  opacity: .08;
+  transform: rotate(8deg);
+}
+
+[data-country-id="japan"] .passport-cover .adventure-label {
+  border: 1px solid rgba(126, 47, 42, .15);
+  background: rgba(255, 252, 245, .82);
+  color: var(--jp-vermillion-dark);
+  box-shadow: 0 3px 10px rgba(75, 55, 37, .04);
+}
+
+[data-country-id="japan"] .passport-cover h2 {
+  color: var(--jp-ink);
+}
+
+[data-country-id="japan"] .passport-cover p {
+  color: #675e55;
+}
+
+[data-country-id="japan"] .passport-cover .collection-progress > span {
+  color: #5f574f;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+[data-country-id="japan"] .passport-cover .collection-progress strong {
+  color: var(--jp-vermillion-dark);
+}
+
+[data-country-id="japan"] .passport-cover .progress-track {
+  border: 1px solid rgba(126, 47, 42, .08);
+  background: rgba(84, 74, 64, .12);
+}
+
+[data-country-id="japan"] .passport-owner {
+  min-width: 145px;
+  gap: 4px;
+  border: 1px solid rgba(126, 47, 42, .16);
+  border-left: 1px solid rgba(126, 47, 42, .16);
+  border-radius: 14px;
+  background: rgba(255, 251, 242, .76);
+  padding: 14px 16px;
+  box-shadow: 0 8px 20px rgba(75, 55, 37, .05);
+}
+
+[data-country-id="japan"] .passport-owner small,
+[data-country-id="japan"] .passport-owner span {
+  color: #74695f;
+}
+
+[data-country-id="japan"] .passport-owner strong {
+  color: var(--jp-ink);
+}
+
+/* 2) Personal stamps: keep desktop collection, rebuild mobile as clean tickets */
+[data-country-id="japan"] .personal-stamp-page {
+  border-color: rgba(126, 47, 42, .14);
+  background:
+    radial-gradient(circle at 13% 14%, rgba(91, 69, 47, .03) 0 1px, transparent 1.45px),
+    linear-gradient(128deg, rgba(255,251,243,.98), rgba(247,237,223,.72));
+  background-size: 15px 15px, auto;
+}
+
+[data-country-id="japan"] .personal-stamp-page > header > span {
+  border-radius: 999px;
+  background: rgba(173, 64, 56, .07);
+  padding: 7px 11px;
+  font-family: inherit;
+  letter-spacing: 0;
+  transform: none;
+}
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .passport-cover {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 14px;
+    min-height: 0;
+    padding: 20px 18px;
+    border-radius: 22px 22px 22px 8px;
+  }
+
+  [data-country-id="japan"] .passport-cover-mark {
+    width: 68px;
+    min-height: 82px;
+    align-self: start;
+  }
+
+  [data-country-id="japan"] .passport-cover h2 {
+    margin-top: 5px;
+    font-size: 34px;
+  }
+
+  [data-country-id="japan"] .passport-cover p {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  [data-country-id="japan"] .passport-cover .collection-progress {
+    margin-top: 14px;
+  }
+
+  [data-country-id="japan"] .passport-owner {
+    grid-column: 1 / -1;
+    min-width: 0;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+
+  [data-country-id="japan"] .passport-owner strong {
+    font-size: 15px;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page {
+    gap: 14px;
+    padding: 18px 14px;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page > header {
+    align-items: center;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page h3 {
+    font-size: 27px;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .stamp-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding: 2px 0 0;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .passport-stamp-entry {
+    display: grid;
+    min-height: 150px;
+    grid-template-columns: 128px minmax(0, 1fr);
+    align-items: center;
+    align-content: center;
+    justify-items: stretch;
+    gap: 13px;
+    overflow: hidden;
+    border: 1px solid rgba(126, 47, 42, .12);
+    border-radius: 17px 17px 17px 6px;
+    background: rgba(255, 252, 245, .88);
+    padding: 11px 13px 11px 10px;
+    text-align: left;
+    box-shadow: 0 8px 20px rgba(76, 54, 34, .055);
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .passport-stamp-entry::after {
+    display: none;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .passport-stamp-mark {
+    max-width: 128px;
+    transform: rotate(var(--stamp-rotation)) scale(.76);
+    transform-origin: center;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .passport-stamp-entry:hover .passport-stamp-mark {
+    transform: rotate(var(--stamp-rotation)) scale(.79);
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .passport-stamp-caption {
+    max-width: none;
+    gap: 6px;
+    text-align: left;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .passport-stamp-caption strong {
+    color: var(--jp-ink);
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  [data-country-id="japan"] .personal-stamp-page .passport-stamp-caption small {
+    font-size: 12px;
+  }
+}
+
+/* 3) Floating camera + companion: two clean controls, no stacked labels */
+[data-country-id="japan"] .floating-companion {
+  right: 22px;
+  bottom: 22px;
+  width: 68px;
+  height: 68px;
+  overflow: hidden;
+  border: 3px solid #fffaf0;
+  border-radius: 50%;
+  background: #d8a63d;
+  box-shadow:
+    0 13px 28px rgba(78, 55, 31, .22),
+    0 0 0 1px rgba(126, 47, 42, .10);
+}
+
+[data-country-id="japan"] .floating-companion .floating-brady {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+[data-country-id="japan"] .floating-companion .floating-brady img {
+  width: 59px;
+  height: 59px;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: scale(1.12);
+  transform-origin: center bottom;
+}
+
+[data-country-id="japan"] .floating-companion small {
+  display: none !important;
+}
+
+[data-country-id="japan"] .floating-camera {
+  right: 101px;
+  bottom: 28px;
+  min-height: 50px;
+  border: 2px solid #fffaf0;
+  border-radius: 999px;
+  background: var(--jp-vermillion);
+  padding: 0 17px;
+  box-shadow: 0 12px 26px rgba(126, 47, 42, .20);
+}
+
+[data-country-id="japan"] .floating-camera:hover,
+[data-country-id="japan"] .floating-companion:hover {
+  transform: translateY(-3px);
+}
+
+@media (max-width: 1120px) {
+  [data-country-id="japan"] .floating-companion {
+    right: 16px;
+    bottom: 91px;
+    width: 62px;
+    height: 62px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady {
+    width: 56px;
+    height: 56px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady img {
+    width: 54px;
+    height: 54px;
+  }
+
+  [data-country-id="japan"] .floating-camera {
+    right: 87px;
+    bottom: 97px;
+    width: 52px;
+    min-width: 52px;
+    min-height: 52px;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  [data-country-id="japan"] .floating-camera span {
+    display: none;
+  }
+}
+
+/* 4) Companion: real character card + speech bubble */
+[data-country-id="japan"] .companion-card.companion-v2 {
+  border-color: rgba(126, 47, 42, .17);
+  background:
+    radial-gradient(circle at 88% 6%, rgba(173, 64, 56, .10), transparent 8rem),
+    radial-gradient(circle at 10% 91%, rgba(67, 92, 61, .09), transparent 9rem),
+    linear-gradient(145deg, #fff9e8, #fff1d8);
+  box-shadow: 0 22px 50px rgba(74, 52, 31, .10);
+}
+
+[data-country-id="japan"] .companion-card.companion-v2::after {
+  position: absolute;
+  right: -25px;
+  top: 42%;
+  width: 150px;
+  height: 88px;
+  pointer-events: none;
+  background: url('/nioli/themes/japan/stamps/jp_nioli_postmark.png') center / contain no-repeat;
+  content: "";
+  opacity: .055;
+  transform: rotate(-8deg);
+}
+
+[data-country-id="japan"] .companion-v2 .companion-brady {
+  transition: transform 180ms ease;
+}
+
+[data-country-id="japan"] .companion-card.companion-v2:hover .companion-brady {
+  transform: translateY(-4px) scale(1.035);
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 > .eyebrow {
+  width: fit-content;
+  border: 1px solid rgba(41, 74, 98, .12);
+  border-radius: 999px;
+  background: rgba(41, 74, 98, .065);
+  padding: 6px 10px;
+  color: var(--jp-indigo);
+  font-size: 10px;
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 h2 {
+  margin-top: 6px;
+  font-size: clamp(31px, 2.2vw, 38px);
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 > p:nth-of-type(2) {
+  position: relative;
+  min-height: 0;
+  margin: 15px 0 18px;
+  border: 1px solid rgba(126, 47, 42, .13);
+  border-radius: 18px 18px 18px 5px;
+  background: rgba(255, 253, 247, .88);
+  padding: 14px 15px 14px 38px;
+  color: #554d46;
+  font-size: 13px !important;
+  font-weight: 650;
+  line-height: 1.5;
+  box-shadow: 0 7px 18px rgba(76, 54, 34, .045);
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 > p:nth-of-type(2)::before {
+  position: absolute;
+  left: 13px;
+  top: 7px;
+  color: var(--jp-vermillion);
+  content: "“";
+  font-family: Georgia, serif;
+  font-size: 33px;
+  line-height: 1;
+  opacity: .72;
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 > p:nth-of-type(2)::after {
+  position: absolute;
+  left: 13px;
+  bottom: -7px;
+  width: 13px;
+  height: 13px;
+  border-right: 1px solid rgba(126, 47, 42, .13);
+  border-bottom: 1px solid rgba(126, 47, 42, .13);
+  background: #fffdf7;
+  content: "";
+  transform: rotate(45deg);
+}
+
+[data-country-id="japan"] .companion-mood strong {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.38);
+}
+
+[data-country-id="japan"] .companion-actions button {
+  border-color: rgba(41, 74, 98, .15);
+  background: rgba(255, 253, 248, .92);
+}
+
+[data-country-id="japan"] .companion-actions button:last-child {
+  border-color: var(--jp-vermillion-dark);
+  background: var(--jp-vermillion-dark);
+  color: #fffaf2;
+}
+
+/* END NIOLI JP PASSPORT + COMPANION POLISH V2 */
+
+/* ========================================================================== */
+/* NIOLI JP BRADY FLOATING INTRO V1                                           */
+/* ========================================================================== */
+
+[data-country-id="japan"] .floating-companion {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 24;
+  display: block;
+  width: 248px;
+  height: 90px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  color: var(--jp-ink);
+  text-align: left;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+[data-country-id="japan"] .floating-companion:hover {
+  transform: translateY(-3px);
+  filter: drop-shadow(0 12px 20px rgba(74, 52, 31, .10));
+}
+
+[data-country-id="japan"] .floating-companion .floating-brady {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  display: block;
+  width: 92px;
+  height: 92px;
+  overflow: hidden;
+  border: 2px solid rgba(126, 47, 42, .17);
+  border-radius: 30px 30px 16px 30px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255,255,255,.7), transparent 64%),
+    linear-gradient(145deg, #fffaf1, #f3e5d6);
+  box-shadow:
+    0 12px 28px rgba(75, 55, 37, .14),
+    inset 0 0 0 1px rgba(255,255,255,.55);
+}
+
+[data-country-id="japan"] .floating-companion .floating-brady img {
+  position: absolute;
+  left: 50%;
+  top: 3px;
+  width: 92px;
+  height: 126px;
+  max-width: none;
+  object-fit: contain;
+  object-position: center top;
+  transform: translateX(-50%) scale(1.20);
+  transform-origin: center top;
+}
+
+[data-country-id="japan"] .floating-companion-copy {
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  z-index: 1;
+  display: grid;
+  width: 184px;
+  min-height: 72px;
+  align-content: center;
+  gap: 2px;
+  border: 1px solid rgba(126, 47, 42, .17);
+  border-radius: 18px 18px 18px 7px;
+  background:
+    radial-gradient(circle at 90% 14%, rgba(173, 64, 56, .07), transparent 4rem),
+    rgba(255, 250, 241, .96);
+  padding: 12px 14px 12px 28px;
+  box-shadow: 0 12px 27px rgba(75, 55, 37, .11);
+}
+
+[data-country-id="japan"] .floating-companion-copy::before {
+  position: absolute;
+  left: -8px;
+  bottom: 15px;
+  width: 16px;
+  height: 16px;
+  border-left: 1px solid rgba(126, 47, 42, .17);
+  border-bottom: 1px solid rgba(126, 47, 42, .17);
+  background: #fffaf1;
+  content: "";
+  transform: rotate(45deg);
+}
+
+[data-country-id="japan"] .floating-companion-copy strong {
+  color: var(--jp-vermillion-dark);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -.02em;
+  line-height: 1.05;
+}
+
+[data-country-id="japan"] .floating-companion-copy small {
+  display: block !important;
+  position: static;
+  min-width: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  color: #665d54;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  box-shadow: none;
+  transform: none;
+}
+
+[data-country-id="japan"] .floating-camera {
+  right: 286px;
+  bottom: 31px;
+}
+
+@media (max-width: 1120px) {
+  [data-country-id="japan"] .floating-companion {
+    right: 14px;
+    bottom: 91px;
+    width: 218px;
+    height: 80px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady {
+    width: 80px;
+    height: 80px;
+    border-radius: 26px 26px 14px 26px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady img {
+    width: 82px;
+    height: 112px;
+    transform: translateX(-50%) scale(1.17);
+  }
+
+  [data-country-id="japan"] .floating-companion-copy {
+    width: 158px;
+    min-height: 64px;
+    padding: 10px 11px 10px 24px;
+  }
+
+  [data-country-id="japan"] .floating-companion-copy strong {
+    font-size: 16px;
+  }
+
+  [data-country-id="japan"] .floating-companion-copy small {
+    font-size: 9px;
+  }
+
+  [data-country-id="japan"] .floating-camera {
+    right: 16px;
+    bottom: 181px;
+  }
+}
+
+@media (max-width: 520px) {
+  [data-country-id="japan"] .floating-companion {
+    width: 202px;
+    height: 74px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady {
+    width: 74px;
+    height: 74px;
+  }
+
+  [data-country-id="japan"] .floating-companion .floating-brady img {
+    width: 76px;
+    height: 106px;
+  }
+
+  [data-country-id="japan"] .floating-companion-copy {
+    width: 146px;
+    min-height: 60px;
+    padding-left: 22px;
+  }
+
+  [data-country-id="japan"] .floating-companion-copy strong {
+    font-size: 15px;
+  }
+
+  [data-country-id="japan"] .floating-companion-copy small {
+    font-size: 8.5px;
+  }
+
+  [data-country-id="japan"] .floating-camera {
+    bottom: 173px;
+  }
+}
+
+/* END NIOLI JP BRADY FLOATING INTRO V1 */
+
+/* ========================================================================== */
+/* NIOLI JAPAN SKIN A — CORE UI V1                                            */
+/* Global shell + navigation + dashboard + controls + modals                  */
+/* Scoped to countryId=japan. Visual only.                                    */
+/* ========================================================================== */
+
+[data-country-id="japan"] {
+  --jp-vermillion: #ad4038;
+  --jp-vermillion-dark: #7e2f2a;
+  --jp-indigo: #294a62;
+  --jp-indigo-dark: #203b4e;
+  --jp-matcha: #435c3d;
+  --jp-matcha-soft: rgba(67, 92, 61, .10);
+  --jp-gold: #c99a3e;
+  --jp-paper: #f8f1e5;
+  --jp-paper-light: #fffaf1;
+  --jp-paper-deep: #efe2cf;
+  --jp-ink: #292722;
+  --jp-muted: #72685f;
+  --jp-line: rgba(103, 78, 54, .17);
+  --jp-shadow: 0 16px 38px rgba(72, 53, 35, .07);
+  --jp-shadow-hover: 0 20px 44px rgba(72, 53, 35, .10);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 1. Global shell / paper                                                     */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] {
+  background:
+    radial-gradient(circle at 7% 10%, rgba(173,64,56,.055), transparent 24rem),
+    radial-gradient(circle at 93% 82%, rgba(41,74,98,.052), transparent 28rem),
+    repeating-linear-gradient(0deg, rgba(94,73,51,.016) 0 1px, transparent 1px 7px),
+    linear-gradient(115deg, #faf5ec 0%, #f7f0e3 54%, #f3eadc 100%);
+}
+
+[data-country-id="japan"] .app-stage {
+  min-height: 100dvh;
+}
+
+[data-country-id="japan"] .app-main {
+  padding-top: 34px;
+}
+
+[data-country-id="japan"] .view-stack {
+  gap: 32px;
+}
+
+[data-country-id="japan"] .welcome-row,
+[data-country-id="japan"] .section-heading {
+  position: relative;
+}
+
+[data-country-id="japan"] .dashboard-view > .welcome-row {
+  align-items: end;
+  border-bottom: 1px solid rgba(126,47,42,.12);
+  padding-bottom: 21px;
+}
+
+[data-country-id="japan"] .dashboard-view > .welcome-row::after {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 92px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--jp-vermillion), rgba(173,64,56,0));
+  content: "";
+}
+
+[data-country-id="japan"] .welcome-row h1,
+[data-country-id="japan"] .section-heading h1 {
+  color: var(--jp-ink);
+  letter-spacing: -.048em;
+}
+
+[data-country-id="japan"] .welcome-row > div > p:last-child,
+[data-country-id="japan"] .section-description {
+  color: var(--jp-muted);
+}
+
+[data-country-id="japan"] .greeting-spark {
+  color: var(--jp-gold);
+}
+
+/* Eyebrows become small editorial labels instead of generic SaaS labels */
+[data-country-id="japan"] .eyebrow {
+  width: fit-content;
+  margin-bottom: 7px;
+  color: var(--jp-indigo);
+  font-size: 11px !important;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Sidebar                                                                  */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .side-navigation {
+  border-right: 1px solid rgba(126,47,42,.14);
+  background:
+    linear-gradient(rgba(249,242,231,.972), rgba(249,242,231,.972)),
+    url('/nioli/themes/japan/stamps/jp_nioli_postmark.png') center bottom 76px / 205px auto no-repeat;
+  box-shadow: 12px 0 34px rgba(70,52,34,.055);
+}
+
+[data-country-id="japan"] .brand-lockup {
+  border-bottom: 1px dashed rgba(126,47,42,.16);
+}
+
+[data-country-id="japan"] .brand-lockup-image {
+  filter: drop-shadow(0 3px 5px rgba(63,46,30,.07));
+}
+
+[data-country-id="japan"] .side-nav-items > p {
+  color: #7a6e64;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .side-nav-button {
+  position: relative;
+  min-height: 51px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  color: #5e5953;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+[data-country-id="japan"] .side-nav-button:hover {
+  border-color: rgba(126,47,42,.08);
+  background: rgba(255,252,246,.76);
+  color: var(--jp-ink);
+  transform: translateX(2px);
+}
+
+[data-country-id="japan"] .side-nav-button.active {
+  border-color: rgba(173,64,56,.12);
+  background:
+    linear-gradient(90deg, rgba(173,64,56,.10), rgba(255,250,241,.72));
+  color: var(--jp-vermillion-dark);
+  box-shadow: inset 3px 0 var(--jp-vermillion);
+}
+
+[data-country-id="japan"] .side-nav-button.active::after {
+  position: absolute;
+  right: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jp-vermillion);
+  content: "";
+  opacity: .65;
+}
+
+[data-country-id="japan"] .side-nav-icon {
+  border-radius: 11px;
+}
+
+[data-country-id="japan"] .side-nav-button.active .side-nav-icon {
+  border-color: rgba(173,64,56,.18);
+  background: rgba(255,250,242,.94);
+  color: var(--jp-vermillion-dark);
+}
+
+/* Active trip: lighter, more ticket-like */
+[data-country-id="japan"] .side-navigation .trip-mini-card {
+  border: 1px dashed rgba(126,47,42,.30) !important;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 94% 8%, rgba(173,64,56,.085), transparent 5.5rem),
+    linear-gradient(145deg, #fffaf2, #f7eee3) !important;
+  box-shadow: 0 9px 22px rgba(75,55,37,.055);
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-flag {
+  border-color: rgba(173,64,56,.20);
+  background: rgba(255,252,247,.97);
+  color: var(--jp-vermillion-dark);
+}
+
+/* Keep the small companion toggle consistent but quieter than the main companion */
+[data-country-id="japan"] .companion-toggle {
+  border: 1px solid rgba(67,92,61,.18);
+  border-radius: 17px;
+  background:
+    radial-gradient(circle at 95% 0%, rgba(67,92,61,.085), transparent 6rem),
+    #fffaf0;
+  box-shadow: 0 9px 22px rgba(75,55,37,.045);
+}
+
+[data-country-id="japan"] .companion-bolt {
+  background: rgba(67,92,61,.11);
+  color: var(--jp-matcha);
+}
+
+[data-country-id="japan"] .companion-copy i {
+  background: #e9dfd2;
+}
+
+[data-country-id="japan"] .companion-copy i b {
+  background: linear-gradient(90deg, var(--jp-matcha), #6c8053);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. Top bar                                                                  */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .top-bar {
+  border-bottom: 1px solid rgba(126,47,42,.13);
+  background:
+    linear-gradient(90deg, rgba(249,243,232,.955), rgba(247,240,227,.93));
+  box-shadow: 0 8px 22px rgba(75,55,37,.025);
+  backdrop-filter: blur(18px);
+}
+
+[data-country-id="japan"] .country-trigger {
+  min-height: 52px;
+  border: 1px solid rgba(126,47,42,.13);
+  border-radius: 16px;
+  background: rgba(255,250,241,.86);
+  box-shadow: 0 4px 14px rgba(72,53,35,.03);
+}
+
+[data-country-id="japan"] .country-trigger:hover {
+  border-color: rgba(126,47,42,.23);
+  background: #fffaf1;
+}
+
+[data-country-id="japan"] .country-code-chip {
+  border-color: rgba(173,64,56,.24);
+  border-radius: 12px;
+  background: rgba(173,64,56,.075);
+  color: var(--jp-vermillion-dark);
+}
+
+[data-country-id="japan"] .country-trigger small {
+  color: #786d63;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .country-trigger strong {
+  color: var(--jp-ink);
+}
+
+[data-country-id="japan"] .traveler-stack > button {
+  border: 3px solid var(--jp-paper);
+  box-shadow: 0 3px 9px rgba(67,49,32,.10);
+}
+
+[data-country-id="japan"] .traveler-stack > button.active {
+  box-shadow:
+    0 0 0 2px var(--jp-vermillion),
+    0 5px 12px rgba(67,49,32,.12);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. Buttons / links / chips                                                  */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .primary-button {
+  border: 1px solid var(--jp-vermillion-dark);
+  border-radius: 13px 13px 13px 5px;
+  background: linear-gradient(180deg, #b7473e, var(--jp-vermillion));
+  color: #fffaf2;
+  box-shadow: 0 9px 20px rgba(126,47,42,.18);
+}
+
+[data-country-id="japan"] .primary-button:hover {
+  background: linear-gradient(180deg, #913731, var(--jp-vermillion-dark));
+  box-shadow: 0 12px 24px rgba(126,47,42,.23);
+  transform: translateY(-1px);
+}
+
+[data-country-id="japan"] .secondary-button,
+[data-country-id="japan"] .quiet-button {
+  border: 1px solid rgba(41,74,98,.15);
+  border-radius: 13px 13px 13px 5px;
+  background: rgba(255,251,244,.90);
+  color: var(--jp-indigo-dark);
+  box-shadow: 0 4px 12px rgba(75,55,37,.025);
+}
+
+[data-country-id="japan"] .secondary-button:hover,
+[data-country-id="japan"] .quiet-button:hover {
+  border-color: rgba(41,74,98,.28);
+  background: #fffdf8;
+  color: var(--jp-indigo-dark);
+  box-shadow: 0 7px 15px rgba(75,55,37,.055);
+  transform: translateY(-1px);
+}
+
+[data-country-id="japan"] .text-link {
+  color: var(--jp-vermillion-dark);
+  font-weight: 850;
+}
+
+[data-country-id="japan"] .text-link:hover {
+  color: #672621;
+}
+
+[data-country-id="japan"] .icon-button {
+  border: 1px solid rgba(103,78,54,.11);
+  background: rgba(255,251,244,.72);
+  color: var(--jp-indigo-dark);
+}
+
+[data-country-id="japan"] .icon-button:not(:disabled):hover {
+  border-color: rgba(126,47,42,.18);
+  background: #fffaf2;
+  color: var(--jp-vermillion-dark);
+}
+
+[data-country-id="japan"] :where(.status-pill,.weather-pill,.currency-pill,.collection-count,.transport-chip,.aircraft-badge) {
+  border: 1px solid rgba(103,78,54,.11);
+  background: rgba(255,251,244,.82);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.30);
+}
+
+[data-country-id="japan"] .status-pill {
+  border-color: rgba(67,92,61,.18);
+  background: rgba(67,92,61,.09);
+  color: var(--jp-matcha);
+}
+
+[data-country-id="japan"] .weather-pill,
+[data-country-id="japan"] .transport-chip {
+  border-color: rgba(41,74,98,.16);
+  background: rgba(41,74,98,.07);
+  color: var(--jp-indigo);
+}
+
+[data-country-id="japan"] .currency-pill,
+[data-country-id="japan"] .collection-count,
+[data-country-id="japan"] .aircraft-badge {
+  border-color: rgba(201,154,62,.19);
+  background: rgba(201,154,62,.09);
+  color: #765a25;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. Dashboard hero — travel pass                                             */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .dashboard-view .trip-hero {
+  min-height: 348px;
+  border: 1px solid rgba(126,47,42,.25);
+  border-radius: 28px 28px 28px 10px;
+  background:
+    radial-gradient(circle at 83% 11%, rgba(173,64,56,.13) 0 5.3rem, transparent 5.35rem),
+    radial-gradient(circle at 8% 94%, rgba(41,74,98,.055), transparent 13rem),
+    linear-gradient(124deg, #fffaf1 0%, #f8efe3 60%, #f0dfd8 100%);
+  box-shadow:
+    0 25px 54px rgba(81,57,36,.10),
+    inset 0 0 0 1px rgba(255,255,255,.45);
+}
+
+[data-country-id="japan"] .dashboard-view .hero-paper-texture {
+  background:
+    radial-gradient(circle at 18% 22%, rgba(92,69,47,.045) 0 1px, transparent 1.45px),
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(41,74,98,.020) 27px 28px),
+    linear-gradient(90deg, transparent 0 68%, rgba(173,64,56,.12) 68.1%, transparent 68.3%);
+  background-size: 15px 15px, auto, auto;
+}
+
+[data-country-id="japan"] .dashboard-view .trip-hero-content {
+  padding-block: 45px 49px;
+}
+
+[data-country-id="japan"] .dashboard-view .hero-kicker {
+  border: 1px solid rgba(126,47,42,.22);
+  border-radius: 8px 8px 8px 3px;
+  background: rgba(255,250,241,.86);
+  color: var(--jp-vermillion-dark);
+  box-shadow: 0 4px 10px rgba(75,55,37,.025);
+}
+
+[data-country-id="japan"] .dashboard-view .trip-hero h2 {
+  color: var(--jp-ink);
+}
+
+[data-country-id="japan"] .dashboard-view .trip-hero-content > p {
+  color: #695f56;
+}
+
+[data-country-id="japan"] .dashboard-view .route-line {
+  margin-top: 4px;
+}
+
+[data-country-id="japan"] .dashboard-view .route-stop small {
+  color: #605950;
+  font-weight: 800;
+}
+
+[data-country-id="japan"] .dashboard-view .route-dot {
+  border-color: rgba(41,74,98,.38);
+  background: #fffaf0;
+}
+
+[data-country-id="japan"] .dashboard-view .route-dot.destination {
+  border-color: #fffaf0;
+  background: var(--jp-vermillion);
+  box-shadow:
+    0 0 0 3px var(--jp-vermillion),
+    0 0 0 7px rgba(173,64,56,.10);
+}
+
+[data-country-id="japan"] .dashboard-view .route-stop i {
+  border-color: rgba(41,74,98,.20);
+}
+
+[data-country-id="japan"] .dashboard-view .trip-hero-side {
+  border-left-color: rgba(126,47,42,.20);
+}
+
+[data-country-id="japan"] .dashboard-view .hero-country-stamp {
+  filter: drop-shadow(0 8px 8px rgba(58,43,27,.09));
+}
+
+[data-country-id="japan"] .dashboard-view .hero-brady {
+  filter: drop-shadow(0 12px 11px rgba(62,46,31,.11)) !important;
+}
+
+[data-country-id="japan"] .dashboard-view .countdown-block {
+  border: 1px solid rgba(126,47,42,.26);
+  border-radius: 18px 18px 18px 6px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(173,64,56,.06), transparent 5rem),
+    rgba(255,251,244,.93);
+  box-shadow: 0 8px 18px rgba(72,53,35,.055);
+}
+
+[data-country-id="japan"] .dashboard-view .countdown-block > strong {
+  color: var(--jp-vermillion-dark);
+}
+
+[data-country-id="japan"] .dashboard-view .countdown-plane {
+  background: var(--jp-gold);
+  color: #fff9ec;
+}
+
+[data-country-id="japan"] .dashboard-view .hero-ticket-code {
+  color: rgba(126,47,42,.52);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. World clock                                                             */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .dashboard-view .world-clock-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(41,74,98,.13);
+  border-radius: 22px 22px 22px 7px;
+  background:
+    radial-gradient(circle at 93% 8%, rgba(41,74,98,.06), transparent 9rem),
+    linear-gradient(120deg, rgba(248,240,227,.96), rgba(255,251,244,.96) 62%);
+  box-shadow: var(--jp-shadow);
+}
+
+[data-country-id="japan"] .dashboard-view .world-clock-card::after {
+  position: absolute;
+  right: -25px;
+  bottom: -32px;
+  width: 150px;
+  height: 100px;
+  pointer-events: none;
+  background: url('/nioli/themes/japan/stamps/jp_nioli_postmark.png') center / contain no-repeat;
+  content: "";
+  opacity: .045;
+  transform: rotate(-9deg);
+}
+
+[data-country-id="japan"] .dashboard-view .world-clock-card > header > span {
+  border: 1px solid rgba(201,154,62,.16);
+  background: rgba(201,154,62,.09);
+  color: #765a25;
+}
+
+[data-country-id="japan"] .dashboard-view .world-clock-location {
+  border-color: rgba(41,74,98,.12);
+  border-radius: 15px 15px 15px 5px;
+  background: rgba(255,253,248,.78);
+}
+
+[data-country-id="japan"] .dashboard-view .world-clock-location.priority {
+  border-color: rgba(173,64,56,.22);
+  background:
+    radial-gradient(circle at 92% 10%, rgba(173,64,56,.055), transparent 4rem),
+    rgba(255,249,239,.92);
+}
+
+[data-country-id="japan"] .dashboard-view .world-clock-country {
+  border: 1px solid rgba(103,78,54,.10);
+  background: #fffaf1;
+  color: var(--jp-vermillion-dark);
+  font-weight: 850;
+}
+
+[data-country-id="japan"] .dashboard-view .world-clock-location time {
+  color: var(--jp-ink);
+}
+
+[data-country-id="japan"] .dashboard-view .clock-connection i {
+  background: linear-gradient(var(--jp-indigo), var(--jp-gold));
+}
+
+[data-country-id="japan"] .dashboard-view .clock-connection span {
+  color: var(--jp-indigo);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7. Dashboard cards / metrics                                                */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .dashboard-view .surface-card {
+  border: 1px solid rgba(103,78,54,.145);
+  border-radius: 22px 22px 22px 7px;
+  background:
+    radial-gradient(circle at 13% 15%, rgba(93,72,48,.028) 0 1px, transparent 1.45px),
+    linear-gradient(125deg, rgba(255,252,246,.97), rgba(248,239,226,.76));
+  background-size: 16px 16px, auto;
+  box-shadow: var(--jp-shadow);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+[data-country-id="japan"] .dashboard-view .surface-card:hover {
+  border-color: rgba(126,47,42,.19);
+  box-shadow: var(--jp-shadow-hover);
+  transform: translateY(-2px);
+}
+
+[data-country-id="japan"] .dashboard-view .card-header-row h2,
+[data-country-id="japan"] .dashboard-view .subsection-heading h2,
+[data-country-id="japan"] .dashboard-view .bases-card h2 {
+  color: var(--jp-ink);
+}
+
+[data-country-id="japan"] .dashboard-view .soft-icon {
+  border: 1px solid rgba(173,64,56,.10);
+  border-radius: 12px 12px 12px 4px;
+  background: rgba(173,64,56,.075);
+  color: var(--jp-vermillion-dark);
+}
+
+[data-country-id="japan"] .dashboard-view .dashboard-reservation-summary,
+[data-country-id="japan"] .dashboard-view .dashboard-empty {
+  border-radius: 15px 15px 15px 5px;
+  background: rgba(255,253,248,.62);
+}
+
+[data-country-id="japan"] .dashboard-view .dashboard-empty {
+  border-color: rgba(126,47,42,.16);
+}
+
+[data-country-id="japan"] .dashboard-view .boarding-meta {
+  border-top-color: rgba(103,78,54,.13);
+}
+
+[data-country-id="japan"] .dashboard-view .boarding-meta button {
+  color: var(--jp-vermillion-dark);
+}
+
+[data-country-id="japan"] .dashboard-view .progress-track {
+  height: 8px;
+  border: 1px solid rgba(103,78,54,.07);
+  background: #eae0d3;
+}
+
+[data-country-id="japan"] .dashboard-view .budget-card .progress-fill {
+  background: linear-gradient(90deg, var(--jp-matcha), #74825a) !important;
+}
+
+[data-country-id="japan"] .dashboard-view .metrics-grid {
+  gap: 15px;
+}
+
+[data-country-id="japan"] .dashboard-view .metric-card {
+  min-height: 160px;
+  border: 1px solid rgba(103,78,54,.13);
+  border-radius: 19px 19px 19px 6px;
+  background:
+    radial-gradient(circle at 91% 8%, currentColor 0 2.6rem, transparent 2.65rem),
+    linear-gradient(140deg, #fffaf1, #f8efe3);
+  box-shadow: 0 10px 25px rgba(59,50,39,.045);
+}
+
+[data-country-id="japan"] .dashboard-view .metric-card::after {
+  display: none;
+}
+
+[data-country-id="japan"] .dashboard-view .metric-icon {
+  border: 1px solid color-mix(in srgb, currentColor 28%, transparent);
+  background: color-mix(in srgb, currentColor 12%, #fffaf1);
+}
+
+[data-country-id="japan"] .dashboard-view .metric-icon svg {
+  color: currentColor;
+}
+
+[data-country-id="japan"] .dashboard-view .metric-card > p,
+[data-country-id="japan"] .dashboard-view .metric-card > span {
+  color: #766c62;
+}
+
+[data-country-id="japan"] .dashboard-view .metric-card > strong {
+  color: var(--jp-ink);
+  font-size: 19px;
+}
+
+[data-country-id="japan"] .dashboard-view .metric-red {
+  color: var(--jp-vermillion);
+}
+
+[data-country-id="japan"] .dashboard-view .metric-purple {
+  color: var(--jp-indigo);
+}
+
+[data-country-id="japan"] .dashboard-view .metric-yellow {
+  color: #a97825;
+}
+
+[data-country-id="japan"] .dashboard-view .metric-teal {
+  color: var(--jp-matcha);
+}
+
+/* Mini itinerary / bases */
+[data-country-id="japan"] .dashboard-view .mini-timeline-item {
+  border-bottom-color: rgba(103,78,54,.105);
+}
+
+[data-country-id="japan"] .dashboard-view .mini-activity-icon,
+[data-country-id="japan"] .dashboard-view .base-emoji {
+  border: 1px solid rgba(41,74,98,.11);
+  background: rgba(41,74,98,.065);
+  color: var(--jp-indigo);
+}
+
+[data-country-id="japan"] .dashboard-view .base-item {
+  border-color: rgba(103,78,54,.11);
+  border-radius: 14px 14px 14px 5px;
+  background: rgba(255,253,248,.62);
+}
+
+[data-country-id="japan"] .dashboard-view .base-number {
+  color: rgba(126,47,42,.42);
+}
+
+[data-country-id="japan"] .dashboard-view .base-route-status.confirmed {
+  background: rgba(67,92,61,.09);
+  color: var(--jp-matcha);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 8. Flights on dashboard                                                     */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .dashboard-view .international-date-line {
+  border: 1px solid rgba(41,74,98,.11);
+  border-radius: 17px 17px 17px 5px;
+  background:
+    linear-gradient(90deg, rgba(41,74,98,.055), rgba(255,251,244,.84), rgba(173,64,56,.045));
+  padding: 12px 14px;
+}
+
+[data-country-id="japan"] .dashboard-view .international-date-line > span {
+  border-color: rgba(103,78,54,.12);
+  background: rgba(255,253,248,.78);
+}
+
+[data-country-id="japan"] .dashboard-view .international-date-line > i {
+  background: linear-gradient(90deg, var(--jp-indigo), var(--jp-gold), var(--jp-vermillion));
+}
+
+[data-country-id="japan"] .dashboard-view .flight-card {
+  border: 1px solid rgba(41,74,98,.135);
+  border-radius: 20px 20px 20px 7px;
+  background:
+    radial-gradient(circle at 91% 8%, rgba(41,74,98,.055), transparent 6rem),
+    linear-gradient(135deg, #fffaf1, #f8efe4 48%, #fffaf1);
+  box-shadow: var(--jp-shadow);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-card:hover {
+  border-color: rgba(41,74,98,.23);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-brand svg {
+  color: var(--jp-vermillion);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-route-line {
+  background: var(--jp-indigo);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-route-line::before {
+  background: var(--jp-indigo);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-route-line::after {
+  background: var(--jp-vermillion);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-route-line svg {
+  color: var(--jp-vermillion);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-facts {
+  border-top-color: rgba(103,78,54,.12);
+}
+
+[data-country-id="japan"] .dashboard-view .flight-facts > span {
+  border: 1px solid rgba(103,78,54,.09);
+  background: rgba(255,250,241,.80);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 9. Generic controls / forms / focus                                         */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border: 1px solid rgba(103,78,54,.18);
+  border-radius: 12px 12px 12px 4px;
+  background: rgba(255,252,246,.94);
+  color: var(--jp-ink);
+  box-shadow: inset 0 1px 2px rgba(70,52,34,.025);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background 150ms ease;
+}
+
+[data-country-id="japan"] :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):hover {
+  border-color: rgba(41,74,98,.25);
+}
+
+[data-country-id="japan"] :where(input:not([type="checkbox"]):not([type="radio"]), select, textarea):focus {
+  border-color: rgba(173,64,56,.50);
+  background: #fffdf8;
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(173,64,56,.10),
+    inset 0 1px 2px rgba(70,52,34,.025);
+}
+
+[data-country-id="japan"] :where(input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--jp-vermillion);
+}
+
+[data-country-id="japan"] label {
+  color: #665e56;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 10. Modals / sheets                                                         */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .modal-backdrop {
+  background: rgba(38,31,25,.48);
+  backdrop-filter: blur(8px) saturate(.82);
+}
+
+[data-country-id="japan"] :where(.country-modal,.expense-modal,.access-modal) {
+  border: 1px solid rgba(126,47,42,.16);
+  border-radius: 27px 27px 27px 9px;
+  background:
+    radial-gradient(circle at 93% 7%, rgba(173,64,56,.055), transparent 8rem),
+    radial-gradient(circle at 14% 90%, rgba(41,74,98,.035), transparent 10rem),
+    #fffaf1;
+  box-shadow: 0 28px 80px rgba(40,31,23,.28);
+}
+
+[data-country-id="japan"] :where(.country-modal,.expense-modal,.access-modal) > header {
+  border-bottom: 1px dashed rgba(126,47,42,.13);
+  padding-bottom: 14px;
+}
+
+[data-country-id="japan"] .access-modal > header {
+  background: #fffaf1;
+}
+
+[data-country-id="japan"] :where(.country-modal,.expense-modal,.access-modal) h2 {
+  color: var(--jp-ink);
+}
+
+[data-country-id="japan"] .country-option {
+  border-color: rgba(103,78,54,.14);
+  border-radius: 15px 15px 15px 5px;
+  background: rgba(255,253,248,.66);
+}
+
+[data-country-id="japan"] .country-option:hover,
+[data-country-id="japan"] .country-option.selected {
+  background: rgba(255,250,241,.94);
+  box-shadow: 0 6px 16px rgba(75,55,37,.045);
+}
+
+[data-country-id="japan"] .country-modal-note {
+  border: 1px solid rgba(41,74,98,.10);
+  background: rgba(41,74,98,.055);
+  color: #645f59;
+}
+
+[data-country-id="japan"] .access-modal fieldset {
+  border-color: rgba(103,78,54,.14);
+  border-radius: 15px 15px 15px 5px;
+  background: rgba(255,253,248,.58);
+}
+
+[data-country-id="japan"] .access-modal legend {
+  color: var(--jp-indigo);
+}
+
+[data-country-id="japan"] .mobile-more-sheet {
+  border-color: rgba(126,47,42,.15);
+  background:
+    radial-gradient(circle at 92% 7%, rgba(173,64,56,.05), transparent 7rem),
+    #fffaf1;
+}
+
+[data-country-id="japan"] .mobile-more-option {
+  border-color: rgba(103,78,54,.13);
+  border-radius: 15px 15px 15px 5px;
+  background: rgba(255,253,248,.78);
+}
+
+[data-country-id="japan"] .mobile-more-option.active {
+  border-color: rgba(173,64,56,.24);
+  background: rgba(173,64,56,.075);
+}
+
+[data-country-id="japan"] .mobile-more-option > svg {
+  color: var(--jp-vermillion-dark);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 11. Bottom navigation                                                       */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .bottom-navigation {
+  border: 1px solid rgba(126,47,42,.15);
+  background: rgba(249,242,231,.965);
+  box-shadow: 0 -10px 28px rgba(72,53,35,.075);
+}
+
+[data-country-id="japan"] .bottom-nav-button {
+  color: #70685f;
+}
+
+[data-country-id="japan"] .bottom-nav-button svg {
+  color: #637065;
+}
+
+[data-country-id="japan"] .bottom-nav-button.active {
+  background:
+    linear-gradient(145deg, rgba(173,64,56,.10), rgba(255,250,242,.90));
+  color: var(--jp-vermillion-dark);
+}
+
+[data-country-id="japan"] .bottom-nav-button.active svg {
+  color: var(--jp-vermillion-dark);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 12. Empty states                                                            */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] :where(.empty-state,.dashboard-empty) {
+  border-color: rgba(126,47,42,.16);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(173,64,56,.035), transparent 5rem),
+    rgba(255,252,246,.58);
+}
+
+[data-country-id="japan"] .empty-state > span {
+  color: var(--jp-vermillion);
+}
+
+[data-country-id="japan"] .empty-state h2 {
+  color: var(--jp-ink);
+}
+
+[data-country-id="japan"] .empty-state p {
+  color: var(--jp-muted);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 13. Responsive                                                              */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 1120px) {
+  [data-country-id="japan"] .bottom-navigation {
+    right: 8px;
+    left: 8px;
+    border-radius: 22px;
+  }
+}
+
+@media (max-width: 920px) {
+  [data-country-id="japan"] .dashboard-view .trip-hero {
+    min-height: 340px;
+  }
+}
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .app-main {
+    padding-top: 22px;
+  }
+
+  [data-country-id="japan"] .view-stack {
+    gap: 25px;
+  }
+
+  [data-country-id="japan"] .dashboard-view > .welcome-row {
+    padding-bottom: 16px;
+  }
+
+  [data-country-id="japan"] .dashboard-view > .welcome-row::after {
+    width: 72px;
+  }
+
+  [data-country-id="japan"] .country-trigger {
+    max-width: calc(100% - 112px);
+    min-height: 48px;
+    border: 1px solid rgba(126,47,42,.13) !important;
+    border-radius: 14px;
+    background: rgba(255,250,242,.92) !important;
+    padding: 5px 10px 5px 6px !important;
+  }
+
+  [data-country-id="japan"] .dashboard-view .trip-hero {
+    min-height: 500px;
+    border-radius: 23px 23px 23px 8px;
+  }
+
+  [data-country-id="japan"] .dashboard-view .trip-hero-side {
+    border-top-color: rgba(126,47,42,.20);
+  }
+
+  [data-country-id="japan"] .dashboard-view .world-clock-card {
+    border-radius: 19px 19px 19px 6px;
+  }
+
+  [data-country-id="japan"] .dashboard-view .surface-card {
+    border-radius: 18px 18px 18px 6px;
+  }
+
+  [data-country-id="japan"] .dashboard-view .metric-card {
+    min-height: 148px;
+    border-radius: 17px 17px 17px 5px;
+  }
+
+  [data-country-id="japan"] :where(.country-modal,.expense-modal,.access-modal) {
+    border-radius: 23px 23px 23px 7px;
+  }
+}
+
+@media (max-width: 420px) {
+  [data-country-id="japan"] .dashboard-view .trip-hero {
+    min-height: 515px;
+  }
+}
+
+/* END NIOLI JAPAN SKIN A — CORE UI V1 */
+
+/* ========================================================================== */
+/* NIOLI JAPAN — NIPPON COLOR + ASSET PERSONALITY V1                          */
+/* Palette: Shironeri / Kurotsurubami / Kon / Shinsyu / Matsuba / Kikyo       */
+/*          / Yamabuki                                                        */
+/* ========================================================================== */
+
+[data-country-id="japan"] {
+  /* Japanese traditional color system */
+  --jp-shironeri: #FCFAF2;
+  --jp-kurotsurubami: #0B1013;
+  --jp-kon: #0F2540;
+  --jp-shinsyu: #AB3B3A;
+  --jp-matsuba: #42602D;
+  --jp-kikyo: #6A4C9C;
+  --jp-yamabuki: #FFB11B;
+  --jp-ainezumi: #566C73;
+
+  /* Compatibility with existing Japan theme variables */
+  --jp-paper: var(--jp-shironeri);
+  --jp-paper-light: #FFFDF7;
+  --jp-paper-deep: #F1E7D8;
+  --jp-ink: var(--jp-kurotsurubami);
+  --jp-indigo: var(--jp-kon);
+  --jp-indigo-dark: #0B1E32;
+  --jp-vermillion: var(--jp-shinsyu);
+  --jp-vermillion-dark: #87302F;
+  --jp-matcha: var(--jp-matsuba);
+  --jp-gold: var(--jp-yamabuki);
+  --jp-muted: #6C675E;
+  --jp-line: rgba(15, 37, 64, .14);
+  --jp-kikyo-soft: rgba(106, 76, 156, .10);
+  --jp-shinsyu-soft: rgba(171, 59, 58, .09);
+  --jp-kon-soft: rgba(15, 37, 64, .075);
+  --jp-matsuba-soft: rgba(66, 96, 45, .09);
+
+  color: var(--jp-kurotsurubami);
+}
+
+/* -------------------------------------------------------------------------- */
+/* GLOBAL BALANCE — 60% Shironeri / 18% Kon / 10% Shinsyu / accents          */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] {
+  background:
+    radial-gradient(circle at 7% 8%, rgba(171, 59, 58, .045), transparent 24rem),
+    radial-gradient(circle at 92% 85%, rgba(15, 37, 64, .045), transparent 30rem),
+    repeating-linear-gradient(0deg, rgba(15, 37, 64, .012) 0 1px, transparent 1px 7px),
+    var(--jp-shironeri);
+}
+
+[data-country-id="japan"] :where(h1,h2,h3,h4,strong) {
+  color: var(--jp-kurotsurubami);
+}
+
+[data-country-id="japan"] :where(.eyebrow,.section-heading .eyebrow,.subsection-heading .eyebrow) {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] :where(.surface-card,.metric-card,.world-clock-card,.reservation-card,.finance-stat-card,.budget-hero-card,.map-toolbar,.route-planner-card,.itinerary-main-card,.day-stats-card,.accommodation-card,.passport-city-page,.personal-stamp-page,.companion-card) {
+  border-color: rgba(15, 37, 64, .13);
+  background-color: var(--jp-shironeri);
+}
+
+/* Primary red = action, not decoration */
+[data-country-id="japan"] .primary-button {
+  border-color: #7D2929;
+  background: linear-gradient(180deg, #B84543, var(--jp-shinsyu));
+  color: #FFFDF7;
+  box-shadow: 0 9px 20px rgba(171, 59, 58, .18);
+}
+
+[data-country-id="japan"] .primary-button:hover {
+  border-color: #702625;
+  background: linear-gradient(180deg, #9C3534, #87302F);
+  box-shadow: 0 12px 25px rgba(171, 59, 58, .23);
+}
+
+/* Kon = structural / secondary */
+[data-country-id="japan"] :where(.secondary-button,.quiet-button) {
+  border-color: rgba(15, 37, 64, .18);
+  background: rgba(252, 250, 242, .94);
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] :where(.secondary-button,.quiet-button):hover {
+  border-color: rgba(15, 37, 64, .32);
+  background: #FFFDF8;
+  color: var(--jp-kon);
+}
+
+/* Matsuba = positive / confirmed / nature */
+[data-country-id="japan"] :where(.status-pill,.base-status.confirmed,.base-route-status.confirmed) {
+  border-color: rgba(66, 96, 45, .20);
+  background: var(--jp-matsuba-soft);
+  color: var(--jp-matsuba);
+}
+
+/* Kikyo = official / passport / immigration */
+[data-country-id="japan"] :where(.official-collection-page .eyebrow,.passport-city-page .collection-count,.official-stamp-grid + *) {
+  color: var(--jp-kikyo);
+}
+
+/* Yamabuki = rewards / progress / XP */
+[data-country-id="japan"] :where(.companion-xp strong,.countdown-plane) {
+  color: var(--jp-kurotsurubami);
+}
+
+[data-country-id="japan"] .companion-xp .progress-fill {
+  background: linear-gradient(90deg, #D99900, var(--jp-yamabuki)) !important;
+}
+
+[data-country-id="japan"] .progress-track {
+  background: #E9E2D5;
+}
+
+/* Form focus = Shinsyu */
+[data-country-id="japan"] :where(input:not([type="checkbox"]):not([type="radio"]),select,textarea):focus {
+  border-color: rgba(171, 59, 58, .48);
+  box-shadow: 0 0 0 3px rgba(171, 59, 58, .10);
+}
+
+/* -------------------------------------------------------------------------- */
+/* SIDEBAR / TOPBAR                                                            */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .side-navigation {
+  border-right-color: rgba(15, 37, 64, .13);
+  background:
+    linear-gradient(rgba(252,250,242,.975), rgba(252,250,242,.975)),
+    url('/nioli/themes/japan/personality/jp_nioli_postmark_red.png')
+      center bottom 54px / 210px auto no-repeat;
+}
+
+[data-country-id="japan"] .side-nav-button {
+  color: #5D625F;
+}
+
+[data-country-id="japan"] .side-nav-button:hover {
+  background: rgba(15, 37, 64, .045);
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .side-nav-button.active {
+  border-color: rgba(171, 59, 58, .13);
+  background:
+    linear-gradient(90deg, rgba(171, 59, 58, .11), rgba(252, 250, 242, .76));
+  color: var(--jp-shinsyu);
+  box-shadow: inset 3px 0 var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .side-nav-button.active .side-nav-icon {
+  border-color: rgba(171, 59, 58, .17);
+  background: var(--jp-shironeri);
+  color: var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .top-bar {
+  border-bottom-color: rgba(15, 37, 64, .12);
+  background: rgba(252, 250, 242, .94);
+}
+
+[data-country-id="japan"] .country-code-chip {
+  border-color: rgba(66, 96, 45, .24);
+  background: rgba(66, 96, 45, .075);
+  color: var(--jp-matsuba);
+}
+
+/* -------------------------------------------------------------------------- */
+/* DASHBOARD — POSTMARK + JP LABEL + KOI                                       */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .japan-dashboard .japan-passport-hero {
+  border-color: rgba(171, 59, 58, .24);
+  background:
+    linear-gradient(90deg, var(--jp-shinsyu) 0 22px, transparent 22px),
+    radial-gradient(circle at 84% 16%, rgba(171, 59, 58, .09) 0 78px, transparent 79px),
+    radial-gradient(circle at 9% 92%, rgba(15, 37, 64, .055), transparent 180px),
+    var(--jp-shironeri);
+}
+
+/* Country luggage label: visible but not dominant */
+[data-country-id="japan"] .japan-dashboard .japan-passport-hero::after {
+  position: absolute;
+  right: 32px;
+  top: 24px;
+  z-index: 4;
+  width: 72px;
+  height: 112px;
+  pointer-events: none;
+  background:
+    url('/nioli/themes/japan/personality/jp_country_label.png')
+    center / contain no-repeat;
+  content: "";
+  opacity: .92;
+  filter: drop-shadow(0 8px 8px rgba(15, 37, 64, .12));
+  transform: rotate(4deg);
+}
+
+/* Red NIOLI postal mark */
+[data-country-id="japan"] .japan-dashboard .japan-passport-hero .hero-paper-texture::before {
+  position: absolute;
+  left: 55%;
+  bottom: 18px;
+  width: 250px;
+  height: 120px;
+  pointer-events: none;
+  background:
+    url('/nioli/themes/japan/personality/jp_nioli_postmark_red.png')
+    center / contain no-repeat;
+  content: "";
+  opacity: .105;
+  transform: rotate(-4deg);
+}
+
+/* Koi is ambient, never a UI icon */
+[data-country-id="japan"] .japan-dashboard .world-clock-card::before {
+  position: absolute;
+  right: -35px;
+  bottom: -55px;
+  z-index: 0;
+  width: 240px;
+  height: 210px;
+  pointer-events: none;
+  background:
+    url('/nioli/themes/japan/personality/jp_koi_wave.png')
+    center / contain no-repeat;
+  content: "";
+  opacity: .070;
+  transform: rotate(-7deg);
+}
+
+[data-country-id="japan"] .japan-dashboard .world-clock-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-country-id="japan"] .japan-dashboard .jp-hero-spine,
+[data-country-id="japan"] .japan-dashboard .countdown-block > strong {
+  color: var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .japan-dashboard .jp-dashboard-masthead > b {
+  color: var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .japan-dashboard .jp-dashboard-masthead strong,
+[data-country-id="japan"] .japan-dashboard .jp-hero-meta-strip strong {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .japan-dashboard .metric-card:nth-child(1) {
+  border-top-color: var(--jp-kon);
+}
+[data-country-id="japan"] .japan-dashboard .metric-card:nth-child(2) {
+  border-top-color: var(--jp-matsuba);
+}
+[data-country-id="japan"] .japan-dashboard .metric-card:nth-child(3) {
+  border-top-color: var(--jp-shinsyu);
+}
+[data-country-id="japan"] .japan-dashboard .metric-card:nth-child(4) {
+  border-top-color: var(--jp-yamabuki);
+}
+
+/* -------------------------------------------------------------------------- */
+/* ITINERARY — RAIL PASS                                                       */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .itinerary-main-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(15, 37, 64, .14);
+  background:
+    linear-gradient(90deg, rgba(15, 37, 64, .04) 0 7px, transparent 7px),
+    var(--jp-shironeri);
+}
+
+/* JR Pass as a travel-document watermark */
+[data-country-id="japan"] .itinerary-main-card::after {
+  position: absolute;
+  right: -18px;
+  bottom: 18px;
+  z-index: 0;
+  width: 290px;
+  height: 135px;
+  pointer-events: none;
+  background:
+    url('/nioli/themes/japan/personality/jp_rail_pass.png')
+    center / contain no-repeat;
+  content: "";
+  opacity: .060;
+  transform: rotate(-4deg);
+}
+
+[data-country-id="japan"] .itinerary-main-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-country-id="japan"] .date-chip.active {
+  border-color: rgba(171, 59, 58, .26);
+  background:
+    linear-gradient(145deg, rgba(171, 59, 58, .10), var(--jp-shironeri));
+  box-shadow: inset 0 3px var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .timeline-time strong {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .activity-card {
+  border-color: rgba(15, 37, 64, .12);
+  background: rgba(252, 250, 242, .92);
+}
+
+[data-country-id="japan"] .activity-category-tags span {
+  border-color: rgba(66, 96, 45, .16);
+  background: rgba(66, 96, 45, .07);
+  color: var(--jp-matsuba);
+}
+
+[data-country-id="japan"] .stamp-reference {
+  color: var(--jp-kikyo);
+}
+
+/* -------------------------------------------------------------------------- */
+/* MAP — TORII                                                                 */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .route-planner-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(15, 37, 64, .15);
+  background:
+    radial-gradient(circle at 92% 9%, rgba(171,59,58,.045), transparent 8rem),
+    var(--jp-shironeri);
+}
+
+[data-country-id="japan"] .route-planner-card::after {
+  position: absolute;
+  right: -35px;
+  bottom: -30px;
+  z-index: 0;
+  width: 230px;
+  height: 220px;
+  pointer-events: none;
+  background:
+    url('/nioli/themes/japan/personality/jp_torii.png')
+    center / contain no-repeat;
+  content: "";
+  opacity: .055;
+}
+
+[data-country-id="japan"] .route-planner-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-country-id="japan"] .route-option.active {
+  border-color: rgba(171, 59, 58, .24);
+  background: rgba(171, 59, 58, .075);
+}
+
+[data-country-id="japan"] .route-option-icon {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .route-option.active .route-option-icon {
+  color: var(--jp-shinsyu);
+}
+
+/* -------------------------------------------------------------------------- */
+/* RESERVATIONS — IMMIGRATION                                                  */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .reservation-card {
+  border-color: rgba(15, 37, 64, .13);
+  background:
+    linear-gradient(135deg, #FFFDF7, var(--jp-shironeri));
+}
+
+[data-country-id="japan"] .reservation-ribbon {
+  background: var(--jp-kon);
+  color: #FFFDF7;
+}
+
+[data-country-id="japan"] .reservation-card:nth-child(3n + 2) .reservation-ribbon {
+  background: var(--jp-matsuba);
+}
+
+[data-country-id="japan"] .reservation-card:nth-child(3n + 3) .reservation-ribbon {
+  background: var(--jp-shinsyu);
+}
+
+/* Immigration stamp belongs to documents/offline area */
+[data-country-id="japan"] .offline-banner {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(106, 76, 156, .19);
+  background:
+    linear-gradient(120deg, rgba(106,76,156,.075), rgba(252,250,242,.95) 45%);
+}
+
+[data-country-id="japan"] .offline-banner::after {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  width: 185px;
+  height: 105px;
+  pointer-events: none;
+  background:
+    url('/nioli/themes/japan/personality/jp_immigration_stamp.png')
+    center / contain no-repeat;
+  content: "";
+  opacity: .18;
+  transform: translateY(-50%) rotate(-4deg);
+}
+
+[data-country-id="japan"] .offline-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+[data-country-id="japan"] .offline-banner .eyebrow {
+  color: var(--jp-kikyo);
+}
+
+[data-country-id="japan"] .offline-mark {
+  border-color: rgba(106, 76, 156, .16);
+  background: rgba(106, 76, 156, .10);
+  color: var(--jp-kikyo);
+}
+
+/* -------------------------------------------------------------------------- */
+/* PASSPORT — KIKYO CEREMONIAL                                                */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .passport-cover {
+  border-color: rgba(15, 37, 64, .15);
+  background:
+    radial-gradient(circle at 86% 7%, rgba(106,76,156,.06), transparent 9rem),
+    var(--jp-shironeri);
+}
+
+[data-country-id="japan"] .passport-cover .adventure-label {
+  border-color: rgba(106, 76, 156, .17);
+  color: var(--jp-kikyo);
+}
+
+[data-country-id="japan"] .official-collection-page {
+  border-color: rgba(106, 76, 156, .15);
+  background:
+    radial-gradient(circle at 85% 10%, rgba(106,76,156,.045), transparent 9rem),
+    var(--jp-shironeri);
+}
+
+[data-country-id="japan"] .official-collection-page > header > span {
+  border-color: rgba(106, 76, 156, .20);
+  background: rgba(106, 76, 156, .075);
+  color: var(--jp-kikyo);
+}
+
+/* -------------------------------------------------------------------------- */
+/* FINANCES — QUIETER SYSTEM, NO DECORATIVE STICKER                           */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .budget-hero-card {
+  border-color: rgba(66, 96, 45, .16);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(66,96,45,.055), transparent 8rem),
+    var(--jp-shironeri);
+}
+
+[data-country-id="japan"] .budget-orbit {
+  color: var(--jp-matsuba);
+}
+
+[data-country-id="japan"] .finance-stat-card:nth-child(1) .finance-stat-icon {
+  color: var(--jp-shinsyu);
+}
+[data-country-id="japan"] .finance-stat-card:nth-child(2) .finance-stat-icon {
+  color: var(--jp-kikyo);
+}
+
+[data-country-id="japan"] .expense-amount {
+  color: var(--jp-shinsyu);
+}
+
+/* -------------------------------------------------------------------------- */
+/* COMPANION — MATSUBA + YAMABUKI                                             */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .companion-card.companion-v2 {
+  border-color: rgba(66, 96, 45, .18);
+  background:
+    radial-gradient(circle at 88% 6%, rgba(255,177,27,.11), transparent 7rem),
+    radial-gradient(circle at 10% 90%, rgba(66,96,45,.08), transparent 9rem),
+    var(--jp-shironeri);
+}
+
+[data-country-id="japan"] .companion-card.companion-v2 > .eyebrow {
+  border-color: rgba(66, 96, 45, .16);
+  background: rgba(66, 96, 45, .075);
+  color: var(--jp-matsuba);
+}
+
+[data-country-id="japan"] .companion-mood strong {
+  border-color: rgba(66, 96, 45, .18);
+  background: rgba(66, 96, 45, .09);
+  color: var(--jp-matsuba);
+}
+
+/* -------------------------------------------------------------------------- */
+/* FLOATING BRADY                                                              */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .floating-companion .floating-brady {
+  border-color: rgba(15, 37, 64, .15);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255,255,255,.72), transparent 64%),
+    var(--jp-shironeri);
+}
+
+[data-country-id="japan"] .floating-companion-copy {
+  border-color: rgba(15, 37, 64, .14);
+  background: rgba(252, 250, 242, .97);
+}
+
+[data-country-id="japan"] .floating-companion-copy strong {
+  color: var(--jp-shinsyu);
+}
+
+/* -------------------------------------------------------------------------- */
+/* MOBILE                                                                     */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .japan-dashboard .japan-passport-hero::after {
+    right: 15px;
+    top: 18px;
+    width: 52px;
+    height: 82px;
+    opacity: .76;
+  }
+
+  [data-country-id="japan"] .japan-dashboard .japan-passport-hero .hero-paper-texture::before {
+    left: 40%;
+    bottom: 8px;
+    width: 180px;
+    height: 88px;
+    opacity: .075;
+  }
+
+  [data-country-id="japan"] .japan-dashboard .world-clock-card::before {
+    right: -55px;
+    bottom: -72px;
+    width: 205px;
+    height: 190px;
+    opacity: .050;
+  }
+
+  [data-country-id="japan"] .itinerary-main-card::after {
+    right: -45px;
+    bottom: 20px;
+    width: 235px;
+    height: 110px;
+    opacity: .045;
+  }
+
+  [data-country-id="japan"] .route-planner-card::after {
+    right: -60px;
+    bottom: -45px;
+    width: 200px;
+    height: 190px;
+    opacity: .045;
+  }
+
+  [data-country-id="japan"] .offline-banner::after {
+    right: -25px;
+    width: 145px;
+    height: 85px;
+    opacity: .12;
+  }
+}
+
+/* END NIOLI JAPAN — NIPPON COLOR + ASSET PERSONALITY V1 */
+
+/* ========================================================================== */
+/* NIOLI JAPAN HOME V3 — DIRECT STRUCTURAL                                    */
+/* ========================================================================== */
+
+[data-country-id="japan"] .jp-home-v3 {
+  --jp-shironeri:#FCFAF2;
+  --jp-kuro:#0B1013;
+  --jp-kon:#0F2540;
+  --jp-shinsyu:#AB3B3A;
+  --jp-matsuba:#42602D;
+  --jp-kikyo:#6A4C9C;
+  --jp-yamabuki:#FFB11B;
+  gap: 34px;
+}
+
+/* Header */
+[data-country-id="japan"] .jp-home-v3 .welcome-row {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:end;
+  gap:24px;
+  border-bottom:1px solid rgba(15,37,64,.13);
+  padding-bottom:20px;
+}
+
+[data-country-id="japan"] .jp-home-v3 .welcome-row::after {
+  width:116px;
+  height:3px;
+  background:linear-gradient(90deg,var(--jp-shinsyu),var(--jp-yamabuki));
+}
+
+[data-country-id="japan"] .jp-home-v3 .welcome-row h1 {
+  color:var(--jp-kuro);
+  font-size:clamp(38px,4vw,58px);
+  letter-spacing:-.055em;
+}
+
+[data-country-id="japan"] .jp-home-v3 .welcome-row .eyebrow {
+  color:var(--jp-kon);
+}
+
+/* HERO ------------------------------------------------------------------- */
+[data-country-id="japan"] .jp-home-hero-v3 {
+  position:relative;
+  display:grid;
+  min-height:390px;
+  grid-template-columns:minmax(0,1fr) 350px;
+  overflow:hidden;
+  border:1px solid rgba(15,37,64,.15);
+  border-radius:12px 30px 30px 12px;
+  background:var(--jp-shironeri);
+  box-shadow:0 28px 58px rgba(37,29,22,.12);
+}
+
+[data-country-id="japan"] .jp-home-hero-v3::before {
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:18px;
+  background:var(--jp-shinsyu);
+  content:"";
+}
+
+[data-country-id="japan"] .jp-home-hero-main {
+  position:relative;
+  z-index:2;
+  padding:38px 42px 32px 66px;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(171,59,58,.035) 0 1px, transparent 1.5px),
+    linear-gradient(90deg,transparent 0 96%,rgba(15,37,64,.035) 96%);
+  background-size:15px 15px,auto;
+}
+
+[data-country-id="japan"] .jp-home-hero-main::after {
+  position:absolute;
+  left:46%;
+  bottom:5px;
+  width:300px;
+  height:135px;
+  pointer-events:none;
+  background:url('/nioli/themes/japan/personality-v3/jp_nioli_postmark_red.png') center/contain no-repeat;
+  content:"";
+  opacity:.14;
+  transform:rotate(-5deg);
+}
+
+[data-country-id="japan"] .jp-home-pass-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  min-height:84px;
+}
+
+[data-country-id="japan"] .jp-home-pass-title {
+  display:grid;
+  gap:4px;
+}
+
+[data-country-id="japan"] .jp-home-pass-title span {
+  color:var(--jp-shinsyu);
+  font-family:var(--font-mono),monospace;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+
+[data-country-id="japan"] .jp-home-pass-title strong {
+  color:var(--jp-kon);
+  font-size:14px;
+  letter-spacing:.08em;
+}
+
+[data-country-id="japan"] .jp-home-country-label {
+  width:62px;
+  height:84px;
+  object-fit:contain;
+  filter:drop-shadow(0 7px 7px rgba(15,37,64,.13));
+  transform:rotate(3deg);
+}
+
+[data-country-id="japan"] .jp-home-hero-v3 h2 {
+  position:relative;
+  z-index:2;
+  max-width:760px;
+  margin:10px 0 0;
+  color:var(--jp-kuro);
+  font-family:var(--font-display);
+  font-size:clamp(56px,6vw,88px);
+  font-weight:850;
+  letter-spacing:-.065em;
+  line-height:.9;
+}
+
+[data-country-id="japan"] .jp-home-trip-dates {
+  margin-top:14px;
+  color:#655f58;
+  font-size:14px;
+  font-weight:650;
+}
+
+[data-country-id="japan"] .jp-home-route {
+  display:flex;
+  align-items:flex-start;
+  gap:0;
+  max-width:680px;
+  margin-top:32px;
+}
+
+[data-country-id="japan"] .jp-home-route-stop {
+  display:grid;
+  min-width:0;
+  flex:1;
+  grid-template-columns:auto 1fr;
+  grid-template-rows:auto auto;
+  align-items:center;
+}
+
+[data-country-id="japan"] .jp-home-route-stop i {
+  width:13px;
+  height:13px;
+  grid-column:1;
+  grid-row:1;
+  border:2px solid rgba(15,37,64,.38);
+  border-radius:50%;
+  background:var(--jp-shironeri);
+}
+
+[data-country-id="japan"] .jp-home-route-stop.destination i {
+  border-color:var(--jp-shinsyu);
+  background:var(--jp-shinsyu);
+  box-shadow:0 0 0 5px rgba(171,59,58,.10);
+}
+
+[data-country-id="japan"] .jp-home-route-stop b {
+  height:1px;
+  grid-column:2;
+  grid-row:1;
+  background:linear-gradient(90deg,rgba(15,37,64,.35),rgba(15,37,64,.12));
+}
+
+[data-country-id="japan"] .jp-home-route-stop small {
+  grid-column:1/3;
+  grid-row:2;
+  margin-top:7px;
+  color:#625e58;
+  font-size:11px;
+  font-weight:800;
+}
+
+[data-country-id="japan"] .jp-home-route-stop.destination small {
+  color:var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .jp-home-meta {
+  display:grid;
+  max-width:670px;
+  grid-template-columns:1.5fr .7fr .9fr;
+  margin-top:30px;
+  border-top:1px solid rgba(15,37,64,.13);
+  border-bottom:1px solid rgba(15,37,64,.13);
+}
+
+[data-country-id="japan"] .jp-home-meta span {
+  display:grid;
+  gap:2px;
+  padding:11px 14px 10px 0;
+}
+
+[data-country-id="japan"] .jp-home-meta span + span {
+  border-left:1px dashed rgba(15,37,64,.14);
+  padding-left:15px;
+}
+
+[data-country-id="japan"] .jp-home-meta small {
+  color:#81776e;
+  font-family:var(--font-mono),monospace;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+
+[data-country-id="japan"] .jp-home-meta strong {
+  overflow:hidden;
+  color:var(--jp-kon);
+  font-size:12px;
+  font-weight:850;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* right indigo panel */
+[data-country-id="japan"] .jp-home-hero-art {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 72% 20%,rgba(255,255,255,.08),transparent 8rem),
+    linear-gradient(160deg,#163653,var(--jp-kon));
+  border-left:1px solid rgba(15,37,64,.18);
+}
+
+[data-country-id="japan"] .jp-home-hero-art::before {
+  position:absolute;
+  left:-85px;
+  bottom:-80px;
+  z-index:-1;
+  width:335px;
+  height:300px;
+  background:url('/nioli/themes/japan/personality-v3/jp_koi_wave.png') center/contain no-repeat;
+  content:"";
+  opacity:.20;
+  transform:rotate(-8deg);
+}
+
+[data-country-id="japan"] .jp-home-hero-art::after {
+  position:absolute;
+  right:-32px;
+  top:-12px;
+  z-index:-1;
+  width:210px;
+  height:130px;
+  background:url('/nioli/themes/japan/personality-v3/jp_immigration_stamp.png') center/contain no-repeat;
+  content:"";
+  opacity:.16;
+  transform:rotate(5deg);
+}
+
+[data-country-id="japan"] .jp-home-brady {
+  position:absolute;
+  right:10px;
+  bottom:92px;
+  z-index:2;
+  width:210px;
+  height:270px;
+  object-fit:contain;
+  object-position:center bottom;
+  filter:drop-shadow(0 15px 12px rgba(0,0,0,.20)) !important;
+}
+
+[data-country-id="japan"] .jp-home-countdown {
+  position:absolute;
+  right:20px;
+  bottom:18px;
+  left:20px;
+  z-index:3;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:end;
+  gap:8px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:17px 17px 17px 6px;
+  background:rgba(252,250,242,.95);
+  padding:14px 15px 13px;
+  box-shadow:0 13px 28px rgba(0,0,0,.16);
+}
+
+[data-country-id="japan"] .jp-home-countdown span {
+  align-self:center;
+  color:#73675f;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+[data-country-id="japan"] .jp-home-countdown strong {
+  color:var(--jp-shinsyu);
+  font-size:61px;
+  font-weight:950;
+  letter-spacing:-.07em;
+  line-height:.77;
+}
+
+[data-country-id="japan"] .jp-home-countdown small {
+  align-self:center;
+  color:var(--jp-kon);
+  font-size:11px;
+  font-weight:900;
+}
+
+[data-country-id="japan"] .jp-home-countdown b {
+  position:absolute;
+  right:13px;
+  top:-18px;
+  display:grid;
+  width:36px;
+  height:36px;
+  place-items:center;
+  border-radius:50%;
+  background:var(--jp-yamabuki);
+  color:var(--jp-kuro);
+  font-size:15px;
+  box-shadow:0 7px 14px rgba(0,0,0,.16);
+}
+
+/* World clock: visibly different */
+[data-country-id="japan"] .jp-home-v3 .world-clock-card {
+  overflow:hidden;
+  border:1px solid rgba(15,37,64,.15);
+  border-radius:10px 24px 24px 10px;
+  background:var(--jp-shironeri);
+  padding:0;
+  box-shadow:0 18px 40px rgba(37,29,22,.075);
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-card > header {
+  margin:0;
+  border:0;
+  background:var(--jp-kon);
+  padding:20px 24px;
+  color:#fff;
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-card > header h2 {
+  color:#fff;
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-card > header .eyebrow {
+  color:var(--jp-yamabuki);
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-card > header > span {
+  border-color:rgba(255,255,255,.18);
+  background:rgba(255,255,255,.09);
+  color:#fff;
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-grid {
+  padding:21px 23px 23px;
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-location {
+  border:0;
+  border-left:3px solid rgba(15,37,64,.14);
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-location.priority {
+  border-left-color:var(--jp-shinsyu);
+  background:rgba(171,59,58,.035);
+}
+
+[data-country-id="japan"] .jp-home-v3 .world-clock-country {
+  border-color:rgba(66,96,45,.16);
+  background:rgba(66,96,45,.07);
+  color:var(--jp-matsuba);
+}
+
+/* Section typography */
+[data-country-id="japan"] .jp-home-v3 .subsection-heading {
+  position:relative;
+  border-bottom:1px solid rgba(15,37,64,.12);
+  padding:0 0 11px 17px;
+}
+
+[data-country-id="japan"] .jp-home-v3 .subsection-heading::before {
+  position:absolute;
+  left:0;
+  bottom:10px;
+  width:5px;
+  height:34px;
+  border-radius:2px;
+  background:var(--jp-shinsyu);
+  content:"";
+}
+
+[data-country-id="japan"] .jp-home-v3 .subsection-heading h2 {
+  color:var(--jp-kon);
+  font-size:clamp(26px,2.5vw,35px);
+}
+
+[data-country-id="japan"] .jp-home-v3 .surface-card {
+  border-color:rgba(15,37,64,.12);
+  background:var(--jp-shironeri);
+  box-shadow:0 13px 30px rgba(37,29,22,.055);
+}
+
+[data-country-id="japan"] .jp-home-v3 .metric-card:nth-child(1){border-top:4px solid var(--jp-kon)}
+[data-country-id="japan"] .jp-home-v3 .metric-card:nth-child(2){border-top:4px solid var(--jp-matsuba)}
+[data-country-id="japan"] .jp-home-v3 .metric-card:nth-child(3){border-top:4px solid var(--jp-shinsyu)}
+[data-country-id="japan"] .jp-home-v3 .metric-card:nth-child(4){border-top:4px solid var(--jp-yamabuki)}
+
+@media(max-width:900px){
+  [data-country-id="japan"] .jp-home-hero-v3{
+    grid-template-columns:minmax(0,1fr) 290px;
+  }
+  [data-country-id="japan"] .jp-home-brady{
+    width:185px;
+  }
+}
+
+@media(max-width:720px){
+  [data-country-id="japan"] .jp-home-v3 .welcome-row{
+    grid-template-columns:1fr;
+    align-items:start;
+  }
+
+  [data-country-id="japan"] .jp-home-hero-v3{
+    display:block;
+    border-radius:9px 22px 22px 9px;
+  }
+
+  [data-country-id="japan"] .jp-home-hero-v3::before{
+    width:12px;
+  }
+
+  [data-country-id="japan"] .jp-home-hero-main{
+    padding:25px 18px 25px 37px;
+  }
+
+  [data-country-id="japan"] .jp-home-pass-row{
+    min-height:62px;
+  }
+
+  [data-country-id="japan"] .jp-home-country-label{
+    width:48px;
+    height:64px;
+  }
+
+  [data-country-id="japan"] .jp-home-hero-v3 h2{
+    font-size:clamp(48px,14vw,68px);
+  }
+
+  [data-country-id="japan"] .jp-home-meta{
+    grid-template-columns:1.35fr .65fr;
+  }
+
+  [data-country-id="japan"] .jp-home-meta span:last-child{
+    display:none;
+  }
+
+  [data-country-id="japan"] .jp-home-hero-art{
+    min-height:285px;
+    border-top:1px solid rgba(15,37,64,.18);
+    border-left:0;
+  }
+
+  [data-country-id="japan"] .jp-home-brady{
+    right:auto;
+    left:18px;
+    bottom:9px;
+    width:175px;
+    height:235px;
+  }
+
+  [data-country-id="japan"] .jp-home-countdown{
+    right:14px;
+    bottom:18px;
+    left:auto;
+    width:142px;
+    grid-template-columns:1fr;
+    justify-items:end;
+  }
+
+  [data-country-id="japan"] .jp-home-countdown strong{
+    font-size:58px;
+  }
+
+  [data-country-id="japan"] .jp-home-countdown b{
+    display:none;
+  }
+
+  [data-country-id="japan"] .jp-home-v3 .world-clock-card > header{
+    padding:17px 18px;
+  }
+
+  [data-country-id="japan"] .jp-home-v3 .world-clock-grid{
+    padding:16px;
+  }
+}
+
+/* END NIOLI JAPAN HOME V3 — DIRECT STRUCTURAL */
+
+/* ========================================================================== */
+/* NIOLI JAPAN — PATCH 1 NAVIGATION + CONTROLS V1                             */
+/* Priority: legibility, hierarchy, restrained color                          */
+/* ========================================================================== */
+
+[data-country-id="japan"] {
+  --jp-shironeri: #FCFAF2;
+  --jp-kuro: #0B1013;
+  --jp-kon: #0F2540;
+  --jp-shinsyu: #AB3B3A;
+  --jp-matsuba: #42602D;
+  --jp-kikyo: #6A4C9C;
+  --jp-yamabuki: #FFB11B;
+  --jp-control-border: rgba(15, 37, 64, .16);
+}
+
+/* -------------------------------------------------------------------------- */
+/* A. TOPBAR — this is now the destination switcher, not a duplicate card     */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .top-bar .country-trigger {
+  position: relative;
+  min-width: 188px;
+  min-height: 58px;
+  grid-template-columns: 43px minmax(0, 1fr) auto;
+  gap: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 37, 64, .15) !important;
+  border-radius: 14px 18px 18px 14px;
+  background:
+    linear-gradient(90deg, rgba(66, 96, 45, .075) 0 47px, transparent 47px),
+    var(--jp-shironeri) !important;
+  padding: 6px 12px 6px 7px !important;
+  color: var(--jp-kon);
+  box-shadow:
+    0 7px 18px rgba(15, 37, 64, .055),
+    inset 0 0 0 1px rgba(255,255,255,.45);
+}
+
+[data-country-id="japan"] .top-bar .country-trigger::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 47px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--jp-matsuba), transparent 72%);
+  content: "";
+  opacity: .78;
+}
+
+[data-country-id="japan"] .top-bar .country-trigger:hover {
+  border-color: rgba(15, 37, 64, .28) !important;
+  background:
+    linear-gradient(90deg, rgba(66, 96, 45, .11) 0 47px, transparent 47px),
+    #fffdf7 !important;
+  box-shadow: 0 10px 22px rgba(15, 37, 64, .085);
+  transform: translateY(-1px);
+}
+
+[data-country-id="japan"] .top-bar .country-code-chip {
+  position: relative;
+  width: 40px;
+  height: 44px;
+  flex: 0 0 40px;
+  border: 0;
+  border-radius: 9px 9px 5px 5px;
+  background: transparent;
+  color: var(--jp-matsuba);
+  font-family: var(--font-mono), monospace;
+  font-size: 15px !important;
+  font-weight: 950;
+  letter-spacing: .03em;
+}
+
+[data-country-id="japan"] .top-bar .country-code-chip::after {
+  display: block;
+  margin-top: 1px;
+  color: rgba(66,96,45,.64);
+  content: "日本";
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .02em;
+}
+
+[data-country-id="japan"] .top-bar .country-trigger > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+  text-align: left;
+}
+
+[data-country-id="japan"] .top-bar .country-trigger small {
+  color: #777268;
+  font-family: var(--font-mono), monospace;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .top-bar .country-trigger strong {
+  overflow: hidden;
+  color: var(--jp-kon);
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-country-id="japan"] .top-bar .country-trigger > svg {
+  color: var(--jp-kon);
+}
+
+/* -------------------------------------------------------------------------- */
+/* B. SIDEBAR TRAVEL PASS — visually different from the topbar switcher       */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .side-navigation .trip-mini-card {
+  position: relative;
+  grid-template-columns: 48px minmax(0, 1fr) 34px;
+  gap: 11px;
+  overflow: visible;
+  border: 1px solid rgba(171, 59, 58, .20) !important;
+  border-left: 4px solid var(--jp-shinsyu) !important;
+  border-radius: 9px 17px 17px 9px;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(171,59,58,.055), transparent 5rem),
+    var(--jp-shironeri) !important;
+  padding: 12px 11px 12px 10px;
+  color: var(--jp-kuro);
+  box-shadow: 0 9px 22px rgba(76, 54, 34, .055);
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-card::before,
+[data-country-id="japan"] .side-navigation .trip-mini-card::after {
+  display: none;
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-flag {
+  width: 43px;
+  height: 52px;
+  border: 1px solid rgba(15,37,64,.15);
+  border-radius: 6px 6px 3px 3px;
+  background:
+    linear-gradient(180deg, rgba(15,37,64,.055), transparent),
+    #fffdf7;
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-flag b {
+  color: var(--jp-kon);
+  font-size: 17px;
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-card > span:nth-child(2) {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-card small {
+  color: var(--jp-shinsyu);
+  font-family: var(--font-mono), monospace;
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-card strong {
+  overflow: hidden;
+  color: var(--jp-kuro);
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-card em {
+  overflow: hidden;
+  color: #6f685f;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-country-id="japan"] .side-navigation .trip-mini-jp-mark {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  border: 1px solid rgba(171,59,58,.18);
+  border-radius: 50%;
+  background: rgba(171,59,58,.065);
+  color: var(--jp-shinsyu);
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* -------------------------------------------------------------------------- */
+/* C. NAV ACTIVE — red is accent only; never a red text-on-red situation      */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .side-nav-button {
+  border: 1px solid transparent;
+  color: #555d5b;
+}
+
+[data-country-id="japan"] .side-nav-button:hover {
+  border-color: rgba(15,37,64,.08);
+  background: rgba(15,37,64,.035);
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .side-nav-button.active {
+  border-color: rgba(15,37,64,.10);
+  background:
+    linear-gradient(90deg, rgba(171,59,58,.075), rgba(252,250,242,.95));
+  color: var(--jp-kon);
+  box-shadow: inset 4px 0 var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .side-nav-button.active .side-nav-icon {
+  border-color: rgba(171,59,58,.17);
+  background: rgba(171,59,58,.055);
+  color: var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .side-nav-button.active::after {
+  background: var(--jp-shinsyu);
+}
+
+/* -------------------------------------------------------------------------- */
+/* D. ITINERARY DAY CARDS — FIX THE ILLEGIBLE ACTIVE STATE                    */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .day-card-strip {
+  scrollbar-color: rgba(15,37,64,.45) transparent;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip {
+  border: 1px solid rgba(15,37,64,.12);
+  border-top: 4px solid var(--route-travel);
+  background: rgba(252,250,242,.94);
+  color: var(--jp-kuro);
+  box-shadow: 0 5px 13px rgba(37,29,22,.025);
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip:hover {
+  border-color: rgba(15,37,64,.25);
+  background: #fffdf7;
+  color: var(--jp-kuro);
+  box-shadow: 0 9px 18px rgba(37,29,22,.055);
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active {
+  border: 1px solid rgba(171,59,58,.28) !important;
+  border-top: 5px solid var(--jp-shinsyu) !important;
+  background:
+    linear-gradient(180deg, rgba(171,59,58,.065), transparent 42%),
+    #fffdf7 !important;
+  color: var(--jp-kuro) !important;
+  box-shadow:
+    0 12px 24px rgba(37,29,22,.075),
+    inset 0 0 0 1px rgba(255,255,255,.6);
+  transform: translateY(-2px);
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active :where(small,span,strong,em) {
+  color: inherit !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-date strong {
+  color: var(--jp-shinsyu) !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-date small {
+  color: #655f58 !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-copy strong {
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-copy span,
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-meta {
+  color: #655f58 !important;
+}
+
+/* Day card focus is visible and high-contrast */
+[data-country-id="japan"] .day-card-strip .date-chip:focus-visible {
+  outline: 3px solid rgba(255,177,27,.55);
+  outline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* E. BUTTON SYSTEM — Kon primary, Shironeri secondary, Shinsyu destructive   */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .primary-button {
+  border: 1px solid #091D31 !important;
+  border-radius: 12px 12px 12px 5px;
+  background: linear-gradient(180deg, #183954, var(--jp-kon)) !important;
+  color: #fffdf7 !important;
+  box-shadow: 0 9px 20px rgba(15,37,64,.18) !important;
+  text-shadow: none;
+}
+
+[data-country-id="japan"] .primary-button:hover:not(:disabled) {
+  border-color: #071827 !important;
+  background: linear-gradient(180deg, #102D47, #0A2036) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 25px rgba(15,37,64,.23) !important;
+  transform: translateY(-1px);
+}
+
+[data-country-id="japan"] .primary-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 5px 12px rgba(15,37,64,.18) !important;
+}
+
+[data-country-id="japan"] .secondary-button,
+[data-country-id="japan"] .quiet-button {
+  border: 1px solid rgba(15,37,64,.17) !important;
+  border-radius: 12px 12px 12px 5px;
+  background: rgba(252,250,242,.96) !important;
+  color: var(--jp-kon) !important;
+  box-shadow: 0 4px 11px rgba(15,37,64,.025);
+  text-decoration: none !important;
+}
+
+[data-country-id="japan"] .secondary-button:hover:not(:disabled),
+[data-country-id="japan"] .quiet-button:hover:not(:disabled) {
+  border-color: rgba(15,37,64,.30) !important;
+  background: #fffdf7 !important;
+  color: var(--jp-kon) !important;
+  box-shadow: 0 7px 15px rgba(15,37,64,.06);
+  transform: translateY(-1px);
+}
+
+[data-country-id="japan"] :where(.primary-button,.secondary-button,.quiet-button):focus-visible {
+  outline: 3px solid rgba(255,177,27,.55);
+  outline-offset: 3px;
+}
+
+[data-country-id="japan"] :where(.primary-button,.secondary-button,.quiet-button):disabled {
+  border-color: rgba(15,37,64,.08) !important;
+  background: #e8e5de !important;
+  color: #817c73 !important;
+  box-shadow: none !important;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* Keep danger semantics red, but guarantee readable contrast */
+[data-country-id="japan"] .danger-button {
+  border-color: #762826 !important;
+  background: var(--jp-shinsyu) !important;
+  color: #fffdf7 !important;
+}
+
+[data-country-id="japan"] .danger-button:hover:not(:disabled) {
+  background: #872e2d !important;
+  color: #fff !important;
+}
+
+/* Links can keep the Japanese red because they are small accents */
+[data-country-id="japan"] .text-link {
+  color: var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .text-link:hover {
+  color: #812d2c;
+}
+
+/* -------------------------------------------------------------------------- */
+/* F. MOBILE                                                                  */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .top-bar .country-trigger {
+    min-width: 0;
+    max-width: calc(100% - 110px);
+    min-height: 50px;
+    grid-template-columns: 37px minmax(0,1fr) auto;
+    padding: 4px 9px 4px 5px !important;
+  }
+
+  [data-country-id="japan"] .top-bar .country-trigger::after {
+    left: 42px;
+  }
+
+  [data-country-id="japan"] .top-bar .country-code-chip {
+    width: 36px;
+    height: 40px;
+    flex-basis: 36px;
+    font-size: 13px !important;
+  }
+
+  [data-country-id="japan"] .top-bar .country-trigger strong {
+    font-size: 14px;
+  }
+
+  [data-country-id="japan"] .day-card-strip .date-chip.active {
+    transform: none;
+  }
+}
+
+/* END NIOLI JAPAN — PATCH 1 NAVIGATION + CONTROLS V1 */
+
+/* ========================================================================== */
+/* NIOLI JAPAN — PATCH 2 ITINERARY + EMPTY STATES V1                          */
+/* Light, legible, intentional. No orphan kanji placeholders.                 */
+/* ========================================================================== */
+
+[data-country-id="japan"] {
+  --jp-shironeri: #FCFAF2;
+  --jp-kuro: #0B1013;
+  --jp-kon: #0F2540;
+  --jp-shinsyu: #AB3B3A;
+  --jp-matsuba: #42602D;
+  --jp-kikyo: #6A4C9C;
+  --jp-yamabuki: #FFB11B;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 1. TRAVEL TIP / FLEXIBLE PLAN                                               */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .travel-tip-card {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid rgba(66, 96, 45, .18);
+  border-left: 5px solid var(--jp-matsuba);
+  border-radius: 10px 20px 20px 10px;
+  background:
+    radial-gradient(circle at 92% 9%, rgba(66,96,45,.065), transparent 7rem),
+    linear-gradient(135deg, #fffdf7, var(--jp-shironeri));
+  padding: 22px 22px 21px 24px;
+  color: var(--jp-kuro);
+  box-shadow: 0 13px 28px rgba(37, 29, 22, .065);
+}
+
+[data-country-id="japan"] .travel-tip-card::after {
+  position: absolute;
+  right: -48px;
+  bottom: -52px;
+  width: 170px;
+  height: 150px;
+  border: 1px solid rgba(66,96,45,.055);
+  border-radius: 50%;
+  content: "";
+}
+
+[data-country-id="japan"] .travel-tip-card .travel-tip-icon {
+  position: static;
+  width: 38px;
+  height: 38px;
+  margin-bottom: 11px;
+  border: 1px solid rgba(66,96,45,.16);
+  border-radius: 12px 12px 12px 5px;
+  background: rgba(66,96,45,.08);
+  padding: 9px;
+  color: var(--jp-matsuba);
+}
+
+[data-country-id="japan"] .travel-tip-card .eyebrow {
+  margin: 0 0 3px;
+  color: var(--jp-matsuba);
+  font-size: 10px !important;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+[data-country-id="japan"] .travel-tip-card h3 {
+  position: relative;
+  margin: 4px 0 9px;
+  color: var(--jp-kon);
+  font-family: var(--font-display);
+  font-size: 23px;
+  font-weight: 750;
+  line-height: 1.15;
+}
+
+[data-country-id="japan"] .travel-tip-card > p:last-child {
+  position: relative;
+  max-width: 29rem;
+  margin: 0;
+  color: #625e57;
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.55;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. ITINERARY MAIN / DETAIL PANEL                                           */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .itinerary-main-card {
+  border: 1px solid rgba(15,37,64,.13);
+  border-radius: 11px 22px 22px 11px;
+  background:
+    linear-gradient(90deg, rgba(15,37,64,.045) 0 7px, transparent 7px),
+    var(--jp-shironeri);
+  box-shadow: 0 15px 34px rgba(37,29,22,.06);
+}
+
+[data-country-id="japan"] .itinerary-day-header {
+  border-bottom-color: rgba(15,37,64,.13);
+}
+
+[data-country-id="japan"] .itinerary-day-header h2 {
+  color: var(--jp-kon);
+  font-weight: 760;
+}
+
+[data-country-id="japan"] .itinerary-day-header > div > span {
+  border: 1px solid rgba(66,96,45,.14);
+  background: rgba(66,96,45,.07);
+  color: var(--jp-matsuba);
+}
+
+[data-country-id="japan"] .day-detail-ribbon {
+  border-color: rgba(15,37,64,.11);
+  background: rgba(255,253,247,.66);
+}
+
+[data-country-id="japan"] .day-detail-ribbon small {
+  color: #716b62;
+}
+
+[data-country-id="japan"] .day-detail-ribbon strong {
+  color: var(--jp-kon);
+}
+
+/* Activities: no black slabs */
+[data-country-id="japan"] .activity-card {
+  border-color: rgba(15,37,64,.11);
+  background: rgba(255,253,247,.92);
+  color: var(--jp-kuro);
+  box-shadow: 0 7px 18px rgba(37,29,22,.035);
+}
+
+[data-country-id="japan"] .activity-card:hover {
+  border-color: rgba(15,37,64,.22);
+  background: #fffdf8;
+  box-shadow: 0 11px 23px rgba(37,29,22,.065);
+}
+
+[data-country-id="japan"] .activity-card h3 {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .activity-card p {
+  color: #625e57;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. EMPTY STATES — NO GIANT KANJI PLACEHOLDERS                              */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .empty-state {
+  position: relative;
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  overflow: hidden;
+  border: 1px dashed rgba(15,37,64,.18);
+  border-radius: 11px 23px 23px 11px;
+  background:
+    radial-gradient(circle at 91% 13%, rgba(171,59,58,.035), transparent 8rem),
+    linear-gradient(140deg, #fffdf7, var(--jp-shironeri));
+  padding: 45px 24px;
+  text-align: center;
+  box-shadow: inset 5px 0 rgba(15,37,64,.035);
+}
+
+[data-country-id="japan"] .empty-state .empty-state-icon {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  margin-bottom: 5px;
+  border: 1px solid rgba(15,37,64,.14);
+  border-radius: 16px 16px 16px 6px;
+  background: rgba(15,37,64,.055);
+  padding: 12px;
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .empty-state > span {
+  display: none !important;
+}
+
+[data-country-id="japan"] .empty-state h2 {
+  margin: 4px 0 1px;
+  color: var(--jp-kon);
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 760;
+}
+
+[data-country-id="japan"] .empty-state p {
+  max-width: 440px;
+  margin: 0;
+  color: #6b665f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Reservations get subtle official-document personality */
+[data-country-id="japan"] .reservation-grid .empty-state::after {
+  position: absolute;
+  right: -25px;
+  bottom: -30px;
+  width: 205px;
+  height: 115px;
+  pointer-events: none;
+  background:
+    url('/nioli/themes/japan/personality-v3/jp_immigration_stamp.png')
+    center / contain no-repeat;
+  content: "";
+  opacity: .055;
+  transform: rotate(-6deg);
+}
+
+[data-country-id="japan"] .reservation-grid .empty-state > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. RESERVATIONS                                                            */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .filter-tabs {
+  border-bottom-color: rgba(15,37,64,.12);
+}
+
+[data-country-id="japan"] .filter-tabs button {
+  color: #666b68;
+}
+
+[data-country-id="japan"] .filter-tabs button:hover {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .filter-tabs button.active {
+  color: var(--jp-kon) !important;
+  font-weight: 850;
+}
+
+[data-country-id="japan"] .filter-tabs button.active::after {
+  background: var(--jp-shinsyu);
+}
+
+[data-country-id="japan"] .reservation-card {
+  border-color: rgba(15,37,64,.12);
+  background: var(--jp-shironeri);
+  box-shadow: 0 13px 27px rgba(37,29,22,.05);
+}
+
+[data-country-id="japan"] .reservation-ribbon {
+  background: var(--jp-kon) !important;
+  color: #fffdf7;
+}
+
+[data-country-id="japan"] .reservation-ribbon small {
+  background: rgba(255,255,255,.14);
+  color: #fff;
+}
+
+[data-country-id="japan"] .reservation-detail h2 {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .reservation-detail > small,
+[data-country-id="japan"] .reservation-date span {
+  color: var(--jp-shinsyu) !important;
+}
+
+/* Offline card: use Kikyo, but remain light and readable */
+[data-country-id="japan"] .offline-banner {
+  border: 1px solid rgba(106,76,156,.16);
+  border-radius: 11px 21px 21px 11px;
+  background:
+    radial-gradient(circle at 94% 10%, rgba(106,76,156,.045), transparent 7rem),
+    #fbf8f2;
+  color: var(--jp-kuro);
+}
+
+[data-country-id="japan"] .offline-mark {
+  border: 1px solid rgba(106,76,156,.15);
+  background: rgba(106,76,156,.08);
+  color: var(--jp-kikyo);
+}
+
+[data-country-id="japan"] .offline-banner .eyebrow {
+  color: var(--jp-kikyo);
+}
+
+[data-country-id="japan"] .offline-banner h3 {
+  color: var(--jp-kon);
+}
+
+[data-country-id="japan"] .offline-banner p:last-child {
+  color: #6b665f;
+}
+
+[data-country-id="japan"] .offline-banner > span {
+  border: 1px solid rgba(66,96,45,.15);
+  background: rgba(66,96,45,.07);
+  color: var(--jp-matsuba);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. PASSPORT MARK — REMOVE OVAL 鳥居 FALLBACK                               */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .passport-cover-mark.has-asset.jp-clean-country-mark {
+  width: 94px;
+  min-height: 118px;
+  align-self: center;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+[data-country-id="japan"] .passport-cover-mark.has-asset.jp-clean-country-mark img {
+  width: 86px;
+  height: 112px;
+  object-fit: contain;
+  filter: drop-shadow(0 7px 8px rgba(15,37,64,.10));
+  transform: rotate(-2deg);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. RESPONSIVE                                                              */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .travel-tip-card {
+    padding: 18px 18px 17px 20px;
+  }
+
+  [data-country-id="japan"] .travel-tip-card h3 {
+    font-size: 21px;
+  }
+
+  [data-country-id="japan"] .travel-tip-card > p:last-child {
+    font-size: 12px;
+  }
+
+  [data-country-id="japan"] .empty-state {
+    min-height: 220px;
+    padding: 35px 18px;
+  }
+
+  [data-country-id="japan"] .offline-banner {
+    align-items: flex-start;
+  }
+
+  [data-country-id="japan"] .passport-cover-mark.has-asset.jp-clean-country-mark {
+    width: 72px;
+    min-height: 90px;
+  }
+
+  [data-country-id="japan"] .passport-cover-mark.has-asset.jp-clean-country-mark img {
+    width: 67px;
+    height: 88px;
+  }
+}
+
+/* END NIOLI JAPAN — PATCH 2 ITINERARY + EMPTY STATES V1 */
+
+/* ========================================================================== */
+/* NIOLI PATCH 3A — GEO MEMORIES                                              */
+/* Functional review metadata; postcard UI comes in Patch 3B.                 */
+/* ========================================================================== */
+
+.camera-memory-status {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 92%, var(--accent-soft));
+  padding: 11px 12px;
+}
+
+.camera-memory-status > span {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 2px 7px;
+  align-items: center;
+}
+
+.camera-memory-status > span > svg {
+  grid-row: 1 / 3;
+  color: var(--accent-dark);
+}
+
+.camera-memory-status strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.camera-memory-status small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+}
+
+.camera-memory-status.is-ready {
+  border-color: color-mix(in srgb, var(--nature) 35%, var(--line));
+}
+
+.camera-memory-status.is-ready > span > svg {
+  color: var(--nature);
+}
+
+.camera-location-button {
+  min-width: 124px;
+  flex: 0 0 auto;
+  justify-content: center;
+}
+
+.camera-captured-time {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px dashed var(--line);
+  padding: 2px 2px 10px;
+  color: var(--muted);
+}
+
+.camera-captured-time > svg {
+  color: var(--secondary);
+}
+
+.camera-captured-time > span {
+  display: grid;
+  gap: 1px;
+}
+
+.camera-captured-time strong {
+  color: var(--ink);
+  font-size: 10px;
+}
+
+.camera-captured-time small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.camera-meta input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fbf8f3;
+  padding: 10px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+/* Japan palette */
+[data-country-id="japan"] .camera-memory-status {
+  border-color: rgba(15, 37, 64, .14);
+  background: #FCFAF2;
+}
+
+[data-country-id="japan"] .camera-memory-status.is-ready {
+  border-color: rgba(66, 96, 45, .24);
+  background: rgba(66, 96, 45, .055);
+}
+
+[data-country-id="japan"] .camera-memory-status > span > svg {
+  color: #0F2540;
+}
+
+[data-country-id="japan"] .camera-memory-status.is-ready > span > svg {
+  color: #42602D;
+}
+
+[data-country-id="japan"] .camera-captured-time > svg {
+  color: #6A4C9C;
+}
+
+[data-country-id="japan"] .camera-meta input {
+  border-color: rgba(15, 37, 64, .16);
+  background: #FFFDF7;
+  color: #0B1013;
+}
+
+@media (max-width: 720px) {
+  .camera-memory-status {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .camera-location-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* END NIOLI PATCH 3A — GEO MEMORIES */
+
+/* ========================================================================== */
+/* NIOLI PATCH 3B — MEMORY BRIDGE                                             */
+/* Photo-first personal memories. Functional detail before social postcard.   */
+/* ========================================================================== */
+
+[data-country-id="japan"] .personal-stamp-page,
+[data-country-id="japan"] .photo-album {
+  display: none;
+}
+
+[data-country-id="japan"] .personal-memory-page {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(15,37,64,.13);
+  border-radius: 12px 24px 24px 12px;
+  background:
+    radial-gradient(circle at 93% 8%, rgba(66,96,45,.045), transparent 9rem),
+    #FCFAF2;
+  padding: 24px;
+  box-shadow: 0 15px 34px rgba(37,29,22,.055);
+}
+
+[data-country-id="japan"] .personal-memory-page > header {
+  border-bottom: 1px dashed rgba(15,37,64,.13);
+  padding-bottom: 13px;
+}
+
+[data-country-id="japan"] .personal-memory-page > header .eyebrow {
+  color: #42602D;
+}
+
+[data-country-id="japan"] .personal-memory-page > header h3 {
+  color: #0F2540;
+}
+
+[data-country-id="japan"] .personal-memory-page > header > span {
+  border: 1px solid rgba(66,96,45,.16);
+  border-radius: 999px;
+  background: rgba(66,96,45,.07);
+  color: #42602D;
+  font-family: inherit;
+  letter-spacing: 0;
+  transform: none;
+}
+
+.memory-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px;
+  margin-top: 4px;
+}
+
+.memory-photo-card {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(15,37,64,.13);
+  border-radius: 10px 19px 19px 10px;
+  background: #FFFDF7;
+  padding: 0;
+  color: #0B1013;
+  text-align: left;
+  box-shadow: 0 10px 23px rgba(37,29,22,.06);
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.memory-photo-card:hover {
+  border-color: rgba(15,37,64,.26);
+  box-shadow: 0 15px 28px rgba(37,29,22,.10);
+  transform: translateY(-3px);
+}
+
+.memory-photo-card:focus-visible {
+  outline: 3px solid rgba(255,177,27,.55);
+  outline-offset: 3px;
+}
+
+.memory-photo-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #E9E4D9;
+}
+
+.memory-photo-thumb img {
+  object-fit: cover;
+}
+
+.memory-photo-stamp-badge {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  z-index: 2;
+  max-width: calc(100% - 18px);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.68);
+  border-radius: 999px;
+  background: rgba(252,250,242,.94);
+  padding: 5px 8px;
+  color: #AB3B3A;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 5px 12px rgba(37,29,22,.11);
+}
+
+.memory-photo-stamp-badge.unlinked {
+  color: #6D685F;
+}
+
+.memory-photo-copy {
+  display: grid;
+  gap: 4px;
+  padding: 13px 14px 14px;
+}
+
+.memory-photo-copy strong {
+  overflow: hidden;
+  color: #0F2540;
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memory-photo-copy > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #6B665E;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.memory-photo-copy small {
+  color: #797269;
+  font-size: 9px;
+}
+
+.memory-photo-gps {
+  color: #42602D !important;
+}
+
+.memory-pending-block {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+  border-top: 1px dashed rgba(15,37,64,.13);
+  padding-top: 15px;
+}
+
+.memory-pending-block > p {
+  margin: 0;
+  color: #716B62;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.memory-pending-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.memory-pending-stamp {
+  border: 1px solid rgba(15,37,64,.12);
+  border-radius: 999px;
+  background: rgba(255,253,247,.78);
+  padding: 7px 10px;
+  color: #0F2540;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.memory-pending-stamp:hover {
+  border-color: rgba(171,59,58,.22);
+  background: rgba(171,59,58,.045);
+  color: #AB3B3A;
+}
+
+/* Functional memory detail */
+.memory-detail-modal {
+  width: min(940px, 94vw);
+  max-height: min(90vh, 860px);
+  overflow-y: auto;
+}
+
+.memory-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+  gap: 22px;
+}
+
+.memory-detail-photo {
+  position: relative;
+  min-height: 460px;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px 24px 24px 12px;
+  background: #161616;
+}
+
+.memory-detail-photo img {
+  object-fit: contain;
+}
+
+.memory-detail-side {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.memory-detail-stamp {
+  display: grid;
+  min-height: 240px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px dashed rgba(15,37,64,.14);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(171,59,58,.035), transparent 9rem),
+    #FCFAF2;
+  padding: 14px;
+}
+
+.memory-detail-stamp .passport-stamp-mark {
+  transform: rotate(var(--stamp-rotation)) scale(.80);
+}
+
+.memory-detail-no-stamp {
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  border: 1px dashed rgba(15,37,64,.14);
+  border-radius: 18px;
+  background: #FCFAF2;
+  padding: 20px;
+  color: #706A62;
+  text-align: center;
+}
+
+.memory-detail-meta {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.memory-detail-meta > div {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 10px;
+  border-bottom: 1px solid rgba(15,37,64,.10);
+  padding: 10px 0;
+}
+
+.memory-detail-meta dt {
+  color: #777067;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.memory-detail-meta dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #0F2540;
+  font-size: 11px;
+  font-weight: 750;
+  text-align: right;
+}
+
+.memory-detail-note {
+  margin: 0;
+  border-left: 3px solid #42602D;
+  background: rgba(66,96,45,.05);
+  padding: 10px 12px;
+  color: #625E57;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.memory-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 900px) {
+  .memory-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .memory-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .memory-detail-photo {
+    min-height: 390px;
+  }
+
+  .memory-detail-stamp {
+    min-height: 190px;
+  }
+}
+
+@media (max-width: 620px) {
+  [data-country-id="japan"] .personal-memory-page {
+    padding: 17px 13px;
+  }
+
+  .memory-photo-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .memory-photo-card {
+    grid-template-columns: 124px minmax(0,1fr);
+    align-items: stretch;
+  }
+
+  .memory-photo-thumb {
+    height: 124px;
+    aspect-ratio: auto;
+  }
+
+  .memory-photo-copy {
+    align-content: center;
+    padding: 11px 12px;
+  }
+
+  .memory-detail-modal {
+    width: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .memory-detail-photo {
+    min-height: 340px;
+  }
+
+  .memory-detail-meta > div {
+    grid-template-columns: 78px minmax(0,1fr);
+  }
+}
+
+/* END NIOLI PATCH 3B — MEMORY BRIDGE */
+
+/* ========================================================================== */
+/* NIOLI PATCH 3C — POSTCARD MEMORIES                                         */
+/* Fotos geolocalizadas convertidas en postales compartibles independientes.  */
+/* ========================================================================== */
+
+[data-country-id="japan"] .memory-postcards {
+  display: grid;
+  gap: 18px;
+}
+
+[data-country-id="japan"] .memory-postcards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+[data-country-id="japan"] .memory-postcard-card {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid rgba(15, 37, 64, 0.14);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.94)),
+    #FCFAF2;
+  color: #0B1013;
+  text-align: left;
+  box-shadow: 0 14px 28px rgba(24, 20, 16, 0.06);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+[data-country-id="japan"] .memory-postcard-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(171, 59, 58, 0.25);
+  box-shadow: 0 18px 34px rgba(24, 20, 16, 0.1);
+}
+
+[data-country-id="japan"] .memory-postcard-card:focus-visible {
+  outline: 3px solid rgba(106, 76, 156, 0.26);
+  outline-offset: 3px;
+}
+
+[data-country-id="japan"] .memory-postcard-thumb {
+  position: relative;
+  min-height: 220px;
+  background: #E8E2D6;
+}
+
+[data-country-id="japan"] .memory-postcard-thumb img {
+  object-fit: cover;
+}
+
+[data-country-id="japan"] .memory-postcard-pill {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  max-width: calc(100% - 24px);
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.62);
+  border-radius: 999px;
+  background: rgba(15,37,64,.78);
+  padding: 7px 12px;
+  color: #FCFAF2;
+  font-size: 11px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-country-id="japan"] .memory-postcard-copy {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px 16px;
+}
+
+[data-country-id="japan"] .memory-postcard-copy strong {
+  color: #0F2540;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+[data-country-id="japan"] .memory-postcard-copy > span,
+[data-country-id="japan"] .memory-postcard-copy small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #6B665E;
+}
+
+[data-country-id="japan"] .memory-postcard-copy > span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+[data-country-id="japan"] .memory-postcard-copy small {
+  font-size: 11px;
+}
+
+[data-country-id="japan"] .memory-postcard-modal {
+  width: min(1180px, 96vw);
+  max-height: min(92vh, 980px);
+  overflow-y: auto;
+}
+
+[data-country-id="japan"] .memory-postcard-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 22px;
+}
+
+[data-country-id="japan"] .memory-postcard-preview {
+  overflow: hidden;
+  border: 1px solid rgba(15, 37, 64, 0.12);
+  border-radius: 26px;
+  background: #FFFCF6;
+  box-shadow: 0 16px 34px rgba(22, 18, 14, 0.08);
+}
+
+[data-country-id="japan"] .memory-postcard-hero {
+  position: relative;
+  min-height: 480px;
+  background: #E8E2D6;
+}
+
+[data-country-id="japan"] .memory-postcard-hero img {
+  object-fit: cover;
+}
+
+[data-country-id="japan"] .memory-postcard-overlay {
+  position: absolute;
+  inset: auto 18px 18px 18px;
+  display: grid;
+  gap: 2px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 18px;
+  background: rgba(15,37,64,.78);
+  padding: 16px 18px;
+  color: #FCFAF2;
+  backdrop-filter: blur(10px);
+}
+
+[data-country-id="japan"] .memory-postcard-overlay span {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .memory-postcard-overlay strong {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 900;
+  line-height: 1;
+}
+
+[data-country-id="japan"] .memory-postcard-overlay small {
+  font-size: 13px;
+  font-weight: 650;
+}
+
+[data-country-id="japan"] .memory-postcard-body {
+  display: grid;
+  gap: 18px;
+  padding: 18px 22px 22px;
+}
+
+[data-country-id="japan"] .memory-postcard-label {
+  margin: 0 0 4px;
+  color: #AB3B3A;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .memory-postcard-body h3 {
+  margin: 0;
+  color: #0F2540;
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+[data-country-id="japan"] .memory-postcard-body p {
+  margin: 8px 0 0;
+  color: #6B665E;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+[data-country-id="japan"] .memory-postcard-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+[data-country-id="japan"] .memory-postcard-meta > div {
+  display: grid;
+  gap: 6px;
+  border: 1px dashed rgba(15, 37, 64, 0.14);
+  border-radius: 16px;
+  background: #FCFAF2;
+  padding: 12px 14px;
+}
+
+[data-country-id="japan"] .memory-postcard-meta span {
+  color: #6B665E;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .memory-postcard-meta strong {
+  color: #0B1013;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+[data-country-id="japan"] .memory-postcard-sidepanel {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+[data-country-id="japan"] .memory-postcard-sharebox,
+[data-country-id="japan"] .memory-postcard-details {
+  border: 1px solid rgba(15, 37, 64, 0.12);
+  border-radius: 22px;
+  background: #FFFCF6;
+  padding: 18px;
+}
+
+[data-country-id="japan"] .memory-postcard-sharebox h3 {
+  margin: 6px 0 10px;
+  color: #0F2540;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+[data-country-id="japan"] .memory-postcard-sharebox p:last-child {
+  margin: 0;
+  color: #6B665E;
+  line-height: 1.55;
+}
+
+[data-country-id="japan"] .memory-postcard-details {
+  display: grid;
+  gap: 0;
+}
+
+[data-country-id="japan"] .memory-postcard-details > div {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(15, 37, 64, 0.08);
+}
+
+[data-country-id="japan"] .memory-postcard-details > div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+[data-country-id="japan"] .memory-postcard-details dt {
+  color: #6B665E;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .memory-postcard-details dd {
+  margin: 0;
+  color: #0B1013;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+[data-country-id="japan"] .memory-postcard-actions-row {
+  display: grid;
+  gap: 10px;
+}
+
+[data-country-id="japan"] .memory-postcard-actions-row .inline-link-button {
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
+}
+
+@media (max-width: 1040px) {
+  [data-country-id="japan"] .memory-postcard-stage,
+  [data-country-id="japan"] .memory-postcards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .memory-postcard-hero {
+    min-height: 300px;
+  }
+
+  [data-country-id="japan"] .memory-postcard-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* END NIOLI PATCH 3C — POSTCARD MEMORIES */
+
+/* ========================================================================== */
+/* NIOLI PATCH 3D.1 — POSTCARD FLIP                                           */
+/* Frente fotográfico + reverso tipo postal. Independiente de sellos.         */
+/* ========================================================================== */
+
+[data-country-id="japan"] .postcard-flip-backdrop {
+  padding: clamp(10px, 2.5vw, 28px);
+}
+
+[data-country-id="japan"] .postcard-flip-modal {
+  width: min(1080px, 96vw);
+  max-height: 94vh;
+  overflow: auto;
+  border: 1px solid rgba(15, 37, 64, .12);
+  border-radius: 24px;
+  background: #FCFAF2;
+  padding: 18px;
+  box-shadow: 0 28px 80px rgba(25, 20, 15, .24);
+}
+
+[data-country-id="japan"] .postcard-flip-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 2px 2px 14px;
+}
+
+[data-country-id="japan"] .postcard-flip-toolbar .eyebrow {
+  margin: 0 0 3px;
+  color: #AB3B3A;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .13em;
+}
+
+[data-country-id="japan"] .postcard-flip-toolbar h2 {
+  margin: 0;
+  color: #0F2540;
+  font-size: clamp(24px, 4vw, 34px);
+  font-weight: 850;
+  line-height: 1.05;
+}
+
+[data-country-id="japan"] .postcard-flip-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[data-country-id="japan"] .postcard-turn-button {
+  min-height: 40px;
+  border: 1px solid rgba(171, 59, 58, .22);
+  border-radius: 999px;
+  background: #FFFDF7;
+  padding: 8px 14px;
+  color: #AB3B3A;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+[data-country-id="japan"] .postcard-turn-button:hover {
+  background: rgba(171, 59, 58, .055);
+}
+
+[data-country-id="japan"] .postcard-flip-scene {
+  width: 100%;
+  perspective: 1800px;
+}
+
+[data-country-id="japan"] .postcard-flip-card {
+  position: relative;
+  width: 100%;
+  min-height: clamp(540px, 65vw, 690px);
+  transform-style: preserve-3d;
+  transition: transform 680ms cubic-bezier(.2, .75, .2, 1);
+}
+
+[data-country-id="japan"] .postcard-flip-card.is-flipped {
+  transform: rotateY(180deg);
+}
+
+[data-country-id="japan"] .postcard-flip-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+[data-country-id="japan"] .postcard-flip-back {
+  transform: rotateY(180deg);
+}
+
+[data-country-id="japan"] .postcard-front-sheet,
+[data-country-id="japan"] .postcard-back-sheet {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  border: 1px solid #DCCFBB;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(66,96,45,.025) 0 1px, transparent 1.4px) 0 0 / 13px 13px,
+    linear-gradient(135deg, #FFFDF8, #F7F1E7);
+  box-shadow:
+    0 18px 36px rgba(47, 37, 28, .11),
+    inset 0 0 0 8px rgba(255,255,255,.44);
+}
+
+[data-country-id="japan"] .postcard-front-sheet {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0;
+  padding: clamp(18px, 2.5vw, 30px);
+}
+
+[data-country-id="japan"] .postcard-front-photo {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  border: 1px solid rgba(15,37,64,.10);
+  border-radius: 3px;
+  background: #E7E0D5;
+  box-shadow: 0 10px 22px rgba(39,31,23,.10);
+}
+
+[data-country-id="japan"] .postcard-front-photo img {
+  object-fit: cover;
+}
+
+[data-country-id="japan"] .postcard-front-caption {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 104px;
+  padding: 17px 10px 2px;
+  color: #0B1013;
+}
+
+[data-country-id="japan"] .postcard-front-caption > div {
+  display: grid;
+  gap: 3px;
+}
+
+[data-country-id="japan"] .postcard-front-caption span {
+  color: #AB3B3A;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .postcard-front-caption strong {
+  color: #0F2540;
+  font-family: var(--font-display);
+  font-size: clamp(25px, 4vw, 38px);
+  font-weight: 760;
+  line-height: 1;
+}
+
+[data-country-id="japan"] .postcard-front-caption small {
+  padding-bottom: 4px;
+  color: #70685E;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+[data-country-id="japan"] .postcard-approved-postmark {
+  position: absolute;
+  right: clamp(24px, 4vw, 52px);
+  bottom: 24px;
+  width: clamp(78px, 10vw, 118px);
+  aspect-ratio: 1 / 1;
+  pointer-events: none;
+  background: url('/nioli/themes/japan/postcards/jp_nioli_postmark_red.png') center / contain no-repeat;
+  opacity: .20;
+  transform: rotate(-8deg);
+  mix-blend-mode: multiply;
+}
+
+[data-country-id="japan"] .postcard-back-sheet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, .92fr);
+  gap: clamp(24px, 4vw, 46px);
+  align-items: stretch;
+  padding: clamp(34px, 5vw, 66px);
+}
+
+[data-country-id="japan"] .postcard-back-message,
+[data-country-id="japan"] .postcard-back-details {
+  position: relative;
+  min-width: 0;
+}
+
+[data-country-id="japan"] .postcard-back-message {
+  display: flex;
+  flex-direction: column;
+}
+
+[data-country-id="japan"] .postcard-back-kicker {
+  margin: 0 0 10px;
+  color: #AB3B3A;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .postcard-back-message h3 {
+  margin: 0 0 28px;
+  color: #0F2540;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 5vw, 48px);
+  font-weight: 760;
+  line-height: 1;
+}
+
+[data-country-id="japan"] .postcard-handwritten-note {
+  max-width: 34rem;
+  margin: 0;
+  color: #4F4B45;
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.6vw, 27px);
+  line-height: 1.55;
+}
+
+[data-country-id="japan"] .postcard-back-signature {
+  display: grid;
+  gap: 3px;
+  margin-top: auto;
+  padding-top: 36px;
+}
+
+[data-country-id="japan"] .postcard-back-signature span {
+  color: #817A70;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .postcard-back-signature strong {
+  color: #42602D;
+  font-size: 17px;
+}
+
+[data-country-id="japan"] .postcard-back-divider {
+  width: 1px;
+  height: 100%;
+  background: rgba(15,37,64,.16);
+}
+
+[data-country-id="japan"] .postcard-back-details {
+  display: flex;
+  flex-direction: column;
+  padding-top: 124px;
+}
+
+[data-country-id="japan"] .postcard-approved-postmark.back {
+  right: 0;
+  top: 0;
+  bottom: auto;
+  width: 112px;
+  opacity: .24;
+  transform: rotate(7deg);
+}
+
+[data-country-id="japan"] .postcard-address-lines {
+  position: absolute;
+  right: 0;
+  top: 14px;
+  display: grid;
+  width: min(54%, 220px);
+  gap: 17px;
+  padding-top: 8px;
+}
+
+[data-country-id="japan"] .postcard-address-lines i {
+  display: block;
+  height: 1px;
+  background: rgba(15,37,64,.18);
+}
+
+[data-country-id="japan"] .postcard-back-details dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+[data-country-id="japan"] .postcard-back-details dl > div {
+  display: grid;
+  grid-template-columns: 84px minmax(0,1fr);
+  gap: 12px;
+  border-bottom: 1px solid rgba(15,37,64,.12);
+  padding: 12px 0;
+}
+
+[data-country-id="japan"] .postcard-back-details dt {
+  color: #80786E;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+[data-country-id="japan"] .postcard-back-details dd {
+  margin: 0;
+  color: #0F2540;
+  font-size: 13px;
+  font-weight: 780;
+  line-height: 1.35;
+  text-align: right;
+}
+
+[data-country-id="japan"] .postcard-location-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: flex-start;
+  margin-top: 20px;
+  border: 1px solid rgba(15,37,64,.10);
+  border-radius: 999px;
+  background: rgba(15,37,64,.035);
+  padding: 7px 10px;
+  color: #6C675F;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+[data-country-id="japan"] .postcard-location-status.ready {
+  border-color: rgba(66,96,45,.16);
+  background: rgba(66,96,45,.055);
+  color: #42602D;
+}
+
+[data-country-id="japan"] .postcard-flip-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 2px 0;
+}
+
+[data-country-id="japan"] .postcard-flip-footer > span {
+  color: #756F67;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+@media (max-width: 760px) {
+  [data-country-id="japan"] .postcard-flip-modal {
+    width: 100%;
+    max-height: 100dvh;
+    border-radius: 18px;
+    padding: 12px;
+  }
+
+  [data-country-id="japan"] .postcard-flip-toolbar {
+    align-items: flex-start;
+  }
+
+  [data-country-id="japan"] .postcard-turn-button {
+    display: none;
+  }
+
+  [data-country-id="japan"] .postcard-flip-card {
+    min-height: 620px;
+  }
+
+  [data-country-id="japan"] .postcard-front-sheet {
+    padding: 15px;
+  }
+
+  [data-country-id="japan"] .postcard-front-photo {
+    min-height: 430px;
+  }
+
+  [data-country-id="japan"] .postcard-front-caption {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 122px;
+  }
+
+  [data-country-id="japan"] .postcard-front-caption small {
+    white-space: normal;
+  }
+
+  [data-country-id="japan"] .postcard-approved-postmark {
+    right: 16px;
+    bottom: 24px;
+    width: 75px;
+  }
+
+  [data-country-id="japan"] .postcard-back-sheet {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1px auto;
+    gap: 20px;
+    padding: 28px 24px;
+  }
+
+  [data-country-id="japan"] .postcard-back-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  [data-country-id="japan"] .postcard-back-details {
+    padding-top: 92px;
+  }
+
+  [data-country-id="japan"] .postcard-address-lines {
+    width: 48%;
+  }
+
+  [data-country-id="japan"] .postcard-back-details dl > div {
+    grid-template-columns: 72px minmax(0,1fr);
+  }
+
+  [data-country-id="japan"] .postcard-flip-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  [data-country-id="japan"] .postcard-flip-footer .secondary-button {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-country-id="japan"] .postcard-flip-card {
+    transition: none;
+  }
+}
+
+/* END NIOLI PATCH 3D.1 — POSTCARD FLIP */
+
+/* ========================================================================== */
+/* NIOLI PATCH 3D.2 — SHARE IMAGE                                             */
+/* Exporta SOLO el frente como PNG 4:5.                                       */
+/* ========================================================================== */
+
+[data-country-id="japan"] .postcard-share-footer {
+  align-items: center;
+}
+
+[data-country-id="japan"] .postcard-share-status {
+  max-width: 260px;
+  color: #756F67;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+[data-country-id="japan"] .postcard-share-status.error {
+  color: #AB3B3A;
+}
+
+[data-country-id="japan"] .postcard-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+[data-country-id="japan"] .postcard-share-actions button {
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  [data-country-id="japan"] .postcard-share-footer {
+    align-items: stretch;
+  }
+
+  [data-country-id="japan"] .postcard-share-status {
+    max-width: none;
+    text-align: center;
+  }
+
+  [data-country-id="japan"] .postcard-share-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  [data-country-id="japan"] .postcard-share-actions button {
+    width: 100%;
+  }
+}
+
+/* END NIOLI PATCH 3D.2 — SHARE IMAGE */

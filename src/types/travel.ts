@@ -351,6 +351,14 @@ export interface TravelPhoto {
   locationId?: string;
   dayId?: string;
   note?: string;
+  capturedAt?: string;
+  timezone?: string;
+  localDate?: string;
+  localTime?: string;
+  placeLabel?: string;
+  geolocationSource?: "none" | "live" | "mock" | "exif" | "manual";
+  exifMetadata?: Record<string, unknown>;
+  isTest?: boolean;
 }
 
 export interface TravelMemory {

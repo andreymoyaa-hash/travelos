@@ -29,7 +29,7 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate, onO
   const unlocked = trip.achievements.filter((achievement) => achievement.unlockedBy.includes(participant.id)).length;
 
   return (
-    <div className="view-stack dashboard-view">
+    <div className={trip.countryId === "japan" ? "view-stack dashboard-view jp-home-v3" : "view-stack dashboard-view"}>
       <header className="welcome-row">
         <div>
           <p className="eyebrow">Panel personal</p>
@@ -39,29 +39,91 @@ export function DashboardView({ trip, theme, participant, spent, onNavigate, onO
         <div className="heading-actions"><button type="button" className="quiet-button" onClick={onOpenCamera}><Camera size={16} /> Tomar foto</button><button type="button" className="quiet-button" onClick={() => onNavigate("itinerary")}>Ver plan completo <ArrowRight size={16} aria-hidden="true" /></button></div>
       </header>
 
-      <section className={`trip-hero trip-hero-${theme.decorativeStyle}`} aria-labelledby="trip-hero-title">
-        <div className="hero-paper-texture" aria-hidden="true" />
-        <span className="hero-postmark hero-postmark-one" aria-hidden="true">NIOLI · {theme.countryCode}</span>
-        <span className="hero-postmark hero-postmark-two" aria-hidden="true">TRAVEL PASS</span>
-        <div className="trip-hero-content">
-          <div className="hero-kicker"><Plane size={15} aria-hidden="true" /> NIOLI TRAVEL PASS <b>{theme.countryCode}</b></div>
-          <h2 id="trip-hero-title">{trip.name}</h2>
-          <p>{trip.dateRange} · {trip.participants.length} participantes</p>
-          <div className="route-line" aria-label={`Ruta: ${trip.route.join(", ")}`}>
-            {trip.route.map((place, index) => (
-              <div key={`${place}-${index}`} className="route-stop"><span className={index === trip.route.length - 1 ? "route-dot destination" : "route-dot"} /><small>{place}</small>{index < trip.route.length - 1 ? <i /> : null}</div>
-            ))}
+      {trip.countryId === "japan" ? (
+        <section className="jp-home-hero-v3" aria-labelledby="trip-hero-title">
+          <div className="jp-home-hero-main">
+            <div className="jp-home-pass-row">
+              <div className="jp-home-pass-title">
+                <span>NIOLI · TRAVEL DOSSIER</span>
+                <strong>JAPAN PASS · 日本</strong>
+              </div>
+              <Image
+                className="jp-home-country-label"
+                src="/nioli/themes/japan/personality-v3/jp_country_label.png"
+                alt=""
+                width={90}
+                height={140}
+              />
+            </div>
+
+            <h2 id="trip-hero-title">{trip.name}</h2>
+            <p className="jp-home-trip-dates">{trip.dateRange} · {trip.participants.length} participantes</p>
+
+            <div className="jp-home-route" aria-label={`Ruta: ${trip.route.join(", ")}`}>
+              {trip.route.map((place, index) => (
+                <div
+                  key={`${place}-${index}`}
+                  className={index === trip.route.length - 1 ? "jp-home-route-stop destination" : "jp-home-route-stop"}
+                >
+                  <i />
+                  {index < trip.route.length - 1 ? <b /> : null}
+                  <small>{place}</small>
+                </div>
+              ))}
+            </div>
+
+            <div className="jp-home-meta">
+              <span><small>DESTINO</small><strong>日本 / JAPAN</strong></span>
+              <span><small>VIAJEROS</small><strong>{trip.participants.length}</strong></span>
+              <span><small>COLECCIÓN</small><strong>{unlocked} / {trip.achievements.length} sellos</strong></span>
+            </div>
           </div>
-        </div>
-        <div className="trip-hero-side">
-          <div className="hero-visual-stack" aria-hidden="true">
-            {stampAsset ? <Image className="hero-country-stamp" src={stampAsset} alt="" width={180} height={220} sizes="120px" /> : <span className="hero-fallback-stamp">{theme.countryCode}</span>}
-            {bradyAsset ? <Image className="hero-brady" src={bradyAsset} alt="" width={420} height={520} sizes="190px" /> : null}
-          </div>
-          <div className="countdown-block"><span>Faltan</span><strong>{trip.countdownDays}</strong><small>días</small><div className="countdown-plane"><Plane size={22} aria-hidden="true" /></div></div>
-        </div>
-        <span className="hero-ticket-code" aria-hidden="true">{theme.countryCode} · {new Date(`${trip.startDate}T12:00:00Z`).getUTCFullYear()}</span>
-      </section>
+
+          <aside className="jp-home-hero-art" aria-label="Resumen del viaje">
+            {bradyAsset ? (
+              <Image
+                className="jp-home-brady"
+                src={bradyAsset}
+                alt=""
+                width={420}
+                height={520}
+                sizes="210px"
+              />
+            ) : null}
+
+            <div className="jp-home-countdown">
+              <span>Faltan</span>
+              <strong>{trip.countdownDays}</strong>
+              <small>días</small>
+              <b aria-hidden="true">✈</b>
+            </div>
+          </aside>
+        </section>
+      ) : (
+              <section className={`trip-hero trip-hero-${theme.decorativeStyle}`} aria-labelledby="trip-hero-title">
+                <div className="hero-paper-texture" aria-hidden="true" />
+                <span className="hero-postmark hero-postmark-one" aria-hidden="true">NIOLI · {theme.countryCode}</span>
+                <span className="hero-postmark hero-postmark-two" aria-hidden="true">TRAVEL PASS</span>
+                <div className="trip-hero-content">
+                  <div className="hero-kicker"><Plane size={15} aria-hidden="true" /> NIOLI TRAVEL PASS <b>{theme.countryCode}</b></div>
+                  <h2 id="trip-hero-title">{trip.name}</h2>
+                  <p>{trip.dateRange} · {trip.participants.length} participantes</p>
+                  <div className="route-line" aria-label={`Ruta: ${trip.route.join(", ")}`}>
+                    {trip.route.map((place, index) => (
+                      <div key={`${place}-${index}`} className="route-stop"><span className={index === trip.route.length - 1 ? "route-dot destination" : "route-dot"} /><small>{place}</small>{index < trip.route.length - 1 ? <i /> : null}</div>
+                    ))}
+                  </div>
+                </div>
+                <div className="trip-hero-side">
+                  <div className="hero-visual-stack" aria-hidden="true">
+                    {stampAsset ? <Image className="hero-country-stamp" src={stampAsset} alt="" width={180} height={220} sizes="120px" /> : <span className="hero-fallback-stamp">{theme.countryCode}</span>}
+                    {bradyAsset ? <Image className="hero-brady" src={bradyAsset} alt="" width={420} height={520} sizes="190px" /> : null}
+                  </div>
+                  <div className="countdown-block"><span>Faltan</span><strong>{trip.countdownDays}</strong><small>días</small><div className="countdown-plane"><Plane size={22} aria-hidden="true" /></div></div>
+                </div>
+                <span className="hero-ticket-code" aria-hidden="true">{theme.countryCode} · {new Date(`${trip.startDate}T12:00:00Z`).getUTCFullYear()}</span>
+              </section>
+      )}
 
       <WorldClock config={trip.worldClock} startDate={trip.startDate} endDate={trip.endDate} />
 

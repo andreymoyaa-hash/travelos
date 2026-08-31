@@ -30,3 +30,7 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Local patch backups
+_backup_before_*
+*.bak

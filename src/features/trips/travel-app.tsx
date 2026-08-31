@@ -93,7 +93,10 @@ export function TravelApp({ initialTrip, cloudSession, onLogout }: { initialTrip
   const activeParticipant = trip.participants.find((participant) => participant.id === activeParticipantId) ?? trip.participants[0];
   const companionProfile = experience.companionProfile;
   const companionProgress = trip.companionProgress ?? { level: 1, xp: 0, mood: "curious" as const, enabled: true };
-  const floatingBradyAsset = officialBradyAsset(trip.countryId);
+  const dashboardBradyAsset = officialBradyAsset(trip.countryId);
+  const floatingBradyAsset = trip.countryId === "japan"
+    ? "/nioli/themes/japan/brady/companion/jp_brady_companion_point.png"
+    : dashboardBradyAsset;
   const dashboardStampAsset = trip.countryId === "japan"
     ? "/nioli/themes/japan/labels/jp_luggage_tag.png"
     : officialStampAssets(trip.countryId)[0] ?? experience.assets.stamps.primary ?? experience.assets.stamps.items[0] ?? null;
@@ -283,10 +286,10 @@ export function TravelApp({ initialTrip, cloudSession, onLogout }: { initialTrip
 
   const companionAction = (action: "snack" | "hello" | "memory" | "explore") => updateActiveTrip((current) => {
     const messages = {
-      snack: "¡Gracias por el snack! Estoy listo para seguir.",
-      hello: current.currentCity ? `Hoy hay bastante por explorar en ${current.currentCity}.` : "¡Hola! Podemos empezar cuando quieras.",
-      memory: current.photos.length ? `Ya guardamos ${current.photos.length} recuerdo${current.photos.length === 1 ? "" : "s"}.` : "La cámara está lista para tu primer recuerdo.",
-      explore: current.itinerary[0]?.area ? `El próximo plan registrado es ${current.itinerary[0].area}.` : "Agrega un día al itinerario para empezar a explorar.",
+      snack: "Arigatō por el snack. Con esto llegamos hasta la próxima estación.",
+      hello: current.currentCity ? `Estoy listo. ¿Nos perdemos un ratito por ${current.currentCity}?` : "¡Hey! Tengo la mochila lista. ¿Qué exploramos hoy?",
+      memory: current.photos.length ? `Ya guardamos ${current.photos.length} recuerdo${current.photos.length === 1 ? "" : "s"}. Este viaje ya está dejando huella.` : "Todavía no tenemos recuerdos. Saquemos la primera foto.",
+      explore: current.itinerary[0]?.area ? `Siguiente parada: ${current.itinerary[0].area}. Yo llevo el mapa.` : "Dame un destino y yo pongo la curiosidad.",
     };
     const progress = current.companionProgress ?? { level: 1, xp: 0, mood: "curious" as const, enabled: true };
     return { ...current, companionProgress: { ...progress, mood: action === "snack" ? "happy" : "curious", lastMessage: messages[action], lastInteractionAt: new Date().toISOString() } };
@@ -304,7 +307,7 @@ export function TravelApp({ initialTrip, cloudSession, onLogout }: { initialTrip
           {cloudError ? <p className="auth-error" role="status">{cloudError}</p> : null}
           {activeFeature === "trips" && cloudSession && canOpenAccess ? <AccessManagerView currentParticipantId={cloudSession.participant.id} currentTripName={cloudSession.trip.name} canManageTripParticipants={canManageParticipants} canManagePlatformAccess={canManagePlatform} canCreateTravelerSpaces={canCreateTravelers} /> : null}
           {activeFeature === "trips" && !cloudSession ? <TripManagerView trips={trips} activeTripId={activeTripId} onOpenTrip={openTrip} onCreateTrip={createTrip} onUpdateTrip={updateTripSettings} onDeleteTrip={deleteTrip} /> : null}
-          {activeFeature === "dashboard" && activeParticipant ? <DashboardView trip={trip} theme={theme} participant={activeParticipant} spent={spentInBudgetCurrency} onNavigate={navigate} onOpenCamera={() => openCamera()} bradyAsset={floatingBradyAsset} stampAsset={dashboardStampAsset} /> : null}
+          {activeFeature === "dashboard" && activeParticipant ? <DashboardView trip={trip} theme={theme} participant={activeParticipant} spent={spentInBudgetCurrency} onNavigate={navigate} onOpenCamera={() => openCamera()} bradyAsset={dashboardBradyAsset} stampAsset={dashboardStampAsset} /> : null}
           {activeFeature === "itinerary" ? <ItineraryView trip={trip} itinerary={trip.itinerary} bases={trip.bases} flightSegments={trip.flightSegments} reservations={trip.reservations} canImportPdf={canImportPdf} onImportPdf={importPdf} onAddDay={addDay} onOpenCamera={(dayId) => openCamera({ dayId })} onSaveActivity={saveActivity} onDeleteActivity={deleteActivity} onReorderActivity={reorderActivity} onUpdateDay={updateDay} onUpdateBase={updateBase} onMoveActivity={moveActivity} onSwapDayPlans={swapDayPlans} /> : null}
           {activeFeature === "expenses" && activeParticipant ? <ExpensesView trip={trip} expenses={trip.expenses} activeParticipant={activeParticipant} onAddExpense={(expense: Expense) => updateActiveTrip((current) => ({ ...current, expenses: [expense, ...current.expenses] }))} onUpdateBudget={(budget: Budget) => updateActiveTrip((current) => ({ ...current, budget }))} /> : null}
           {activeFeature === "reservations" ? <ReservationsView reservations={trip.reservations} startDate={trip.startDate} endDate={trip.endDate} canManage={canEditReservations} onAddReservation={(reservation: Reservation) => updateActiveTrip((current) => ({ ...current, reservations: [reservation, ...current.reservations] }))} /> : null}
@@ -312,10 +315,25 @@ export function TravelApp({ initialTrip, cloudSession, onLogout }: { initialTrip
           {activeFeature === "adventure" && activeParticipant ? <AdventureView trip={trip} theme={theme} achievements={trip.achievements} participant={activeParticipant} photos={trip.photos.filter((photo) => photo.participantId === activeParticipant.id)} position={position} locationStatus={locationStatus} locationError={locationError} companionProfile={companionProfile} companionProgress={companionProgress} onRequestLocation={requestCurrentLocation} onSavePhoto={addPhoto} onToggleAchievement={toggleAchievement} onAddAchievement={addAchievement} onCompanionAction={companionAction} onOpenCamera={(achievementId) => openCamera({ achievementId })} /> : null}
         </main>
       </div>
-      {companionProgress.enabled && activeFeature !== "adventure" && activeFeature !== "trips" ? <button type="button" className="floating-companion" onClick={() => navigate("adventure")} aria-label="Abrir compañero de viaje"><span className="floating-brady" aria-hidden="true">{floatingBradyAsset ? <Image src={floatingBradyAsset} alt="" width={46} height={46} /> : companionProfile.icon}</span><small>{companionProgress.mood === "excited" ? "¡Nuevo sello!" : "Explorar"}</small></button> : null}
+      {companionProgress.enabled && activeFeature !== "adventure" && activeFeature !== "trips" ? (
+        <button
+          type="button"
+          className="floating-companion"
+          onClick={() => navigate("adventure")}
+          aria-label="Abrir compañero de viaje"
+        >
+          <span className="floating-brady" aria-hidden="true">
+            {floatingBradyAsset ? <Image src={floatingBradyAsset} alt="" width={92} height={126} /> : companionProfile.icon}
+          </span>
+          <span className="floating-companion-copy">
+            <strong>Soy Brady</strong>
+            <small>Te acompaño en tu aventura</small>
+          </span>
+        </button>
+      ) : null}
       {activeFeature !== "trips" && activeFeature !== "adventure" ? <button type="button" className="floating-camera" onClick={() => openCamera()} aria-label={`Tomar foto desde ${activeFeature}`}><Camera size={20} /><span>Foto</span></button> : null}
       <BottomNavigation active={activeFeature} onNavigate={navigate} showTrips={!cloudSession || canOpenAccess} tripsLabel={cloudSession ? "Participantes" : "Mis viajes"} onLogout={onLogout} />
-      {activeParticipant ? <PhotoCapture key={`${trip.id}-${cameraContext.achievementId ?? "none"}-${cameraContext.dayId ?? "none"}`} open={cameraOpen} tripId={trip.id} participant={activeParticipant} achievements={trip.achievements} days={photoDays} savedPlaces={trip.savedPlaces} position={position} initialAchievementId={cameraContext.achievementId} initialDayId={cameraContext.dayId} onClose={() => { setCameraOpen(false); setCameraContext({}); }} onSave={addPhoto} /> : null}
+      {activeParticipant ? <PhotoCapture key={`${trip.id}-${cameraContext.achievementId ?? "none"}-${cameraContext.dayId ?? "none"}`} open={cameraOpen} tripId={trip.id} participant={activeParticipant} achievements={trip.achievements} days={photoDays} savedPlaces={trip.savedPlaces} position={position} onRequestLocation={requestLocation} initialAchievementId={cameraContext.achievementId} initialDayId={cameraContext.dayId} onClose={() => { setCameraOpen(false); setCameraContext({}); }} onSave={addPhoto} /> : null}
     </div>
   );
 }

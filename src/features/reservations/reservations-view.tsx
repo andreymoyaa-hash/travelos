@@ -113,7 +113,7 @@ export function ReservationsView({ reservations, startDate, endDate, onAddReserv
         ))}
         {visibleReservations.length === 0 ? (
           <div className="empty-state">
-            <span>旅</span><h2>No tienes reservas registradas</h2><p>Cuando añadas una, aparecerá en este espacio.</p>
+            <Plane className="empty-state-icon" size={28} aria-hidden="true" /><h2>No tienes reservas registradas</h2><p>Cuando añadas una, aparecerá en este espacio.</p>
           </div>
         ) : null}
       </section>

@@ -396,10 +396,32 @@ export async function loadAuthorizedTrip(token: string): Promise<CloudTripPayloa
     if (signed.error) continue;
     const clientId = `photo-${row.id}`;
     photoIdToClientId.set(row.id, clientId);
+    const capturedAt = row.captured_at ?? row.taken_at ?? row.created_at;
     photos.push({
-      id: clientId, tripId: remoteTrip.id, dataUrl: signed.data.signedUrl, storagePath: row.storage_path,
-      createdAt: row.taken_at ?? row.created_at, participantId: row.participant_id, activityId: (activitiesResult.data ?? []).find((item) => item.id === row.activity_id)?.stable_key,
-      locationId: locations.get(row.location_id)?.stable_key, achievementId: stampIdToStableKey.get(row.stamp_id), note: row.note ?? undefined,
+      id: clientId,
+      tripId: remoteTrip.id,
+      dataUrl: signed.data.signedUrl,
+      storagePath: row.storage_path,
+      createdAt: row.taken_at ?? capturedAt,
+      capturedAt,
+      participantId: row.participant_id,
+      activityId: (activitiesResult.data ?? []).find((item) => item.id === row.activity_id)?.stable_key,
+      locationId: locations.get(row.location_id)?.stable_key,
+      achievementId: stampIdToStableKey.get(row.stamp_id),
+      note: row.note ?? undefined,
+      location: row.latitude != null && row.longitude != null ? {
+        latitude: row.latitude,
+        longitude: row.longitude,
+        accuracy: row.accuracy_m ?? 0,
+        timestamp: Date.parse(capturedAt),
+      } : undefined,
+      geolocationSource: row.geolocation_source ?? "none",
+      timezone: row.timezone ?? undefined,
+      localDate: row.local_date ?? undefined,
+      localTime: row.local_time?.slice(0, 8) ?? undefined,
+      placeLabel: row.place_label ?? locations.get(row.location_id)?.name ?? undefined,
+      exifMetadata: row.exif_metadata ?? {},
+      isTest: Boolean(row.is_test),
     });
   }
   trip.photos = photos;

@@ -25,7 +25,7 @@ export function TopBar({ trip, theme, activeParticipantId, onSelectParticipant, 
 
       <button type="button" className="country-trigger" onClick={onOpenCountries} disabled={!onOpenCountries}>
         <span className="country-code-chip">{theme.countryCode}</span>
-        <span><small>Viaje activo</small><strong>{trip.name}</strong></span>
+        <span><small>{trip.countryId === "japan" ? "Destino activo" : "Viaje activo"}</small><strong>{trip.name}</strong></span>
         {onOpenCountries ? <ChevronDown size={17} aria-hidden="true" /> : null}
       </button>
 

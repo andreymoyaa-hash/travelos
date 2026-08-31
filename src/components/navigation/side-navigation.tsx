@@ -75,11 +75,11 @@ export function SideNavigation({
       <div className="trip-mini-card" aria-label={`Viaje activo: ${trip.name}`}>
         <span className="trip-mini-flag"><b>{theme.countryCode}</b></span>
         <span>
-          <small>Viaje activo</small>
+          <small>{trip.countryId === "japan" ? "Travel pass" : "Viaje activo"}</small>
           <strong>{trip.name}</strong>
           <em>{trip.countdownDays} días · {trip.dateRange}</em>
         </span>
-        <Luggage size={20} aria-hidden="true" />
+        {trip.countryId === "japan" ? <span className="trip-mini-jp-mark" aria-hidden="true">日</span> : <Luggage size={20} aria-hidden="true" />}
       </div>
 
       <nav aria-label="Navegación del viaje" className="side-nav-items">

@@ -72,13 +72,13 @@ const JAPAN_APPROVED_STAMP_ASSETS = [
 ] as const;
 
 export function officialBradyAsset(countryId: CountryId): string {
-  if (countryId === "japan") return "/nioli/themes/japan/brady/jp_brady_japan_happi.png";
+  if (countryId === "japan") return "/nioli/themes/japan/brady/companion/jp_brady_companion_neutral.png";
   const code = officialCountryCode(countryId);
   return code ? `/nioli/official/brady/${code}.png` : "/nioli/official/brady/master.png";
 }
 
 export function officialRouteArt(countryId: CountryId): string | null {
-  if (countryId === "japan") return "/nioli/themes/japan/tickets/jp_japan_rail_pass.png";
+  if (countryId === "japan") return "/nioli/themes/japan/brady/companion/jp_brady_companion_neutral.png";
   const code = officialCountryCode(countryId);
   return code ? `/nioli/official/route-art/${code}.jpg` : null;
 }
