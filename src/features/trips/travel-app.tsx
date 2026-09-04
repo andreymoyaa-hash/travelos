@@ -127,6 +127,33 @@ export function TravelApp({ initialTrip, cloudSession, onLogout }: { initialTrip
     }));
   }, [activeTripId, cloudSession, normalizedInitialTrip]);
 
+  /* NIOLI JAPAN CATALOG FORCE SYNC V4 */
+  const japanStoredOfficialSignature = trip.countryId === "japan"
+    ? trip.achievements.filter((achievement) => !achievement.custom).map((achievement) => achievement.id).join("|")
+    : "";
+
+  const japanCatalogOfficialSignature = trip.countryId === "japan"
+    ? withOfficialPassportCatalog({ ...trip, achievements: [] }).achievements.map((achievement) => achievement.id).join("|")
+    : "";
+
+  useEffect(() => {
+    if (trip.countryId !== "japan") return;
+    if (!japanCatalogOfficialSignature || japanStoredOfficialSignature === japanCatalogOfficialSignature) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      updateActiveTrip((current) => withOfficialPassportCatalog(current));
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [
+    trip.countryId,
+    trip.id,
+    japanStoredOfficialSignature,
+    japanCatalogOfficialSignature,
+    updateActiveTrip,
+  ]);
+  /* END NIOLI JAPAN CATALOG FORCE SYNC V4 */
+
   const navigate = (feature: FeatureId) => {
     setActiveFeature(feature);
     window.scrollTo({ top: 0, behavior: "smooth" });

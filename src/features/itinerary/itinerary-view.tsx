@@ -51,6 +51,15 @@ const dayTypeLabels: Record<TripDay["dayType"], string> = {
   recovery: "Recovery Day",
 };
 
+const formatStayDate = (value: string) => {
+  const date = new Date(`${value.slice(0, 10)}T12:00:00Z`);
+  return new Intl.DateTimeFormat("es", {
+    day: "2-digit",
+    month: "short",
+    timeZone: "UTC",
+  }).format(date).replace(".", "").toUpperCase();
+};
+
 interface ItineraryViewProps {
   trip: Trip;
   itinerary: TripDay[];
@@ -215,9 +224,9 @@ export function ItineraryView({
             <article className="surface-card accommodation-card">
               <header><div><p className="eyebrow">Alojamiento</p><h3>{selectedBase.city}</h3></div><span className={selectedBase.status === "confirmed" ? "base-status confirmed" : "base-status"}>{selectedBase.status === "confirmed" ? "Confirmado" : "Pendiente de agregar"}</span></header>
               <p>{selectedBase.area ?? "Zona pendiente de agregar"}</p>
-              <small>{selectedBase.checkInDate} → {selectedBase.checkOutDate} · {selectedBase.nights} noches</small>
+              <small>{formatStayDate(selectedBase.checkInDate)}–{formatStayDate(selectedBase.checkOutDate)} · {selectedBase.nights} noches</small>
               {selectedBase.location.address ? <address>{selectedBase.location.address}</address> : null}
-              <button type="button" className="secondary-button full-width" onClick={() => setEditor({ kind: "base", baseId: selectedBase.id })}><Pencil size={14} /> Editar alojamiento</button>
+              <button type="button" className="secondary-button accommodation-edit-button" onClick={() => setEditor({ kind: "base", baseId: selectedBase.id })}><Pencil size={14} /> Editar</button>
             </article>
           ) : null}
 

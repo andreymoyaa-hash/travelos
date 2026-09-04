@@ -9911,3 +9911,908 @@ body {
 }
 
 /* END NIOLI PATCH 3D.2 — SHARE IMAGE */
+
+/* ========================================================================== */
+/* NIOLI PATCH 4 — JAPAN PALETTE CLEANUP                                      */
+/* No red as primary/navigation/selection color. Japan only.                  */
+/* ========================================================================== */
+
+[data-country-id="japan"] {
+  /* Override inline Japan theme variables too. */
+  --accent: #0F2540 !important;        /* Kon */
+  --accent-dark: #0B1E35 !important;
+  --accent-soft: #EEF2F4 !important;
+  --highlight: #FFB11B !important;     /* Yamabuki */
+  --secondary: #566C73 !important;     /* Ainezumi */
+  --nature: #42602D !important;        /* Matsuba */
+  --cultural: #6A4C9C !important;      /* Kikyo */
+  --premium: #C9A15A !important;
+  --route-travel: #0F2540 !important;
+  --route-transition: #C9A15A !important;
+  --route-base-1: #6A4C9C !important;
+  --route-base-2: #42602D !important;
+  --route-base-3: #0F2540 !important;
+  --route-base-4: #566C73 !important;
+
+  --jp-paper: #FCFAF2;
+  --jp-surface: #FFFDF7;
+  --jp-ink: #0B1013;
+  --jp-kon: #0F2540;
+  --jp-kon-hover: #183B5D;
+  --jp-matsuba: #42602D;
+  --jp-kikyo: #6A4C9C;
+  --jp-yamabuki: #FFB11B;
+  --jp-ainezumi: #566C73;
+  --jp-line: #D8CFBF;
+  --jp-muted: #746D64;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PRIMARY / SECONDARY ACTIONS                                                 */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .primary-button {
+  border-color: var(--jp-kon) !important;
+  background: linear-gradient(180deg, #173754, var(--jp-kon)) !important;
+  color: #FFF !important;
+  box-shadow: 0 8px 18px rgba(15,37,64,.14) !important;
+}
+
+[data-country-id="japan"] .primary-button:hover:not(:disabled) {
+  border-color: var(--jp-kon-hover) !important;
+  background: var(--jp-kon-hover) !important;
+  color: #FFF !important;
+}
+
+[data-country-id="japan"] .secondary-button,
+[data-country-id="japan"] .quiet-button {
+  border-color: rgba(15,37,64,.16) !important;
+  background: var(--jp-surface) !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .secondary-button:hover:not(:disabled),
+[data-country-id="japan"] .quiet-button:hover:not(:disabled) {
+  border-color: rgba(15,37,64,.28) !important;
+  background: rgba(15,37,64,.055) !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .text-link {
+  color: var(--jp-kon) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* DESKTOP SIDE MENU                                                           */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .side-nav-button {
+  color: #5F625E;
+}
+
+[data-country-id="japan"] .side-nav-button:hover {
+  background: rgba(15,37,64,.045) !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .side-nav-button.active {
+  border: 1px solid rgba(15,37,64,.11);
+  background:
+    linear-gradient(90deg, rgba(66,96,45,.075), rgba(255,253,247,.94)) !important;
+  color: var(--jp-kon) !important;
+  box-shadow: inset 3px 0 var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .side-nav-button.active .side-nav-icon {
+  border-color: rgba(66,96,45,.15) !important;
+  background: rgba(66,96,45,.07) !important;
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .side-nav-button.active svg {
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .logout-button,
+[data-country-id="japan"] .logout-button .side-nav-icon,
+[data-country-id="japan"] .logout-button svg {
+  color: var(--jp-kikyo) !important;
+}
+
+[data-country-id="japan"] .logout-button:hover {
+  background: rgba(106,76,156,.055) !important;
+  color: var(--jp-kikyo) !important;
+}
+
+/* Active trip pass */
+[data-country-id="japan"] .trip-mini-card {
+  border-color: rgba(66,96,45,.22) !important;
+  border-left: 4px solid var(--jp-matsuba) !important;
+  background: #FFFDF7 !important;
+}
+
+[data-country-id="japan"] .trip-mini-flag {
+  border-color: rgba(66,96,45,.18) !important;
+  background: rgba(66,96,45,.065) !important;
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .trip-mini-card em {
+  color: var(--jp-kon) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* TOP BAR / ACTIVE DESTINATION                                                */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .country-trigger {
+  border-color: rgba(15,37,64,.12) !important;
+  background: rgba(255,253,247,.86) !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .country-trigger:hover {
+  border-color: rgba(66,96,45,.24) !important;
+  background: #FFFDF7 !important;
+}
+
+[data-country-id="japan"] .country-code-chip {
+  border-color: rgba(66,96,45,.18) !important;
+  background: rgba(66,96,45,.07) !important;
+  color: var(--jp-matsuba) !important;
+}
+
+/* The selected destination in the country picker must not inherit Japan red. */
+[data-country-id="japan"] .country-option.selected {
+  border-color: var(--jp-kon) !important;
+  background: rgba(15,37,64,.055) !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .country-option.selected .country-check {
+  background: var(--jp-kon) !important;
+  color: #FFF !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* MOBILE NAVIGATION                                                           */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .bottom-nav-button.active {
+  background: rgba(15,37,64,.07) !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .bottom-nav-button.active svg {
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .mobile-more-option.active {
+  border-color: rgba(15,37,64,.18) !important;
+  background: rgba(15,37,64,.055) !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .mobile-more-option.active > svg {
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .mobile-more-option.danger > svg,
+[data-country-id="japan"] .mobile-more-option.danger strong {
+  color: var(--jp-kikyo) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* SELECTED / ACTIVE CONTROLS                                                  */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .day-card-strip .date-chip.active {
+  border-color: rgba(15,37,64,.24) !important;
+  border-top-color: var(--jp-matsuba) !important;
+  background: #FFFDF7 !important;
+  color: var(--jp-ink) !important;
+  box-shadow:
+    inset 0 3px var(--jp-matsuba),
+    0 10px 22px rgba(15,37,64,.07) !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active :where(small, span, strong, em, b) {
+  color: inherit !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-date strong {
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-date small,
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-meta {
+  color: var(--jp-muted) !important;
+}
+
+[data-country-id="japan"] .day-card-strip .date-chip.active .date-chip-marker {
+  background: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .filter-tabs button.active {
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .filter-tabs button.active::after {
+  background: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] :where(button, [role="button"])[aria-pressed="true"] {
+  border-color: rgba(15,37,64,.24);
+}
+
+/* -------------------------------------------------------------------------- */
+/* BADGES / COUNTERS / EYEBROWS                                                */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .collection-count {
+  border: 1px solid rgba(66,96,45,.14) !important;
+  background: rgba(66,96,45,.07) !important;
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .eyebrow {
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .adventure-label {
+  border-color: rgba(15,37,64,.13) !important;
+  background: rgba(15,37,64,.055) !important;
+  color: var(--jp-kon) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* PROGRESS                                                                    */
+/* Inline theme colors are intentionally overridden for Japan.                */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .progress-track {
+  background: #E9E3D9 !important;
+}
+
+[data-country-id="japan"] .progress-fill {
+  background-color: transparent !important;
+  background-image: linear-gradient(90deg, var(--jp-kon), var(--jp-matsuba)) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* RESERVATIONS                                                                */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .reservation-ribbon {
+  background: var(--jp-kon) !important;
+  color: #FFFDF7 !important;
+}
+
+[data-country-id="japan"] .reservation-date span,
+[data-country-id="japan"] .reservation-detail > small,
+[data-country-id="japan"] .reservation-card footer button {
+  color: var(--jp-matsuba) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* POSTCARDS / MEMORIES                                                        */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .memory-postcard-label,
+[data-country-id="japan"] .postcard-front-caption span,
+[data-country-id="japan"] .postcard-back-kicker,
+[data-country-id="japan"] .postcard-flip-toolbar .eyebrow {
+  color: var(--jp-matsuba) !important;
+}
+
+[data-country-id="japan"] .postcard-turn-button {
+  border-color: rgba(15,37,64,.18) !important;
+  background: #FFFDF7 !important;
+  color: var(--jp-kon) !important;
+}
+
+[data-country-id="japan"] .postcard-turn-button:hover {
+  background: rgba(15,37,64,.055) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* FOCUS / ACCESSIBILITY                                                       */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] :where(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid rgba(255,177,27,.62) !important;
+  outline-offset: 3px;
+}
+
+/* END NIOLI PATCH 4 — JAPAN PALETTE CLEANUP */
+
+/* ========================================================================== */
+/* NIOLI PATCH 4.1 — JAPAN MINIMAL PASS                                       */
+/* One protagonist, one secondary datum, max one decorative element.          */
+/* ========================================================================== */
+
+/* -------------------------------------------------------------------------- */
+/* 1. PASSPORT PAGE HEADING                                                    */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .passport-view > .section-heading {
+  align-items: center;
+  gap: 16px;
+}
+
+[data-country-id="japan"] .passport-view > .section-heading > div:first-child {
+  max-width: 520px;
+}
+
+[data-country-id="japan"] .passport-view > .section-heading h1 {
+  max-width: 480px;
+  font-size: clamp(34px, 4vw, 48px) !important;
+  line-height: .98 !important;
+  letter-spacing: -.045em !important;
+}
+
+[data-country-id="japan"] .passport-view > .section-heading .section-description {
+  max-width: 360px;
+  margin-top: 7px;
+  color: #746D64;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+[data-country-id="japan"] .passport-view > .section-heading .heading-actions {
+  gap: 8px;
+}
+
+[data-country-id="japan"] .passport-view > .section-heading .heading-actions button {
+  min-height: 40px;
+  padding: 9px 13px;
+  box-shadow: none !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. PASSPORT HERO — REMOVE DECORATIVE NOISE                                 */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .passport-cover {
+  min-height: 0 !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 24px !important;
+  border: 1px solid rgba(15,37,64,.12) !important;
+  border-radius: 18px !important;
+  background: #FFFDF7 !important;
+  padding: 24px 28px !important;
+  color: #0B1013 !important;
+  box-shadow: 0 8px 20px rgba(30,24,18,.045) !important;
+}
+
+/* No giant emblem / torii / decorative cover mark. */
+[data-country-id="japan"] .passport-cover .passport-cover-mark {
+  display: none !important;
+}
+
+/* No badge competing with the trip title. */
+[data-country-id="japan"] .passport-cover .adventure-label {
+  display: none !important;
+}
+
+/* No destination marketing sentence inside this summary card. */
+[data-country-id="japan"] .passport-cover > div:nth-child(2) > p {
+  display: none !important;
+}
+
+[data-country-id="japan"] .passport-cover h2 {
+  margin: 0 !important;
+  color: #0F2540 !important;
+  font-family: var(--font-display);
+  font-size: clamp(31px, 4vw, 43px) !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+[data-country-id="japan"] .passport-cover .collection-progress {
+  max-width: 330px !important;
+  margin-top: 14px !important;
+}
+
+[data-country-id="japan"] .passport-cover .collection-progress > span {
+  color: #5F5B55 !important;
+  font-size: 10px !important;
+  font-weight: 750;
+}
+
+[data-country-id="japan"] .passport-cover .collection-progress > span strong {
+  color: #0F2540 !important;
+}
+
+[data-country-id="japan"] .passport-cover .progress-track {
+  height: 4px !important;
+  margin-top: 7px;
+  background: #E7E1D8 !important;
+}
+
+[data-country-id="japan"] .passport-cover .progress-fill {
+  background: #42602D !important;
+  background-image: none !important;
+}
+
+/* Traveler becomes one quiet line: Andy · Viajero */
+[data-country-id="japan"] .passport-owner {
+  display: flex !important;
+  align-items: baseline;
+  align-self: end;
+  gap: 5px;
+  min-width: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  padding: 0 0 2px !important;
+  box-shadow: none !important;
+}
+
+[data-country-id="japan"] .passport-owner strong {
+  order: 1;
+  color: #0F2540 !important;
+  font-size: 13px !important;
+  font-weight: 850;
+}
+
+[data-country-id="japan"] .passport-owner small {
+  order: 2;
+  color: #746D64 !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  text-transform: none;
+}
+
+[data-country-id="japan"] .passport-owner small::before {
+  content: "· ";
+}
+
+[data-country-id="japan"] .passport-owner span {
+  display: none !important;
+}
+
+/* Remove any decorative pseudo layers inherited by Japan skin. */
+[data-country-id="japan"] .passport-cover::before,
+[data-country-id="japan"] .passport-cover::after {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. ROUTE MEMORY — TURN IT INTO A QUIET EDITORIAL TICKET                    */
+/* -------------------------------------------------------------------------- */
+
+/* The ticket itself says enough. Remove the heading above it. */
+[data-country-id="japan"] .passport-route-memory > .subsection-heading {
+  display: none !important;
+}
+
+[data-country-id="japan"] .passport-route-memory {
+  gap: 0 !important;
+}
+
+[data-country-id="japan"] .passport-route-ticket {
+  max-width: 760px !important;
+}
+
+[data-country-id="japan"] .route-memory-ticket {
+  min-height: 160px !important;
+  grid-template-columns: 155px minmax(0,1fr) !important;
+  border: 1px solid rgba(15,37,64,.12) !important;
+  border-radius: 16px !important;
+  background: #FFFDF7 !important;
+  box-shadow: 0 7px 18px rgba(30,24,18,.045) !important;
+}
+
+/* No ticket punch holes. */
+[data-country-id="japan"] .route-memory-ticket::before,
+[data-country-id="japan"] .route-memory-ticket::after {
+  display: none !important;
+}
+
+/* Brady accompanies the route; he does not dominate it. */
+[data-country-id="japan"] .route-memory-art {
+  min-height: 160px !important;
+  border-right: 1px solid rgba(15,37,64,.10) !important;
+  background: rgba(66,96,45,.035) !important;
+}
+
+[data-country-id="japan"] .route-memory-art img {
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 15px 18px !important;
+}
+
+/* No paper texture/pattern in the copy half. */
+[data-country-id="japan"] .route-memory-copy::after {
+  display: none !important;
+}
+
+[data-country-id="japan"] .route-memory-copy {
+  align-content: center !important;
+  gap: 7px !important;
+  padding: 22px 26px !important;
+}
+
+/* Keep only trip name, route and date. */
+[data-country-id="japan"] .route-memory-copy header span {
+  display: none !important;
+}
+
+[data-country-id="japan"] .route-memory-copy header strong {
+  color: #746D64 !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+}
+
+[data-country-id="japan"] .route-memory-route {
+  gap: 10px !important;
+  color: #0F2540 !important;
+}
+
+[data-country-id="japan"] .route-memory-route b {
+  font-size: clamp(30px, 4vw, 40px) !important;
+  letter-spacing: -.045em !important;
+}
+
+[data-country-id="japan"] .route-memory-route span {
+  color: #42602D !important;
+  font-size: 24px !important;
+}
+
+[data-country-id="japan"] .route-memory-copy dl {
+  display: block !important;
+  margin: 1px 0 0 !important;
+}
+
+[data-country-id="japan"] .route-memory-copy dl > div {
+  display: block !important;
+}
+
+[data-country-id="japan"] .route-memory-copy dl > div:nth-child(n+2) {
+  display: none !important;
+}
+
+[data-country-id="japan"] .route-memory-copy dt {
+  display: none !important;
+}
+
+[data-country-id="japan"] .route-memory-copy dd {
+  color: #746D64 !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+}
+
+/* Kill the visual clutter. */
+[data-country-id="japan"] .route-memory-transport,
+[data-country-id="japan"] .route-memory-barcode,
+[data-country-id="japan"] .route-memory-seal {
+  display: none !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. RESPONSIVE                                                              */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  [data-country-id="japan"] .passport-view > .section-heading {
+    align-items: stretch;
+  }
+
+  [data-country-id="japan"] .passport-view > .section-heading h1 {
+    font-size: clamp(32px, 10vw, 40px) !important;
+  }
+
+  [data-country-id="japan"] .passport-view > .section-heading .section-description {
+    font-size: 12px;
+  }
+
+  [data-country-id="japan"] .passport-cover {
+    grid-template-columns: 1fr !important;
+    gap: 13px !important;
+    padding: 20px !important;
+  }
+
+  [data-country-id="japan"] .passport-owner {
+    justify-self: start;
+  }
+
+  [data-country-id="japan"] .route-memory-ticket {
+    grid-template-columns: 105px minmax(0,1fr) !important;
+    min-height: 128px !important;
+  }
+
+  [data-country-id="japan"] .route-memory-art {
+    min-height: 128px !important;
+    border-right: 1px solid rgba(15,37,64,.10) !important;
+    border-bottom: 0 !important;
+  }
+
+  [data-country-id="japan"] .route-memory-art img {
+    padding: 12px !important;
+  }
+
+  [data-country-id="japan"] .route-memory-copy {
+    padding: 17px 16px !important;
+  }
+
+  [data-country-id="japan"] .route-memory-route b {
+    font-size: clamp(25px, 8vw, 32px) !important;
+  }
+}
+
+/* END NIOLI PATCH 4.1 — JAPAN MINIMAL PASS */
+
+/* ========================================================================== */
+/* NIOLI PATCH 4.2 — SIMPLIFY LODGING + ONE BRADY                            */
+/* Japan only. Less UI, less decoration, one companion presence per screen.   */
+/* ========================================================================== */
+
+/* -------------------------------------------------------------------------- */
+/* 1. ITINERARY — MINIMAL LODGING CARD                                        */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .accommodation-card {
+  position: relative;
+  display: grid;
+  gap: 6px !important;
+  overflow: hidden;
+  border: 1px solid rgba(15,37,64,.11) !important;
+  border-radius: 15px !important;
+  background: #FFFDF7 !important;
+  padding: 16px !important;
+  box-shadow: 0 6px 16px rgba(30,24,18,.04) !important;
+}
+
+[data-country-id="japan"] .accommodation-card header {
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+[data-country-id="japan"] .accommodation-card .eyebrow {
+  margin-bottom: 3px;
+  color: #42602D !important;
+  font-size: 9px !important;
+  letter-spacing: .10em !important;
+}
+
+[data-country-id="japan"] .accommodation-card h3 {
+  margin: 0 !important;
+  color: #0F2540 !important;
+  font-family: var(--font-display);
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+}
+
+[data-country-id="japan"] .accommodation-card .base-status {
+  align-self: start;
+  border: 1px solid rgba(15,37,64,.10);
+  border-radius: 999px;
+  background: rgba(15,37,64,.045);
+  padding: 5px 7px;
+  color: #746D64;
+  font-size: 7px;
+  font-weight: 850;
+  letter-spacing: .05em;
+}
+
+[data-country-id="japan"] .accommodation-card .base-status.confirmed {
+  border-color: rgba(66,96,45,.14);
+  background: rgba(66,96,45,.07);
+  color: #42602D;
+}
+
+[data-country-id="japan"] .accommodation-card > p {
+  margin: 2px 0 0 !important;
+  color: #68635C !important;
+  font-size: 11px !important;
+  font-weight: 650;
+  line-height: 1.3 !important;
+}
+
+[data-country-id="japan"] .accommodation-card > small {
+  margin: 4px 0 0 !important;
+  color: #0F2540 !important;
+  font-size: 10px !important;
+  font-weight: 800;
+  line-height: 1.3 !important;
+}
+
+/* Full postal address belongs in Edit/detail, not summary. */
+[data-country-id="japan"] .accommodation-card address {
+  display: none !important;
+}
+
+/* Compact action, no giant full-width administrative button. */
+[data-country-id="japan"] .accommodation-card .accommodation-edit-button {
+  width: fit-content !important;
+  min-height: 34px !important;
+  justify-self: end;
+  margin-top: 6px;
+  border-color: transparent !important;
+  background: transparent !important;
+  padding: 6px 4px !important;
+  color: #0F2540 !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+}
+
+[data-country-id="japan"] .accommodation-card .accommodation-edit-button:hover {
+  border-color: transparent !important;
+  background: rgba(15,37,64,.045) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. HOME — ONE BRADY ONLY                                                   */
+/* Keep floating Brady. Remove decorative Bradys from the dashboard.          */
+/* -------------------------------------------------------------------------- */
+
+/* Brady in the large Japan hero is redundant with the functional floater. */
+[data-country-id="japan"] .jp-home-v3 .jp-home-brady,
+[data-country-id="japan"] .dashboard-view .hero-brady {
+  display: none !important;
+}
+
+/* Ambient dashboard pseudo-art is noise in the minimal pass. */
+[data-country-id="japan"] .jp-home-v3::before,
+[data-country-id="japan"] .jp-home-v3::after {
+  content: none !important;
+  display: none !important;
+  background-image: none !important;
+}
+
+/* Hero right panel no longer needs to reserve a Brady-sized canvas. */
+[data-country-id="japan"] .jp-home-hero-art {
+  min-height: 0 !important;
+}
+
+[data-country-id="japan"] .jp-home-hero-art::before {
+  opacity: .08 !important;
+}
+
+[data-country-id="japan"] .jp-home-hero-art::after {
+  opacity: .08 !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. HOME ROUTE MEMORY — TEXT TICKET, NO SECOND BRADY                         */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-section > .subsection-heading {
+  display: none !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-section {
+  gap: 0 !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-ticket {
+  max-width: 680px !important;
+  min-height: 136px !important;
+  grid-template-columns: 1fr !important;
+  border: 1px solid rgba(15,37,64,.11) !important;
+  border-radius: 15px !important;
+  background: #FFFDF7 !important;
+  box-shadow: 0 6px 16px rgba(30,24,18,.04) !important;
+}
+
+/* This is the second Brady in the screenshot. Remove the art column entirely. */
+[data-country-id="japan"] .jp-home-v3 .route-memory-art {
+  display: none !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-ticket::before,
+[data-country-id="japan"] .jp-home-v3 .route-memory-ticket::after,
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy::after {
+  display: none !important;
+  content: none !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy {
+  align-content: center !important;
+  gap: 7px !important;
+  padding: 20px 24px !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy header span {
+  display: none !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy header strong {
+  color: #746D64 !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-route {
+  gap: 9px !important;
+  color: #0F2540 !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-route b {
+  font-size: clamp(29px, 4vw, 38px) !important;
+  letter-spacing: -.045em !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-route span {
+  color: #42602D !important;
+  font-size: 22px !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy dl {
+  display: block !important;
+  margin: 0 !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy dl > div {
+  display: block !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy dl > div:nth-child(n+2),
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy dt,
+[data-country-id="japan"] .jp-home-v3 .route-memory-transport,
+[data-country-id="japan"] .jp-home-v3 .route-memory-barcode,
+[data-country-id="japan"] .jp-home-v3 .route-memory-seal {
+  display: none !important;
+}
+
+[data-country-id="japan"] .jp-home-v3 .route-memory-copy dd {
+  margin: 0 !important;
+  color: #746D64 !important;
+  font-family: inherit !important;
+  font-size: 10px !important;
+  font-weight: 750 !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. THE ONE BRADY WE KEEP                                                   */
+/* -------------------------------------------------------------------------- */
+
+[data-country-id="japan"] .floating-companion {
+  /* Intentionally untouched visually: this is the one functional Brady. */
+  visibility: visible;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. MOBILE                                                                   */
+/* -------------------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  [data-country-id="japan"] .accommodation-card {
+    padding: 14px !important;
+  }
+
+  [data-country-id="japan"] .accommodation-card h3 {
+    font-size: 22px !important;
+  }
+
+  [data-country-id="japan"] .jp-home-v3 .route-memory-ticket {
+    min-height: 120px !important;
+  }
+
+  [data-country-id="japan"] .jp-home-v3 .route-memory-copy {
+    padding: 17px 18px !important;
+  }
+
+  [data-country-id="japan"] .jp-home-v3 .route-memory-route b {
+    font-size: clamp(26px, 9vw, 34px) !important;
+  }
+}
+
+/* END NIOLI PATCH 4.2 — SIMPLIFY LODGING + ONE BRADY */
+
+
+/* NIOLI JAPAN 20 PLACES V2 — HIDE CUSTOM STAMP */
+[data-country-id="japan"] .passport-view > .section-heading .heading-actions .secondary-button { display: none !important; }
+/* END NIOLI JAPAN 20 PLACES V2 — HIDE CUSTOM STAMP */
+
+
+/* NIOLI JAPAN 20 PLACES V3 — HIDE CUSTOM STAMP */
+[data-country-id="japan"] .passport-view > .section-heading .heading-actions .secondary-button {
+  display: none !important;
+}
+/* END NIOLI JAPAN 20 PLACES V3 — HIDE CUSTOM STAMP */

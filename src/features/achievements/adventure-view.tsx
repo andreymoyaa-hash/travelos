@@ -370,7 +370,7 @@ export function AdventureView({
     if (officialCollection && official.length) {
       return [
         { location: theme.name, achievements: official, official: true },
-        ...(personal.length ? [{ location: "Sellos personales", achievements: personal, official: false }] : []),
+        ...(trip.countryId === "japan" ? [] : personal.length ? [{ location: "Sellos personales", achievements: personal, official: false }] : []),
       ];
     }
     return Array.from(new Set(achievements.map((achievement) => achievement.city ?? achievement.location ?? "General"))).map((location) => ({
@@ -378,7 +378,7 @@ export function AdventureView({
       achievements: achievements.filter((achievement) => (achievement.city ?? achievement.location ?? "General") === location),
       official: false,
     }));
-  }, [achievements, officialCollection, theme.name]);
+  }, [achievements, officialCollection, theme.name, trip.countryId]);
 
   useEffect(() => {
     if (!recentlyUnlockedId) return;
@@ -410,8 +410,8 @@ export function AdventureView({
     <div className="view-stack passport-view">
       <SectionHeading
         eyebrow={`Nioli Passport · ${participant.name}`}
-        title="Colecciona recuerdos, no tareas"
-        description="Cada sello pertenece a este viaje y se valida de forma manual, con GPS real o mediante una fotografía asociada. Tus recuerdos viven aparte como postales compartibles."
+        title={trip.countryId === "japan" ? "Colecciona recuerdos" : "Colecciona recuerdos, no tareas"}
+        description={trip.countryId === "japan" ? "Tu pasaporte de Japón." : "Cada sello pertenece a este viaje y se valida de forma manual, con GPS real o mediante una fotografía asociada."}
         action={
           <div className="heading-actions">
             <button type="button" className="secondary-button" onClick={() => setCustomOpen(true)}><Plus size={17} /> Sello personalizado</button>
