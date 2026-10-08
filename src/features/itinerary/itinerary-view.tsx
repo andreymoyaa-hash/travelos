@@ -278,10 +278,6 @@ export function ItineraryView({
           ) : null}
 
           {relatedFlights.map((flight) => <FlightCard flight={flight} compact key={flight.id} />)}
-
-          <article className="travel-tip-card">
-            <NotebookPen className="travel-tip-icon" size={20} aria-hidden="true" /><p className="eyebrow">{selectedDay.hiddenGem ? "Hidden gem" : "Notas del día"}</p><h3>{selectedDay.area}</h3><p>{selectedDay.hiddenGem ?? "Los horarios, notas, costos, lugares y reservas pueden modificarse desde este día."}</p>
-          </article>
         </aside>
       </div>
 
