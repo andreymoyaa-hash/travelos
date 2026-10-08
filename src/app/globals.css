@@ -10816,3 +10816,190 @@ body {
   display: none !important;
 }
 /* END NIOLI JAPAN 20 PLACES V3 — HIDE CUSTOM STAMP */
+
+
+/* NIOLI itinerary day vision v1 */
+.itinerary-day-overview {
+  display: grid;
+  gap: 16px;
+  margin: 18px 0 4px;
+}
+
+.itinerary-day-lead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  padding: 0 0 16px;
+}
+
+.itinerary-day-lead > p {
+  max-width: 680px;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.35;
+}
+
+.itinerary-day-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+}
+
+.itinerary-day-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.itinerary-day-facts > span {
+  display: grid;
+  gap: 4px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  padding: 4px 0 4px 12px;
+}
+
+.itinerary-day-facts small,
+.itinerary-practical article small,
+.nioli-day-tip small {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.itinerary-day-facts strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.itinerary-practical {
+  display: grid;
+  gap: 11px;
+  margin-top: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.itinerary-practical-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.itinerary-practical article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 10px;
+  min-height: 112px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--surface) 90%, var(--accent-soft));
+  padding: 14px;
+}
+
+.itinerary-practical article > svg {
+  margin-top: 2px;
+  color: var(--accent-dark);
+}
+
+.itinerary-practical article p {
+  margin: 5px 0 0;
+  color: var(--ink);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.nioli-day-tip {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin-top: 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--accent-soft) 58%, var(--surface));
+  padding: 14px 16px;
+}
+
+.nioli-day-tip > svg {
+  margin-top: 1px;
+  color: var(--accent-dark);
+}
+
+.nioli-day-tip p {
+  margin: 4px 0 0;
+  color: var(--ink);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.itinerary-context-card h3 {
+  margin: 4px 0 2px;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.itinerary-context-card > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.itinerary-context-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.itinerary-context-meta span {
+  border-radius: 999px;
+  background: var(--accent-soft);
+  padding: 5px 8px;
+  color: var(--accent-dark);
+  font-size: 8px;
+  font-weight: 750;
+}
+
+@media (max-width: 900px) {
+  .itinerary-day-lead {
+    display: grid;
+  }
+
+  .itinerary-day-actions {
+    flex-wrap: wrap;
+  }
+
+  .itinerary-practical-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .itinerary-practical article {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .itinerary-day-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .itinerary-day-facts > span {
+    grid-template-columns: 90px 1fr;
+    align-items: baseline;
+  }
+
+  .itinerary-day-lead > p {
+    font-size: 20px;
+  }
+
+  .itinerary-day-actions .secondary-button {
+    flex: 1 1 auto;
+  }
+}

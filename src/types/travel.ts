@@ -159,6 +159,11 @@ export interface TripDay {
   notes?: string;
   hiddenGem?: string;
   flexible?: boolean;
+  transportSummary?: string;
+  foodPause?: string;
+  reservationNote?: string;
+  keyNote?: string;
+  paceNote?: string;
   activities: Activity[];
 }
 

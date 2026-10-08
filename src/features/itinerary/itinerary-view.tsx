@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Clock3,
   FileUp,
-  Gem,
   GripVertical,
   Link2,
   MapPin,
@@ -19,7 +18,6 @@ import {
   Pencil,
   Plus,
   Trash2,
-  WalletCards,
   X,
 } from "lucide-react";
 
@@ -126,6 +124,26 @@ export function ItineraryView({
   const relatedFlights = flightSegments.filter((flight) => flightIds.has(flight.id));
   const linkedReservationCount = selectedDay.activities.filter((activity) => activity.reservationId).length;
   const hiddenGemCount = selectedDay.activities.filter((activity) => activity.hiddenGem).length;
+  const firstTimedActivity = selectedDay.activities.find((activity) => activity.startTime);
+  const paceLabel =
+    selectedDay.dayType === "recovery" || selectedDay.dayType === "relaxed"
+      ? "Suave"
+      : selectedDay.dayType === "flexible"
+        ? "Flexible"
+        : selectedDay.dayType === "theme-park" || selectedDay.dayType === "pokemon-full-day"
+          ? "Intenso"
+          : selectedDay.dayType === "travel" || selectedDay.dayType === "base-transition"
+            ? "Traslado"
+            : "Normal";
+  const dayLead =
+    selectedDay.paceNote ??
+    (selectedDay.dayType === "recovery"
+      ? "Hoy conviene bajar el ritmo y dejar margen para descansar."
+      : selectedDay.dayType === "flexible"
+        ? "Este día está pensado para adaptarse a energía, clima y ganas."
+        : selectedDay.dayType === "theme-park"
+          ? "Día largo: conviene llegar temprano y no cargar la noche."
+          : selectedDay.notes ?? "Plan del día editable.");
 
   const selectAdjacentDay = (direction: -1 | 1) => {
     const currentIndex = itinerary.findIndex((day) => day.id === selectedDay.id);
@@ -167,14 +185,22 @@ export function ItineraryView({
             <button type="button" className="icon-button" onClick={() => selectAdjacentDay(1)} disabled={selectedDay.id === itinerary.at(-1)?.id} aria-label="Día siguiente"><ChevronRight size={20} aria-hidden="true" /></button>
           </header>
 
-          <div className="day-detail-ribbon">
-            <span><small>Fecha</small><strong>{selectedDay.weekday} {selectedDay.dayNumber} {selectedDay.month}</strong></span>
-            <span><small>Base</small><strong>{previousBase ? `${previousBase.city} → ` : ""}{selectedBase?.city ?? "Travel / Flight"}</strong></span>
-            <span><small>Ciudad visitada</small><strong>{selectedDay.visitedCity ?? selectedDay.city}</strong></span>
-            <div><button type="button" className="secondary-button" onClick={() => setEditor({ kind: "day", dayId: selectedDay.id })}><Pencil size={14} /> Editar día</button><button type="button" className="secondary-button" onClick={() => setMove({ kind: "day", dayId: selectedDay.id })}><ArrowRightLeft size={14} /> Mover plan</button></div>
+          <div className="itinerary-day-overview">
+            <div className="itinerary-day-lead">
+              <p>{dayLead}</p>
+              <div className="itinerary-day-actions">
+                <button type="button" className="secondary-button" onClick={() => setEditor({ kind: "day", dayId: selectedDay.id })}><Pencil size={14} /> Editar día</button>
+                <button type="button" className="secondary-button" onClick={() => setMove({ kind: "day", dayId: selectedDay.id })}><ArrowRightLeft size={14} /> Mover plan</button>
+              </div>
+            </div>
+            <div className="itinerary-day-facts">
+              <span><small>Ritmo</small><strong>{paceLabel}</strong></span>
+              <span><small>Primera hora</small><strong>{firstTimedActivity?.startTime ?? "Flexible"}</strong></span>
+              <span><small>Base</small><strong>{previousBase ? `${previousBase.city} → ` : ""}{selectedBase?.city ?? selectedDay.city}</strong></span>
+            </div>
           </div>
 
-          {selectedDay.notes ? <div className="day-master-note"><NotebookPen size={15} /><p>{selectedDay.notes}</p></div> : null}
+          {selectedDay.notes && selectedDay.notes !== dayLead ? <div className="day-master-note"><NotebookPen size={15} /><p>{selectedDay.notes}</p></div> : null}
 
           <div className="timeline-list">
             {selectedDay.activities.map((activity, index) => {
@@ -208,16 +234,37 @@ export function ItineraryView({
             {selectedDay.activities.length === 0 ? <div className="empty-state compact"><span>＋</span><h2>Este día está abierto</h2><p>Añade un lugar o mueve aquí una actividad existente.</p></div> : null}
           </div>
           <button type="button" className="secondary-button full-width add-place-button" onClick={() => setEditor({ kind: "activity", dayId: selectedDay.id })}><Plus size={16} /> Agregar actividad o lugar</button>
+
+          {(selectedDay.transportSummary || selectedDay.foodPause || selectedDay.reservationNote) ? (
+            <section className="itinerary-practical" aria-label="Plan práctico del día">
+              <p className="eyebrow">Plan práctico</p>
+              <div className="itinerary-practical-grid">
+                {selectedDay.transportSummary ? <article><MapPin size={16} aria-hidden="true" /><div><small>Transporte</small><p>{selectedDay.transportSummary}</p></div></article> : null}
+                {selectedDay.foodPause ? <article><Clock3 size={16} aria-hidden="true" /><div><small>Comida / pausa</small><p>{selectedDay.foodPause}</p></div></article> : null}
+                {selectedDay.reservationNote ? <article><Link2 size={16} aria-hidden="true" /><div><small>Reserva</small><p>{selectedDay.reservationNote}</p></div></article> : null}
+              </div>
+            </section>
+          ) : null}
+
+          {(selectedDay.keyNote || selectedDay.hiddenGem) ? (
+            <aside className="nioli-day-tip">
+              <NotebookPen size={17} aria-hidden="true" />
+              <div><small>Consejo NIOLI</small><p>{selectedDay.keyNote ?? selectedDay.hiddenGem}</p></div>
+            </aside>
+          ) : null}
         </section>
 
         <aside className="itinerary-side-stack">
-          <article className="surface-card day-stats-card">
-            <p className="eyebrow">Resumen del día</p>
-            <div><Clock3 size={18} aria-hidden="true" /><span><strong>{selectedDay.activities.length}</strong> actividades</span></div>
-            <div><WalletCards size={18} aria-hidden="true" /><span><strong>{dailyEstimate ? formatMoney(dailyEstimate, trip.budget.currency) : "Sin costos"}</strong> registrados</span></div>
-            <div><MapPin size={18} aria-hidden="true" /><span><strong>{selectedBase?.city ?? selectedDay.city}</strong> base logística</span></div>
-            <div><Link2 size={18} aria-hidden="true" /><span><strong>{linkedReservationCount}</strong> reservas vinculadas</span></div>
-            <div><Gem size={18} aria-hidden="true" /><span><strong>{hiddenGemCount}</strong> hidden gems</span></div>
+          <article className="surface-card itinerary-context-card">
+            <p className="eyebrow">Contexto</p>
+            <h3>{selectedDay.weekday} {selectedDay.dayNumber} {selectedDay.month}</h3>
+            <p>{selectedDay.visitedCity ?? selectedDay.city}</p>
+            <div className="itinerary-context-meta">
+              <span>{selectedDay.activities.length} paradas</span>
+              {dailyEstimate ? <span>{formatMoney(dailyEstimate, trip.budget.currency)}</span> : null}
+              {linkedReservationCount ? <span>{linkedReservationCount} reserva{linkedReservationCount > 1 ? "s" : ""}</span> : null}
+              {hiddenGemCount ? <span>{hiddenGemCount} joya{hiddenGemCount > 1 ? "s" : ""}</span> : null}
+            </div>
           </article>
 
           {selectedBase ? (
@@ -231,10 +278,6 @@ export function ItineraryView({
           ) : null}
 
           {relatedFlights.map((flight) => <FlightCard flight={flight} compact key={flight.id} />)}
-
-          <article className="travel-tip-card">
-            <NotebookPen className="travel-tip-icon" size={20} aria-hidden="true" /><p className="eyebrow">{selectedDay.hiddenGem ? "Hidden gem" : "Notas del día"}</p><h3>{selectedDay.area}</h3><p>{selectedDay.hiddenGem ?? "Los horarios, notas, costos, lugares y reservas pueden modificarse desde este día."}</p>
-          </article>
         </aside>
       </div>
 

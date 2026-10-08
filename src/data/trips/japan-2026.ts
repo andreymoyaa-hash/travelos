@@ -232,6 +232,11 @@ const itinerary: TripDay[] = [
     area: "Universal Studios Japan",
     dayType: "theme-park",
     notes: "Día completo de parque. No añadir otras actividades obligatorias.",
+    transportSummary: "JR hacia Universal City. Salir del hotel muy temprano.",
+    foodPause: "Desayuno comprado la noche anterior. Usar Mobile Order cuando esté disponible.",
+    reservationNote: "Studio Pass + Express Pass separados. Vincular boletos a la app. El Express debe garantizar Super Nintendo World.",
+    keyNote: "One Piece Premier Summer termina el 19 nov.; Frieren y el 25 aniversario continúan durante la visita.",
+    paceNote: "Llegar 75–90 min antes de apertura. Mantener el resto del día libre de compromisos.",
     activities: [
       activity("2026-11-18", "jp-2026-11-18-usj-departure", "Salida muy temprano", "travel", "Kyoto → Universal City", { city: "Kyoto / Osaka", categories: ["travel", "transport"] }),
       activity("2026-11-18", "jp-2026-11-18-usj", "Universal Studios Japan", "theme-park", "Universal Studios Japan", { city: "Osaka", stampId: "jp-osaka-universal-studios" }),
