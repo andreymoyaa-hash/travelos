@@ -201,7 +201,19 @@ export async function syncAuthorizedTrip(token: string, source: Trip, options: {
   const dayRows = source.itinerary.map((day) => ({
     id: stableUuid(session.trip.id, "day", day.id), trip_id: session.trip.id, stable_key: day.id, day_date: day.date,
     country_code: country.countryCode, city: day.city, base_name: day.baseId ?? null, title: day.area,
-    notes: encodeNote(day.notes, { visitedCity: day.visitedCity, previousBaseId: day.previousBaseId, dayType: day.dayType, weather: day.weather, hiddenGem: day.hiddenGem, flexible: day.flexible }),
+    notes: encodeNote(day.notes, {
+      visitedCity: day.visitedCity,
+      previousBaseId: day.previousBaseId,
+      dayType: day.dayType,
+      weather: day.weather,
+      hiddenGem: day.hiddenGem,
+      flexible: day.flexible,
+      transportSummary: day.transportSummary,
+      foodPause: day.foodPause,
+      reservationNote: day.reservationNote,
+      keyNote: day.keyNote,
+      paceNote: day.paceNote,
+    }),
   }));
   if (canEditPlan && dayRows.length) assertResult(await client.from("trip_days").upsert(dayRows, { onConflict: "trip_id,stable_key" }), "trip days");
 
@@ -358,6 +370,11 @@ export async function loadAuthorizedTrip(token: string): Promise<CloudTripPayloa
       weather: typeof extra.weather === "string" ? extra.weather : template?.weather, notes: extra.note,
       hiddenGem: typeof extra.hiddenGem === "string" ? extra.hiddenGem : template?.hiddenGem,
       flexible: typeof extra.flexible === "boolean" ? extra.flexible : template?.flexible,
+      transportSummary: typeof extra.transportSummary === "string" ? extra.transportSummary : template?.transportSummary,
+      foodPause: typeof extra.foodPause === "string" ? extra.foodPause : template?.foodPause,
+      reservationNote: typeof extra.reservationNote === "string" ? extra.reservationNote : template?.reservationNote,
+      keyNote: typeof extra.keyNote === "string" ? extra.keyNote : template?.keyNote,
+      paceNote: typeof extra.paceNote === "string" ? extra.paceNote : template?.paceNote,
       activities: (activitiesByDay.get(row.id) ?? []).map((activity) => ({ ...activity, date: row.day_date })),
     };
   });
