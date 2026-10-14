@@ -99,8 +99,11 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
   const autocompleteHostRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markerClassRef = useRef<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
+  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
   const routePolylinesRef = useRef<google.maps.Polyline[]>([]);
+  const [resolvedCoordinates, setResolvedCoordinates] = useState<Record<string, { lat: number; lng: number }>>({});
+  const [loadError, setLoadError] = useState<string>();
   const onPlaceSelectRef = useRef(onPlaceSelect);
   const onRouteResultRef = useRef(onRouteResult);
   const onRouteErrorRef = useRef(onRouteError);
@@ -124,7 +127,8 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
       loaderConfigured = true;
     }
 
-    void Promise.all([importLibrary("maps"), importLibrary("marker"), importLibrary("places")]).then(([mapsLibrary, markerLibrary, placesLibrary]) => {
+    setLoadError(undefined);
+    void Promise.all([importLibrary("maps"), importLibrary("marker"), importLibrary("places"), importLibrary("geocoding")]).then(([mapsLibrary, markerLibrary, placesLibrary, geocodingLibrary]) => {
       if (disposed || !mapContainerRef.current || !autocompleteHostRef.current) return;
       const initialPoint = initialPointsRef.current.map((point) => toLatLng(point.location)).find(Boolean);
       const initialPosition = initialPositionRef.current;
@@ -161,8 +165,16 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
       autocompleteHostRef.current.replaceChildren(autocomplete);
       mapRef.current = map;
       markerClassRef.current = markerLibrary.AdvancedMarkerElement;
+      geocoderRef.current = new geocodingLibrary.Geocoder();
       setReadyVersion((version) => version + 1);
-    }).catch(() => onRouteErrorRef.current("No se pudo cargar Google Maps. Revisa la API key y las APIs habilitadas."));
+    }).catch((error) => {
+      const detail = error instanceof Error ? error.message : String(error ?? "");
+      const message = detail
+        ? `No se pudo cargar Google Maps: ${detail}`
+        : "No se pudo cargar Google Maps. Revisa la API key, restricciones de dominio y APIs habilitadas.";
+      setLoadError(message);
+      onRouteErrorRef.current(message);
+    });
 
     return () => {
       disposed = true;
@@ -172,9 +184,44 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
       markersRef.current = [];
       routePolylinesRef.current = [];
       markerClassRef.current = null;
+      geocoderRef.current = null;
       mapRef.current = null;
     };
   }, [apiKey, mapId, regionCode]);
+
+  useEffect(() => {
+    const geocoder = geocoderRef.current;
+    if (!geocoder || !readyVersion) return;
+    let disposed = false;
+
+    const unresolved = points.filter((point) => !toLatLng(point.location) && !resolvedCoordinates[point.id]);
+    if (!unresolved.length) return;
+
+    void (async () => {
+      const next: Record<string, { lat: number; lng: number }> = {};
+      for (const point of unresolved) {
+        if (disposed) return;
+        const query = point.location.address?.trim() || point.location.name?.trim() || point.label;
+        if (!query) continue;
+        try {
+          const response = await geocoder.geocode({
+            address: query,
+            region: regionCode,
+          });
+          const result = response.results?.[0];
+          const location = result?.geometry?.location;
+          if (location) next[point.id] = { lat: location.lat(), lng: location.lng() };
+        } catch {
+          // A missing geocode should not break the entire map. Search still lets the user pick a verified place.
+        }
+      }
+      if (!disposed && Object.keys(next).length) {
+        setResolvedCoordinates((current) => ({ ...current, ...next }));
+      }
+    })();
+
+    return () => { disposed = true; };
+  }, [points, readyVersion, regionCode, resolvedCoordinates]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -182,7 +229,7 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
     if (!map || !AdvancedMarkerElement) return;
     markersRef.current.forEach((marker) => { marker.map = null; });
     const validPoints = points.flatMap((point) => {
-      const coordinates = toLatLng(point.location);
+      const coordinates = toLatLng(point.location) ?? resolvedCoordinates[point.id];
       return coordinates ? [{ ...point, coordinates }] : [];
     });
     const nextMarkers = validPoints.map((point) => new AdvancedMarkerElement({ map, position: point.coordinates, title: point.label }));
@@ -190,7 +237,7 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
       nextMarkers.push(new AdvancedMarkerElement({ map, position: { lat: position.latitude, lng: position.longitude }, title: "Tu ubicación actual" }));
     }
     markersRef.current = nextMarkers;
-  }, [points, position, readyVersion]);
+  }, [points, position, readyVersion, resolvedCoordinates]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -246,6 +293,14 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
   return (
     <div className="google-map-shell">
       <div className="google-places-host" ref={autocompleteHostRef} />
+      {loadError ? (
+        <div className="google-map-unconfigured" role="alert">
+          <p className="eyebrow">Google Maps no pudo iniciar</p>
+          <h2>Revisa la configuración de Google Maps</h2>
+          <p>{loadError}</p>
+          <small>La API key está configurada en NIOLI. Si aparece un error de autorización, revisa que nioli.vercel.app esté permitido en las restricciones HTTP del API key y que Maps JavaScript API + Places API estén habilitadas.</small>
+        </div>
+      ) : null}
       <div className="google-map" ref={mapContainerRef} aria-label="Mapa interactivo de Google Maps" />
     </div>
   );
