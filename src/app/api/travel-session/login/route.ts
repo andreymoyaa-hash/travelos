@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { callPinLogin, TRAVEL_SESSION_COOKIE, WORKSPACE_CONTEXT_COOKIE, WORKSPACE_SESSION_COOKIE } from "@/lib/supabase/server";
-import { encodeWorkspaceContext, getTravelSession } from "@/lib/supabase/session";
+import { encodeWorkspaceContext } from "@/lib/supabase/session";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +47,31 @@ export async function POST(request: Request) {
       return result;
     }
 
-    const session = await getTravelSession(payload.sessionToken);
+    const trip = payload.trip && typeof payload.trip === "object"
+      ? payload.trip as { id?: unknown; name?: unknown; slug?: unknown; mapProvider?: unknown }
+      : {};
+    const participant = payload.participant && typeof payload.participant === "object"
+      ? payload.participant as { id?: unknown; name?: unknown; role?: unknown }
+      : {};
+    if (typeof trip.id !== "string" || typeof trip.name !== "string" || typeof participant.id !== "string" || typeof participant.name !== "string") {
+      return NextResponse.json({ error: "No se pudo abrir la sesión del viaje." }, { status: 502 });
+    }
+    const session = {
+      accessKind: "trip" as const,
+      trip: {
+        id: trip.id,
+        name: trip.name,
+        slug: typeof trip.slug === "string" ? trip.slug : undefined,
+        mapProvider: trip.mapProvider === "google" ? "google" as const : "open" as const,
+      },
+      participant: {
+        id: participant.id,
+        name: participant.name,
+        role: participant.role === "owner" || participant.role === "editor" || participant.role === "participant" || participant.role === "viewer" ? participant.role : "participant",
+      },
+      permissions: payload.permissions && typeof payload.permissions === "object" && !Array.isArray(payload.permissions) ? payload.permissions : {},
+      expiresAt,
+    };
     const result = NextResponse.json(session);
     result.cookies.set(TRAVEL_SESSION_COOKIE, payload.sessionToken, cookieOptions);
     result.cookies.set(WORKSPACE_SESSION_COOKIE, "", { ...cookieOptions, expires: undefined, maxAge: 0 });
