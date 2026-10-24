@@ -19,7 +19,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import type { GoogleDayRouteSummary, GoogleMapPoint, GoogleRouteRequest, GoogleRouteSummary } from "@/features/maps/google-map-v2";
 import type { GeoPosition, LocationStatus, RouteOption, Trip, TripLocation } from "@/types/travel";
 
-const GoogleMap = dynamic(() => import("@/features/maps/google-map"), {
+const GoogleMap = dynamic(() => import("@/features/maps/google-map-v2"), {
   ssr: false,
   loading: () => <div className="map-loading"><span /><strong>Cargando Google Maps…</strong></div>,
 });
