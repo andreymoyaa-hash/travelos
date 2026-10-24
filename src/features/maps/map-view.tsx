@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BadgeDollarSign,
   ExternalLink,
@@ -89,10 +89,22 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
   ], [savedPlaces, selectedDay?.activities, trip.bases]);
 
   const validPointCount = points.filter((point) => hasCoordinates(point.location)).length;
-  const handlePlaceSelect = (place: TripLocation) => {
-    setDestination(place);
+
+  useEffect(() => {
+    if (provider !== "google" || !apiKey || !position || !destination) return;
+    setPreparingRoute(true);
     setRouteResult(undefined);
     setRouteError(undefined);
+    setRouteRequest({
+      id: Date.now(),
+      origin: position,
+      destination,
+      preference: selectedRoute,
+    });
+  }, [apiKey, destination, position, provider, selectedRoute]);
+
+  const handlePlaceSelect = (place: TripLocation) => {
+    setDestination(place);
     onSavePlace(place);
   };
 
@@ -175,7 +187,7 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
             {trip.routeOptions.map((route) => {
               const Icon = routeIcons[route.id];
               return (
-                <button type="button" key={route.id} className={selectedRoute === route.id ? "route-option active" : "route-option"} onClick={() => { setSelectedRoute(route.id); setRouteResult(undefined); }} aria-pressed={selectedRoute === route.id}>
+                <button type="button" key={route.id} className={selectedRoute === route.id ? "route-option active" : "route-option"} onClick={() => setSelectedRoute(route.id)} aria-pressed={selectedRoute === route.id}>
                   <span className="route-option-icon"><Icon size={18} aria-hidden="true" /></span>
                   <span><strong>{route.label}</strong><small>{route.description}</small></span>
                   <span>{selectedRoute === route.id ? "Elegida" : ""}</span>
