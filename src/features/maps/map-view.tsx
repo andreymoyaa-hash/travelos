@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "@/components/ui/section-heading";
-import type { GoogleDayRouteSummary, GoogleMapPoint, GoogleRouteRequest, GoogleRouteSummary } from "@/features/maps/google-map";
+import type { GoogleDayRouteSummary, GoogleMapPoint, GoogleRouteRequest, GoogleRouteSummary } from "@/features/maps/google-map-v2";
 import type { GeoPosition, LocationStatus, RouteOption, Trip, TripLocation } from "@/types/travel";
 
 const GoogleMap = dynamic(() => import("@/features/maps/google-map"), {
@@ -84,7 +84,7 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
 
   const points = useMemo<GoogleMapPoint[]>(() => [
     ...trip.bases.map((base) => ({ id: `base-${base.id}`, label: `Base · ${base.city}`, location: base.location, kind: "base" as const })),
-    ...(selectedDay?.activities ?? []).map((activity) => ({ id: activity.id, label: activity.title, location: activity.location, kind: "activity" as const })),
+    ...(selectedDay?.activities ?? []).map((activity) => ({ id: activity.id, label: activity.title, location: activity.location, kind: "activity" as const, query: activity.location.address ?? `${activity.location.name}, ${activity.city ?? selectedDay?.city ?? ""}, Japan`, routeable: activity.category !== "transport" })),
     ...savedPlaces.map((place, index) => ({ id: place.placeId ?? `saved-${index}-${place.name}`, label: place.name, location: place, kind: "saved" as const })),
   ], [savedPlaces, selectedDay?.activities, trip.bases]);
 
