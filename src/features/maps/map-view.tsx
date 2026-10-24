@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "@/components/ui/section-heading";
-import type { GoogleMapPoint, GoogleRouteRequest, GoogleRouteSummary } from "@/features/maps/google-map";
+import type { GoogleDayRouteSummary, GoogleMapPoint, GoogleRouteRequest, GoogleRouteSummary } from "@/features/maps/google-map";
 import type { GeoPosition, LocationStatus, RouteOption, Trip, TripLocation } from "@/types/travel";
 
 const GoogleMap = dynamic(() => import("@/features/maps/google-map"), {
@@ -73,6 +73,7 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
   const [routeRequest, setRouteRequest] = useState<GoogleRouteRequest>();
   const [routeResult, setRouteResult] = useState<GoogleRouteSummary>();
   const [routeError, setRouteError] = useState<string>();
+  const [dayRoute, setDayRoute] = useState<GoogleDayRouteSummary>();
   const [preparingRoute, setPreparingRoute] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY?.trim() ?? "";
   const mapId = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID?.trim();
@@ -150,6 +151,7 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
               routeRequest={routeRequest}
               onPlaceSelect={handlePlaceSelect}
               onRouteResult={handleRouteResult}
+              onDayRouteResult={setDayRoute}
               onRouteError={handleRouteError}
             />
           ) : (
@@ -165,7 +167,7 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
         </section>
 
         <aside className="route-planner-card google-route-planner">
-          <header><p className="eyebrow">Preparar ruta real</p><h2><Route size={19} aria-hidden="true" /> {position ? "Tu ubicación" : "Falta origen"}</h2><p>{destination?.name ?? "Busca y selecciona un destino"}</p></header>
+          <header><p className="eyebrow">Ruta del día</p><h2><Route size={19} aria-hidden="true" /> {selectedDay?.area ?? "Sin día seleccionado"}</h2><p>{dayRoute ? `${dayRoute.legs} tramos · ${dayRoute.duration} · ${dayRoute.distance}` : "Nioli calcula automáticamente el recorrido entre las paradas del día."}</p></header>
 
           {savedPlaces.length > 0 ? <div className="saved-place-list"><small>Lugares guardados</small>{savedPlaces.map((place) => <button type="button" key={place.placeId ?? place.name} onClick={() => setDestination(place)}><MapPinned size={15} aria-hidden="true" /><span><strong>{place.name}</strong><small>{place.address ?? "Dirección no disponible"}</small></span></button>)}</div> : null}
 
@@ -182,6 +184,16 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
             })}
           </div>
 
+          {dayRoute ? (
+            <div className="real-route-result" aria-live="polite">
+              <div><span><small>Ruta del día</small><strong>{dayRoute.legs} tramos</strong></span><span><small>Total</small><strong>{dayRoute.duration}</strong></span></div>
+              <div><span><small>Distancia</small><strong>{dayRoute.distance}</strong></span><span><small>Modo</small><strong><TrainFront size={15} /> Transporte público</strong></span></div>
+              {dayRoute.failedLegs > 0 ? <p>{dayRoute.failedLegs} tramo(s) no pudieron calcularse automáticamente.</p> : <p>La ruta visible se recalcula al cambiar de día.</p>}
+            </div>
+          ) : null}
+
+          <header><p className="eyebrow">Desde tu ubicación</p><h2><Navigation size={19} aria-hidden="true" /> {position ? "Origen listo" : "Falta origen"}</h2><p>{destination?.name ?? "Busca y selecciona un destino"}</p></header>
+
           {routeResult ? (
             <div className="real-route-result" aria-live="polite">
               <div><span><small>Tiempo</small><strong>{routeResult.duration}</strong></span><span><small>Distancia</small><strong>{routeResult.distance}</strong></span></div>
@@ -196,7 +208,7 @@ export function MapView({ trip, position, locationStatus, locationError, savedPl
           <button type="button" className="primary-button full-width" disabled={provider !== "google" || !apiKey || !position || !destination || preparingRoute} onClick={prepareRoute}><Navigation size={18} aria-hidden="true" /> {preparingRoute ? "Calculando…" : "Calcular ruta"}</button>
           {provider === "google" && position && destination ? <a className="secondary-button full-width google-maps-link" href={createGoogleMapsUrl(position, destination)} target="_blank" rel="noreferrer">Abrir en Google Maps <ExternalLink size={16} aria-hidden="true" /></a> : null}
           {provider === "open" && position ? <a className="secondary-button full-width google-maps-link" href={createOpenStreetMapUrl(position, destination)} target="_blank" rel="noreferrer">Abrir en OpenStreetMap <ExternalLink size={16} aria-hidden="true" /></a> : null}
-          {provider === "open" ? <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Este viaje usa OpenStreetMap. Cambia el proveedor en la configuración del viaje para habilitar Places y Routes.</p> : !apiKey ? <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Places y Routes se activarán al configurar la key restringida.</p> : null}
+          {provider === "open" ? <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Este viaje usa OpenStreetMap. Cambia el proveedor en la configuración del viaje para habilitar Places y Routes.</p> : !apiKey ? <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Places y Routes se activarán al configurar la key restringida.</p> : <p className="configuration-note"><MapPinned size={14} aria-hidden="true" /> Para dibujar rutas, la clave de Google debe tener Maps JavaScript API, Places API y Routes API habilitadas.</p>}
         </aside>
       </div>
     </div>
