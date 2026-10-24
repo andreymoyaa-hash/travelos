@@ -21,6 +21,13 @@ export interface GoogleRouteRequest {
   preference: RouteOption["id"];
 }
 
+export interface GoogleDayRouteSummary {
+  legs: number;
+  failedLegs: number;
+  duration: string;
+  distance: string;
+}
+
 export interface GoogleRouteSummary {
   duration: string;
   distance: string;
@@ -40,6 +47,7 @@ interface GoogleMapProps {
   routeRequest?: GoogleRouteRequest;
   onPlaceSelect: (place: TripLocation) => void;
   onRouteResult: (result: GoogleRouteSummary) => void;
+  onDayRouteResult: (result: GoogleDayRouteSummary | undefined) => void;
   onRouteError: (message: string) => void;
 }
 
@@ -94,7 +102,7 @@ function chooseRoute(routes: google.maps.routes.Route[], preference: RouteOption
   return { route: fastest, message: null };
 }
 
-export default function GoogleMap({ apiKey, mapId, position, points, regionCode, routeRequest, onPlaceSelect, onRouteResult, onRouteError }: GoogleMapProps) {
+export default function GoogleMap({ apiKey, mapId, position, points, regionCode, routeRequest, onPlaceSelect, onRouteResult, onDayRouteResult, onRouteError }: GoogleMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const autocompleteHostRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
@@ -102,10 +110,12 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
   const geocoderRef = useRef<google.maps.Geocoder | null>(null);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
   const routePolylinesRef = useRef<google.maps.Polyline[]>([]);
+  const dayRoutePolylinesRef = useRef<google.maps.Polyline[]>([]);
   const [resolvedCoordinates, setResolvedCoordinates] = useState<Record<string, { lat: number; lng: number }>>({});
   const [loadError, setLoadError] = useState<string>();
   const onPlaceSelectRef = useRef(onPlaceSelect);
   const onRouteResultRef = useRef(onRouteResult);
+  const onDayRouteResultRef = useRef(onDayRouteResult);
   const onRouteErrorRef = useRef(onRouteError);
   const initialPointsRef = useRef(points);
   const initialPositionRef = useRef(position);
@@ -114,8 +124,9 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
   useEffect(() => {
     onPlaceSelectRef.current = onPlaceSelect;
     onRouteResultRef.current = onRouteResult;
+    onDayRouteResultRef.current = onDayRouteResult;
     onRouteErrorRef.current = onRouteError;
-  }, [onPlaceSelect, onRouteError, onRouteResult]);
+  }, [onDayRouteResult, onPlaceSelect, onRouteError, onRouteResult]);
 
   useEffect(() => {
     if (!mapContainerRef.current || !autocompleteHostRef.current) return;
@@ -181,8 +192,10 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
       autocomplete?.remove();
       markersRef.current.forEach((marker) => { marker.map = null; });
       routePolylinesRef.current.forEach((polyline) => polyline.setMap(null));
+      dayRoutePolylinesRef.current.forEach((polyline) => polyline.setMap(null));
       markersRef.current = [];
       routePolylinesRef.current = [];
+      dayRoutePolylinesRef.current = [];
       markerClassRef.current = null;
       geocoderRef.current = null;
       mapRef.current = null;
@@ -238,6 +251,111 @@ export default function GoogleMap({ apiKey, mapId, position, points, regionCode,
     }
     markersRef.current = nextMarkers;
   }, [points, position, readyVersion, resolvedCoordinates]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !readyVersion) return;
+
+    const activityPoints = points
+      .filter((point) => point.kind === "activity")
+      .map((point) => ({
+        ...point,
+        coordinates: toLatLng(point.location) ?? resolvedCoordinates[point.id],
+      }))
+      .filter((point): point is GoogleMapPoint & { coordinates: { lat: number; lng: number } } => Boolean(point.coordinates));
+
+    dayRoutePolylinesRef.current.forEach((polyline) => polyline.setMap(null));
+    dayRoutePolylinesRef.current = [];
+    onDayRouteResultRef.current(undefined);
+
+    if (activityPoints.length < 2) return;
+
+    let disposed = false;
+    void importLibrary("routes").then(async ({ Route }) => {
+      let totalDistance = 0;
+      let totalDuration = 0;
+      let successfulLegs = 0;
+      let failedLegs = 0;
+      const allPolylines: google.maps.Polyline[] = [];
+      const bounds = new google.maps.LatLngBounds();
+
+      for (let index = 0; index < activityPoints.length - 1; index += 1) {
+        if (disposed) return;
+        const origin = activityPoints[index].coordinates;
+        const destination = activityPoints[index + 1].coordinates;
+        bounds.extend(origin);
+        bounds.extend(destination);
+
+        try {
+          const { routes } = await Route.computeRoutes({
+            origin,
+            destination,
+            travelMode: "TRANSIT",
+            computeAlternativeRoutes: false,
+            fields: ["path", "distanceMeters", "durationMillis", "viewport"],
+          });
+          const route = routes?.[0];
+          if (!route) {
+            failedLegs += 1;
+            continue;
+          }
+
+          successfulLegs += 1;
+          totalDistance += route.distanceMeters ?? 0;
+          totalDuration += route.durationMillis ?? 0;
+          const routeColor = getComputedStyle(mapContainerRef.current!).getPropertyValue("--secondary").trim() || "#2D4665";
+          const polylines = route.createPolylines({
+            polylineOptions: (defaults) => ({
+              ...defaults,
+              strokeColor: routeColor,
+              strokeOpacity: 0.82,
+              strokeWeight: 5,
+            }),
+          });
+          polylines.forEach((polyline) => {
+            polyline.setMap(map);
+            allPolylines.push(polyline);
+          });
+        } catch {
+          failedLegs += 1;
+        }
+      }
+
+      if (disposed) {
+        allPolylines.forEach((polyline) => polyline.setMap(null));
+        return;
+      }
+
+      dayRoutePolylinesRef.current = allPolylines;
+      if (!bounds.isEmpty()) map.fitBounds(bounds, 52);
+
+      if (successfulLegs > 0) {
+        const totalMinutes = Math.max(1, Math.round(totalDuration / 60000));
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        onDayRouteResultRef.current({
+          legs: successfulLegs,
+          failedLegs,
+          duration: hours ? `${hours} h ${minutes} min` : `${minutes} min`,
+          distance: formatDistance(totalDistance),
+        });
+      } else {
+        onRouteErrorRef.current("No se pudieron calcular las rutas del día. Verifica que Routes API esté habilitada para la clave de Google Maps.");
+      }
+    }).catch((error) => {
+      if (disposed) return;
+      const detail = error instanceof Error ? error.message : "";
+      onRouteErrorRef.current(detail
+        ? `Google Routes no pudo iniciar: ${detail}`
+        : "Google Routes no pudo iniciar. Verifica que Routes API esté habilitada.");
+    });
+
+    return () => {
+      disposed = true;
+      dayRoutePolylinesRef.current.forEach((polyline) => polyline.setMap(null));
+      dayRoutePolylinesRef.current = [];
+    };
+  }, [points, readyVersion, resolvedCoordinates]);
 
   useEffect(() => {
     const map = mapRef.current;
