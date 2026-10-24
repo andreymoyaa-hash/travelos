@@ -48,9 +48,9 @@ export async function getTravelSession(token?: string): Promise<TravelSession> {
 
   const [tripResult, participantIdResult, roleResult, permissionsResult] = await Promise.all([
     client.from("trips").select("id,name,slug,map_provider").single(),
-    client.schema("app").rpc("current_participant_id"),
-    client.schema("app").rpc("current_role"),
-    client.schema("app").rpc("current_permissions"),
+    client.rpc("current_participant_id_bridge"),
+    client.rpc("current_role_bridge"),
+    client.rpc("current_permissions_bridge"),
   ]);
   if (tripResult.error || participantIdResult.error || !tripResult.data || !participantIdResult.data) throw new Error("INVALID_SESSION");
 
@@ -74,7 +74,7 @@ export async function getTravelWorkspaceSession(token?: string): Promise<TravelW
   const sessionToken = token ?? await readWorkspaceSessionToken();
   if (!sessionToken) throw new Error("UNAUTHENTICATED");
   const client = createWorkspaceClient(sessionToken);
-  const result = await client.schema("app").rpc("current_guest_workspace_id");
+  const result = await client.rpc("current_guest_workspace_id_bridge");
   if (result.error || typeof result.data !== "string") throw new Error("INVALID_WORKSPACE_SESSION");
   const context = await readWorkspaceContext();
   return {
