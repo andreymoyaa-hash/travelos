@@ -96,6 +96,7 @@ export default function GoogleMap({
   const autocompleteHostRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markerClassRef = useRef<typeof google.maps.marker.AdvancedMarkerElement | null>(null);
+  const pinClassRef = useRef<typeof google.maps.marker.PinElement | null>(null);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
   const dayRoutePolylinesRef = useRef<google.maps.Polyline[]>([]);
   const userRoutePolylinesRef = useRef<google.maps.Polyline[]>([]);
@@ -167,6 +168,7 @@ export default function GoogleMap({
       autocompleteHostRef.current.replaceChildren(autocomplete);
       mapRef.current = map;
       markerClassRef.current = markerLibrary.AdvancedMarkerElement;
+      pinClassRef.current = markerLibrary.PinElement;
       setReadyVersion((version) => version + 1);
     }).catch((error) => {
       const detail = error instanceof Error ? error.message : String(error ?? "");
@@ -186,6 +188,7 @@ export default function GoogleMap({
       userRoutePolylinesRef.current = [];
       mapRef.current = null;
       markerClassRef.current = null;
+      pinClassRef.current = null;
     };
   }, [apiKey, mapId, position, regionCode]);
 
@@ -243,24 +246,81 @@ export default function GoogleMap({
   useEffect(() => {
     const map = mapRef.current;
     const AdvancedMarkerElement = markerClassRef.current;
-    if (!map || !AdvancedMarkerElement) return;
+    const PinElement = pinClassRef.current;
+    if (!map || !AdvancedMarkerElement || !PinElement) return;
 
     markersRef.current.forEach((marker) => { marker.map = null; });
     const next: google.maps.marker.AdvancedMarkerElement[] = [];
+    let activityNumber = 0;
 
     for (const point of points) {
       const coordinates = toLatLng(point.location) ?? (resolvedPlaces[point.id]?.location
         ? { lat: resolvedPlaces[point.id].location!.lat(), lng: resolvedPlaces[point.id].location!.lng() }
         : undefined);
       if (!coordinates) continue;
-      next.push(new AdvancedMarkerElement({ map, position: coordinates, title: point.label }));
+
+      let glyphText = "•";
+      let background = "#6B7280";
+      let borderColor = "#374151";
+      let glyphColor = "#FFFFFF";
+      let scale = 1;
+      let zIndex = 20;
+
+      if (point.kind === "activity") {
+        if (point.routeable !== false) {
+          activityNumber += 1;
+          glyphText = String(activityNumber);
+          background = "#C84A3A";
+          borderColor = "#8E2F25";
+          scale = 1.05;
+          zIndex = 50 + activityNumber;
+        } else {
+          glyphText = "T";
+          background = "#8B5E34";
+          borderColor = "#5F3F23";
+          zIndex = 35;
+        }
+      } else if (point.kind === "base") {
+        glyphText = "H";
+        background = "#2E4A3A";
+        borderColor = "#1E3328";
+        scale = 1.1;
+        zIndex = 45;
+      } else if (point.kind === "saved") {
+        glyphText = "★";
+        background = "#D6A84B";
+        borderColor = "#8B6B24";
+        glyphColor = "#1F2937";
+        scale = 1.05;
+        zIndex = 40;
+      }
+
+      const pin = new PinElement({ glyphText, background, borderColor, glyphColor, scale });
+      next.push(new AdvancedMarkerElement({
+        map,
+        position: coordinates,
+        title: point.kind === "activity" && point.routeable !== false
+          ? `${activityNumber}. ${point.label}`
+          : point.label,
+        content: pin,
+        zIndex,
+      }));
     }
 
     if (position) {
+      const userPin = new PinElement({
+        glyphText: "YO",
+        background: "#2563EB",
+        borderColor: "#123A8C",
+        glyphColor: "#FFFFFF",
+        scale: 1.35,
+      });
       next.push(new AdvancedMarkerElement({
         map,
         position: { lat: position.latitude, lng: position.longitude },
-        title: "Tu ubicación actual",
+        title: "Tu ubicación GPS",
+        content: userPin,
+        zIndex: 1000,
       }));
     }
 
