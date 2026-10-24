@@ -369,39 +369,84 @@ export default function GoogleMap({
     const map = mapRef.current;
     if (!map || !routeRequest) return;
     const destination = toLatLng(routeRequest.destination);
-    if (!destination) return;
+    if (!destination) {
+      onRouteErrorRef.current("El destino no tiene coordenadas válidas. Selecciónalo nuevamente desde Google Places.");
+      return;
+    }
 
     let disposed = false;
     void importLibrary("routes").then(async ({ Route }) => {
       userRoutePolylinesRef.current.forEach((polyline) => polyline.setMap(null));
       userRoutePolylinesRef.current = [];
 
-      const transitPreference = routeRequest.preference === "walking"
-        ? { routingPreference: "LESS_WALKING" as const }
-        : undefined;
+      const origin = { lat: routeRequest.origin.latitude, lng: routeRequest.origin.longitude };
+      const preferredModes = routeRequest.preference === "walking"
+        ? (["WALKING"] as const)
+        : (["TRANSIT", "WALKING"] as const);
 
-      const { routes } = await Route.computeRoutes({
-        origin: { lat: routeRequest.origin.latitude, lng: routeRequest.origin.longitude },
-        destination,
-        travelMode: "TRANSIT",
-        transitPreference,
-        computeAlternativeRoutes: true,
-        fields: ["path", "legs", "distanceMeters", "durationMillis", "localizedValues", "warnings"],
-      });
-      if (disposed || !routes?.length) throw new Error("No routes");
-      const route = routes[0];
-      const polylines = route.createPolylines();
+      let chosen: google.maps.routes.Route | undefined;
+      let chosenMode: "TRANSIT" | "WALKING" | undefined;
+      const errors: string[] = [];
+
+      for (const travelMode of preferredModes) {
+        try {
+          const { routes } = await Route.computeRoutes({
+            origin,
+            destination,
+            travelMode,
+            computeAlternativeRoutes: travelMode === "TRANSIT",
+            fields: ["path", "legs", "distanceMeters", "durationMillis", "localizedValues", "warnings", "travelAdvisory"],
+          });
+
+          if (routes?.length) {
+            if (routeRequest.preference === "cheapest" && travelMode === "TRANSIT") {
+              const withFare = routes
+                .map((route) => ({ route, fare: route.travelAdvisory?.transitFare }))
+                .filter((item) => item.fare);
+              chosen = withFare.length ? withFare[0].route : routes[0];
+            } else {
+              chosen = routes[0];
+            }
+            chosenMode = travelMode;
+            break;
+          }
+        } catch (error) {
+          const detail = error instanceof Error ? error.message : String(error ?? "");
+          errors.push(`${travelMode}: ${detail || "sin detalle"}`);
+        }
+      }
+
+      if (disposed) return;
+      if (!chosen || !chosenMode) {
+        throw new Error(errors.length ? errors.join(" | ") : "Google no devolvió rutas.");
+      }
+
+      const polylines = chosen.createPolylines();
       polylines.forEach((polyline) => polyline.setMap(map));
       userRoutePolylinesRef.current = polylines;
 
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend(origin);
+      bounds.extend(destination);
+      map.fitBounds(bounds, 64);
+
+      const fare = chosen.travelAdvisory?.transitFare?.toString?.() ?? null;
+      const walkingMeters = chosen.legs?.reduce((total, leg) => total + leg.steps.reduce(
+        (legTotal, step) => legTotal + (step.travelMode === "WALKING" ? step.distanceMeters : 0),
+        0,
+      ), 0) ?? null;
+      const transitSteps = chosen.legs?.reduce((total, leg) => total + leg.steps.filter((step) => step.travelMode === "TRANSIT").length, 0) ?? null;
+
       onRouteResultRef.current({
-        duration: route.localizedValues?.duration ?? formatDuration(route.durationMillis ?? 0),
-        distance: route.localizedValues?.distance ?? formatDistance(route.distanceMeters ?? 0),
-        fare: null,
-        walkingDistance: null,
-        transfers: null,
-        message: null,
-        warnings: route.warnings ?? [],
+        duration: chosen.localizedValues?.duration ?? formatDuration(chosen.durationMillis ?? 0),
+        distance: chosen.localizedValues?.distance ?? formatDistance(chosen.distanceMeters ?? 0),
+        fare,
+        walkingDistance: walkingMeters !== null ? formatDistance(walkingMeters) : null,
+        transfers: chosenMode === "TRANSIT" && transitSteps !== null ? Math.max(0, transitSteps - 1) : 0,
+        message: chosenMode === "WALKING" && routeRequest.preference !== "walking"
+          ? "Google no devolvió una ruta de transporte público; se muestra la ruta a pie."
+          : null,
+        warnings: chosen.warnings ?? [],
       });
     }).catch((error) => {
       const detail = error instanceof Error ? error.message : String(error ?? "");
