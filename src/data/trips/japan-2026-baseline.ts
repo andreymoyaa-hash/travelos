@@ -10,7 +10,7 @@ export const japan2026Baseline = {
   flightIds: [],
   participantIds: ["andy", "jose"],
   stampCount: 20,
-  reservationCount: 6,
+  reservationCount: 7,
   expenseCount: 0,
   photoCount: 0,
 } as const;
