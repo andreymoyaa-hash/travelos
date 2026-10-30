@@ -125,7 +125,7 @@ async function removeMissingPlannedRows(client: SupabaseClient, tripId: string, 
   assertResult(deleted, `delete ${table}`);
 }
 
-export async function syncAuthorizedTrip(token: string, source: Trip, options: { migration?: boolean } = {}) {
+export async function syncAuthorizedTrip(token: string, source: Trip, options: { migration?: boolean; preserveUnlisted?: boolean } = {}) {
   const session = await getTravelSession(token);
   const client = createTravelClient(token);
   if (options.migration) {
@@ -277,12 +277,12 @@ export async function syncAuthorizedTrip(token: string, source: Trip, options: {
     assertResult(companionResult, "companion progress");
   }
 
-  if (canEditPlan) {
+  if (canEditPlan && !options.preserveUnlisted) {
     await removeMissingPlannedRows(client, session.trip.id, "activities", source.itinerary.flatMap((day) => day.activities.map((activity) => activity.id)));
     await removeMissingPlannedRows(client, session.trip.id, "trip_days", source.itinerary.map((day) => day.id));
     await removeMissingPlannedRows(client, session.trip.id, "locations", locationRows.map((row) => String(row.stable_key)));
   }
-  if (canManageReservations) {
+  if (canManageReservations && !options.preserveUnlisted) {
     await removeMissingPlannedRows(client, session.trip.id, "reservations", source.reservations.map((reservation) => reservation.id));
   }
   return session;
@@ -336,7 +336,7 @@ export async function loadAuthorizedTrip(token: string): Promise<CloudTripPayloa
       ? extensionSettings.updatedAt
       : undefined;
     if (templateUpdatedAt && (!cloudTemplateUpdatedAt || cloudTemplateUpdatedAt < templateUpdatedAt)) {
-      await syncAuthorizedTrip(token, japan2026Trip);
+      await syncAuthorizedTrip(token, japan2026Trip, { preserveUnlisted: true });
       return loadAuthorizedTrip(token);
     }
   }
