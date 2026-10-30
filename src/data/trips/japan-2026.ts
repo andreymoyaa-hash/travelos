@@ -11,18 +11,18 @@ const itinerary: TripDay[] = [
     "dayNumber": "11",
     "month": "NOV",
     "city": "Osaka",
-    "area": "Llegada, Namba y abastecimiento",
+    "area": "Llegada a Osaka · KIX → Namba · descanso",
     "dayType": "recovery",
     "baseId": "osaka",
-    "notes": "Primer día ligero: traslado, check-in y abastecimiento. Dotonbori sólo si queda energía.",
-    "transportSummary": "Llegada → Motomachi/Namba. La ruta puerta a puerta queda pendiente de confirmar aeropuerto y vuelo.",
+    "notes": "Día de llegada y descanso real. Vuelo Jetstar Japan GK215 Narita T3 11:50 → Kansai T1 13:30. Después sólo traslado, check-in, cena cerca y compra mínima si hace falta.",
+    "transportSummary": "NRT T3 11:50 → KIX T1 13:30 (GK215) → Namba/Motomachi. Sin Shinkansen este día.",
     "foodPause": "Comprar desayuno, agua y snacks en supermercado para evitar depender de aeropuerto o konbini.",
-    "keyNote": "No reservar atracciones este día.",
-    "paceNote": "Plan lluvia: compras bajo techo. Priorizar adaptación y descanso.",
+    "keyNote": "No planear atracciones ni Dotonbori este día; prioridad total al descanso antes de USJ.",
+    "paceNote": "Ritmo suave. Dotonbori se hace el viernes 13 con Namba/Den Den Town.",
     "activities": [
       {
         "id": "jp-2026-11-11-transfer",
-        "title": "Traslado al alojamiento en Motomachi",
+        "title": "KIX T1 → Namba/Motomachi",
         "date": "2026-11-11",
         "category": "transport",
         "categories": [
@@ -30,14 +30,14 @@ const itinerary: TripDay[] = [
           "transport"
         ],
         "location": {
-          "name": "Traslado al alojamiento en Motomachi",
+          "name": "KIX T1 → Namba/Motomachi",
           "address": null,
           "latitude": null,
           "longitude": null,
           "placeId": null
         },
         "city": "Osaka",
-        "notes": "Ruta exacta desde el aeropuerto se confirmará cuando estén definidos aeropuerto, terminal y horario."
+        "notes": "Vuelo confirmado: GK215 llega a KIX T1 a las 13:30. Traslado terrestre a Namba después de salir de terminal."
       },
       {
         "id": "jp-2026-11-11-checkin",
@@ -61,14 +61,14 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-11-supplies",
-        "title": "Life / Daikokucho · desayuno, agua, snacks e higiene",
+        "title": "Compra mínima cerca del alojamiento · agua/desayuno",
         "date": "2026-11-11",
         "category": "shopping",
         "categories": [
           "shopping"
         ],
         "location": {
-          "name": "Life / Daikokucho · desayuno, agua, snacks e higiene",
+          "name": "Compra mínima cerca del alojamiento · agua/desayuno",
           "address": null,
           "latitude": null,
           "longitude": null,
@@ -78,7 +78,7 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-11-dotonbori",
-        "title": "Dotonbori nocturno si queda energía",
+        "title": "Descanso en el alojamiento / cena cerca",
         "date": "2026-11-11",
         "category": "leisure",
         "categories": [
@@ -87,7 +87,7 @@ const itinerary: TripDay[] = [
           "photography"
         ],
         "location": {
-          "name": "Dotonbori nocturno si queda energía",
+          "name": "Descanso en el alojamiento / cena cerca",
           "address": null,
           "latitude": null,
           "longitude": null,
@@ -105,14 +105,14 @@ const itinerary: TripDay[] = [
     "dayNumber": "12",
     "month": "NOV",
     "city": "Osaka",
-    "area": "Universal Studios Japan · pendiente de comprar",
+    "area": "Universal Studios Japan · CONFIRMADO",
     "dayType": "theme-park",
     "baseId": "osaka",
-    "notes": "USJ propuesto para el jueves 12. Usar la app oficial, registrar Studio Passes y gestionar entrada programada a Super Nintendo World cuando corresponda.",
+    "notes": "USJ confirmado para el jueves 12. Express Pass: SUPER NINTENDO WORLD 11:30–12:30; Mario Kart 11:30–12:00; Yoshi 12:00–12:30. Hollywood Dream, Minion Mayhem y The Flying Dinosaur quedan flexibles durante el día.",
     "transportSummary": "Salir temprano desde Namba hacia Universal City; confirmar transbordos el mismo día.",
-    "reservationNote": "Entrada pendiente. Comparar el precio oficial del 12 con el 13 antes de pagar; el 13 inicia programación navideña.",
-    "keyNote": "No asumir acceso a Super Nintendo World sin comprobar condiciones.",
-    "paceNote": "Express Pass sólo si la espera prevista justifica el precio.",
+    "reservationNote": "CONFIRMADO · respetar las ventanas impresas del Express Pass.",
+    "keyNote": "SUPER NINTENDO WORLD está garantizado por el Express Pass de 11:30 a 12:30. Llegar a la zona con margen.",
+    "paceNote": "Mine Cart Madness no está en este Express: intentar standby después de Yoshi o cuando la cola baje.",
     "activities": [
       {
         "id": "jp-2026-11-12-usj-transfer",
@@ -153,7 +153,7 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-12-mario-kart",
-        "title": "Mario Kart",
+        "title": "Mario Kart: Koopa's Challenge™",
         "date": "2026-11-12",
         "category": "theme-park",
         "categories": [
@@ -161,17 +161,19 @@ const itinerary: TripDay[] = [
           "gaming"
         ],
         "location": {
-          "name": "Mario Kart",
+          "name": "Mario Kart: Koopa's Challenge™",
           "address": null,
           "latitude": null,
           "longitude": null,
           "placeId": null
         },
+        "startTime": "11:30",
+        "endTime": "12:00",
         "city": "Osaka"
       },
       {
         "id": "jp-2026-11-12-donkey-kong",
-        "title": "Donkey Kong",
+        "title": "Yoshi's Adventure™",
         "date": "2026-11-12",
         "category": "theme-park",
         "categories": [
@@ -179,30 +181,33 @@ const itinerary: TripDay[] = [
           "gaming"
         ],
         "location": {
-          "name": "Donkey Kong",
+          "name": "Yoshi's Adventure™",
           "address": null,
           "latitude": null,
           "longitude": null,
           "placeId": null
         },
+        "startTime": "12:00",
+        "endTime": "12:30",
         "city": "Osaka"
       },
       {
         "id": "jp-2026-11-12-harry-potter",
-        "title": "Harry Potter",
+        "title": "Express flexible · Hollywood Dream + Minion Mayhem + Flying Dinosaur",
         "date": "2026-11-12",
         "category": "theme-park",
         "categories": [
           "theme-park"
         ],
         "location": {
-          "name": "Harry Potter",
+          "name": "Express flexible · Hollywood Dream + Minion Mayhem + Flying Dinosaur",
           "address": null,
           "latitude": null,
           "longitude": null,
           "placeId": null
         },
-        "city": "Osaka"
+        "city": "Osaka",
+        "notes": "Una vez cada atracción con espera reducida; hacerlas alrededor del bloque fijo de Nintendo World."
       }
     ]
   },
@@ -344,7 +349,8 @@ const itinerary: TripDay[] = [
     "dayType": "standard",
     "baseId": "osaka",
     "notes": "Katsuo-ji temprano; tarde en Osaka Station, Toki-no-Hiroba y Umeda.",
-    "transportSummary": "Consultar ticket y bus desde Minoh-Kayano la noche anterior.",
+    "transportSummary": "Minoh-Kayano → Katsuo-ji. El bus directo de sábado comienza a las 09:00; revisar horario operativo la noche anterior.",
+    "reservationNote": "WEB TICKET RECOMENDADO para Katsuo-ji · no obligatorio; ayuda a evitar la fila de taquilla en otoño.",
     "keyNote": "Umeda Sky es opcional si bastan las vistas gratuitas.",
     "paceNote": "Referencia del documento: Katsuo-ji ¥500 y Umeda Sky ¥2.000; confirmar antes de pagar.",
     "activities": [
@@ -439,6 +445,7 @@ const itinerary: TripDay[] = [
     "visitedCity": "Nara",
     "notes": "Nara durante el traslado entre bases. Resolver equipaje antes de entrar al parque.",
     "transportSummary": "Osaka-Namba → Kintetsu-Nara; después Nara → Kioto → Enmachi.",
+    "reservationNote": "SIN RESERVA PREVIA · Tōdai-ji y Nara Park se resuelven el mismo día.",
     "keyNote": "No comprar pase Kintetsu sin calcular los trayectos reales.",
     "paceNote": "Nara Park y Naramachi son gratuitos; Tōdai-ji es la entrada principal a valorar.",
     "activities": [
@@ -569,6 +576,7 @@ const itinerary: TripDay[] = [
     "baseId": "kyoto",
     "notes": "Salida objetivo 06:15–06:30. Recorrer Higashiyama en descenso desde Kiyomizu hasta Gion.",
     "transportSummary": "Combinar tren y caminata cuando convenga para evitar buses saturados.",
+    "reservationNote": "SIN RESERVA PREVIA · Kiyomizu-dera para visita normal.",
     "keyNote": "Respetar calles privadas y normas de fotografía en Gion.",
     "paceNote": "Buscar las fotos principales antes de las 09:00.",
     "activities": [
@@ -708,10 +716,11 @@ const itinerary: TripDay[] = [
     "dayNumber": "17",
     "month": "NOV",
     "city": "Kyoto",
-    "area": "Arashiyama, Kinkaku-ji e iluminación opcional",
+    "area": "Arashiyama temprano, Tenryū-ji, Kinkaku-ji y Kitano",
     "dayType": "standard",
     "baseId": "kyoto",
-    "notes": "Arashiyama temprano y luego Kinkaku-ji. Noche de Chion-in sólo si el programa oficial 2026 lo permite.",
+    "notes": "Bamboo Grove al amanecer, Tenryū-ji con apertura otoñal temprana, luego Kinkaku-ji y zona Kitano/Enmachi. Chion-in se mueve al 19 por cercanía con Kawaramachi/Gion.",
+    "reservationNote": "SIN RESERVA PREVIA · Bamboo Grove, Tenryū-ji (visita normal) y Kinkaku-ji.",
     "keyNote": "No intentar todas las entradas de Arashiyama.",
     "paceNote": "Referencia del documento: Kinkaku-ji ¥500; confirmar tarifa.",
     "activities": [
@@ -736,7 +745,7 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-17-katsura",
-        "title": "Río Katsura / Arashiyama",
+        "title": "Tenryū-ji · apertura otoñal 07:30",
         "date": "2026-11-17",
         "category": "nature",
         "categories": [
@@ -744,7 +753,7 @@ const itinerary: TripDay[] = [
           "photography"
         ],
         "location": {
-          "name": "Río Katsura / Arashiyama",
+          "name": "Tenryū-ji · apertura otoñal 07:30",
           "address": null,
           "latitude": null,
           "longitude": null,
@@ -774,21 +783,22 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-17-chionin",
-        "title": "Iluminación de Chion-in",
+        "title": "Kitano Tenmangū / regreso por Enmachi",
         "date": "2026-11-17",
-        "category": "culture",
+        "category": "temple",
         "categories": [
+          "temple",
           "culture"
         ],
         "location": {
-          "name": "Iluminación de Chion-in",
+          "name": "Kitano Tenmangū / regreso por Enmachi",
           "address": null,
           "latitude": null,
           "longitude": null,
           "placeId": null
         },
         "city": "Kyoto",
-        "notes": "Sólo si horario y entradas 2026 están confirmados.",
+        "notes": "Bloque flexible cerca de la base; no requiere reserva para la visita normal.",
         "optional": true
       }
     ]
@@ -804,6 +814,7 @@ const itinerary: TripDay[] = [
     "dayType": "standard",
     "baseId": "kyoto",
     "notes": "Fushimi Inari alrededor de 06:30–07:00; después Fushimi histórico, canales y calles de sake.",
+    "reservationNote": "SIN RESERVA PREVIA · Fushimi Inari para visita normal.",
     "keyNote": "Santuario y senderos principales gratuitos.",
     "paceNote": "Evitar concentrarse en los primeros 200 metros, donde se acumulan las fotos.",
     "activities": [
@@ -909,12 +920,13 @@ const itinerary: TripDay[] = [
     "dayNumber": "19",
     "month": "NOV",
     "city": "Kyoto",
-    "area": "Nijō, Kyoto Gyoen y compras locales",
+    "area": "Nijō, Sanjō-kai, Nishiki, Kawaramachi y Chion-in",
     "dayType": "relaxed",
     "baseId": "kyoto",
-    "notes": "Día más suave antes del cambio de base: Nijō opcional, Kyoto Gyoen, comercio local y segunda mano.",
-    "keyNote": "Dejar espacio real para descanso y lavandería.",
-    "paceNote": "Kyoto Gyoen y las calles locales no exigen entrada.",
+    "notes": "Ruta central compacta: Nijō → Sanjō-kai → Nishiki → Kawaramachi/segunda mano → Chion-in Autumn Light-up 17:30–21:30.",
+    "reservationNote": "Ninomaru: SIN RESERVA PREVIA. Honmaru Palace: RESERVA OBLIGATORIA si se añade. Chion-in light-up general: SIN RESERVA PREVIA.",
+    "keyNote": "Honmaru sólo se añade si conseguimos horario; no es necesario para visitar Nijō/Ninomaru.",
+    "paceNote": "Mantener margen para llegar a Chion-in después de Kawaramachi; iluminación desde las 17:30.",
     "activities": [
       {
         "id": "jp-2026-11-19-nijo",
@@ -936,15 +948,16 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-19-gyoen",
-        "title": "Kyoto Gyoen",
+        "title": "Nishiki Market",
         "date": "2026-11-19",
-        "category": "nature",
+        "category": "food",
         "categories": [
-          "nature",
+          "food",
+          "shopping",
           "culture"
         ],
         "location": {
-          "name": "Kyoto Gyoen",
+          "name": "Nishiki Market",
           "address": null,
           "latitude": null,
           "longitude": null,
@@ -1023,19 +1036,23 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-19-laundry",
-        "title": "Descanso y lavandería",
+        "title": "Chion-in Autumn Light-up · 17:30–21:30",
         "date": "2026-11-19",
-        "category": "leisure",
+        "category": "culture",
         "categories": [
-          "leisure"
+          "culture",
+          "temple",
+          "photography"
         ],
         "location": {
-          "name": "Descanso y lavandería",
+          "name": "Chion-in Autumn Light-up · 17:30–21:30",
           "address": null,
           "latitude": null,
           "longitude": null,
           "placeId": null
         },
+        "startTime": "17:30",
+        "endTime": "21:30",
         "city": "Kyoto"
       }
     ]
@@ -1141,6 +1158,7 @@ const itinerary: TripDay[] = [
     "dayType": "standard",
     "baseId": "tokyo",
     "notes": "Senso-ji temprano, luego compras útiles en Kappabashi y vistas gratuitas hacia Skytree.",
+    "reservationNote": "SIN RESERVA PREVIA · Asakusa y el mirador del Tourist Information Center.",
     "keyNote": "Kappabashi suele abrir más tarde que el templo.",
     "paceNote": "Skytree pago sólo si se desea subir expresamente; la terraza de Asakusa es la alternativa de ahorro.",
     "activities": [
@@ -1367,6 +1385,7 @@ const itinerary: TripDay[] = [
     "dayType": "standard",
     "baseId": "tokyo",
     "notes": "Día festivo en Japón. Mirador metropolitano gratuito, Shinjuku y Kagurazaka.",
+    "reservationNote": "SIN RESERVA PREVIA · Tokyo Metropolitan Government Observatory funciona por orden de llegada.",
     "keyNote": "No Disney este día festivo. Verificar apertura, mantenimiento y aforo del observatorio.",
     "paceNote": "Tokyo Night & Light sólo si la programación oficial lo confirma.",
     "activities": [
@@ -1452,11 +1471,11 @@ const itinerary: TripDay[] = [
     "dayNumber": "24",
     "month": "NOV",
     "city": "Tokyo",
-    "area": "Tokyo DisneySea · pendiente de comprar",
+    "area": "Tokyo DisneySea · PLAN FIJO",
     "dayType": "theme-park",
     "baseId": "tokyo",
     "notes": "Día completo de DisneySea. Salida muy temprana desde Shiinamachi.",
-    "reservationNote": "Entrada pendiente. Precio publicado de referencia en el documento: ¥10.900 adulto; confirmar al comprar.",
+    "reservationNote": "COMPRA PENDIENTE — OBLIGATORIA · el día no se mueve; comprar 1-Day Passport por canal oficial cuando sea posible.",
     "keyNote": "Comprar por canal oficial y usar la app para Premier Access/Standby según necesidad.",
     "paceNote": "Horario publicado de referencia: 09:00–21:00; verificar antes de ir.",
     "activities": [
@@ -1668,7 +1687,7 @@ const itinerary: TripDay[] = [
     "dayType": "pokemon-full-day",
     "baseId": "tokyo",
     "notes": "PokéPark KANTO confirmado con Trainer’s Pass. Llegar con margen suficiente.",
-    "reservationNote": "Pokémon Forest: ventana de entrada 14:00–15:00. Sedge Town y Yomiuriland según condiciones y horario de operación.",
+    "reservationNote": "CONFIRMADO · Trainer’s Pass. Pokémon Forest 14:00–15:00. Limited-Access Tickets internos se solicitan el mismo día en la app desde las 10:45, según disponibilidad.",
     "keyNote": "Llevar pasaporte original si las condiciones aplicables lo exigen, entrada accesible sin conexión y batería externa. No compartir número de ticket.",
     "paceNote": "La ventana 14:00–15:00 es de acceso, no duración garantizada del recorrido.",
     "activities": [
@@ -1759,84 +1778,50 @@ const itinerary: TripDay[] = [
     "dayNumber": "27",
     "month": "NOV",
     "city": "Tokyo",
-    "area": "Tokyo Tower exterior, Zojoji y Odaiba",
-    "dayType": "relaxed",
+    "area": "Tokyo Disneyland · PLAN FIJO",
+    "dayType": "theme-park",
     "baseId": "tokyo",
-    "notes": "Fotos gratuitas de Tokyo Tower desde Zojoji/Shiba Park y tarde relajada por la bahía y Odaiba.",
-    "keyNote": "No planear la estatua Unicorn Gundam: el documento indica que la exhibición terminó en agosto de 2026.",
-    "paceNote": "Evitar pagar Main Deck si la prioridad es fotografiar la torre completa.",
+    "notes": "Día completo de Tokyo Disneyland. Mantenerlo separado de PokéPark sólo por una noche, pero sin mover la fecha: el viernes conserva jornada completa y evita el fin de semana.",
+    "reservationNote": "COMPRA PENDIENTE — OBLIGATORIA · el día no se mueve; comprar 1-Day Passport por canal oficial cuando sea posible.",
+    "keyNote": "Llegar antes de apertura y usar la app para Entry Request/Premier Access sólo donde realmente aporte valor.",
+    "paceNote": "Prioridad: Beauty and the Beast, Pooh, Haunted Mansion y programación navideña/nocturna según operación del día.",
     "activities": [
       {
-        "id": "jp-2026-11-27-zojoji",
-        "title": "Zojoji + Shiba Park",
+        "id": "jp-2026-11-27-disney-transfer",
+        "title": "Shiinamachi → Maihama / Tokyo Disneyland",
         "date": "2026-11-27",
-        "category": "temple",
-        "categories": [
-          "temple",
-          "photography"
-        ],
-        "location": {
-          "name": "Zojoji + Shiba Park",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
+        "category": "transport",
+        "categories": ["travel", "transport"],
+        "location": {"name": "Shiinamachi → Maihama / Tokyo Disneyland", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo"
       },
       {
-        "id": "jp-2026-11-27-tower",
-        "title": "Tokyo Tower · exterior",
+        "id": "jp-2026-11-27-disneyland",
+        "title": "Tokyo Disneyland",
         "date": "2026-11-27",
-        "category": "photography",
-        "categories": [
-          "photography",
-          "viewpoint"
-        ],
-        "location": {
-          "name": "Tokyo Tower · exterior",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo"
-      },
-      {
-        "id": "jp-2026-11-27-odaiba",
-        "title": "Bahía de Tokio + Rainbow Bridge + Odaiba",
-        "date": "2026-11-27",
-        "category": "leisure",
-        "categories": [
-          "leisure",
-          "photography"
-        ],
-        "location": {
-          "name": "Bahía de Tokio + Rainbow Bridge + Odaiba",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo"
-      },
-      {
-        "id": "jp-2026-11-27-malls",
-        "title": "Centros comerciales de Odaiba",
-        "date": "2026-11-27",
-        "category": "shopping",
-        "categories": [
-          "shopping"
-        ],
-        "location": {
-          "name": "Centros comerciales de Odaiba",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
+        "category": "theme-park",
+        "categories": ["theme-park"],
+        "location": {"name": "Tokyo Disneyland", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo",
-        "optional": true
+        "reservationId": "disneyland-2026-11-27"
+      },
+      {
+        "id": "jp-2026-11-27-disney-priority",
+        "title": "Atracciones prioritarias · Beauty and the Beast + Pooh + Haunted Mansion",
+        "date": "2026-11-27",
+        "category": "theme-park",
+        "categories": ["theme-park"],
+        "location": {"name": "Tokyo Disneyland", "address": null, "latitude": null, "longitude": null, "placeId": null},
+        "city": "Tokyo"
+      },
+      {
+        "id": "jp-2026-11-27-disney-return",
+        "title": "Regreso a Shiinamachi",
+        "date": "2026-11-27",
+        "category": "transport",
+        "categories": ["travel", "transport"],
+        "location": {"name": "Regreso a Shiinamachi", "address": null, "latitude": null, "longitude": null, "placeId": null},
+        "city": "Tokyo"
       }
     ]
   },
@@ -1934,66 +1919,40 @@ const itinerary: TripDay[] = [
     "dayNumber": "29",
     "month": "NOV",
     "city": "Tokyo",
-    "area": "Día buffer: Yanaka/Nezu, Ikebukuro o compras finales",
-    "dayType": "flexible",
+    "area": "HARD OFF Oizumigakuen · retro y compras finales",
+    "dayType": "relaxed",
     "baseId": "tokyo",
-    "flexible": true,
-    "notes": "Elegir según clima, cansancio y pendientes. Mantener este día sin excursión rígida.",
-    "keyNote": "Comparar precios de souvenirs antes del aeropuerto.",
-    "paceNote": "Priorizar lavandería, equipaje y pendientes reales.",
+    "notes": "Día principal para buscar Game Boy/retro fuera de Akihabara, aprovechando la conexión desde Shiinamachi por la Seibu Ikebukuro Line. Después volver hacia Ikebukuro y cerrar compras.",
+    "reservationNote": "SIN RESERVA PREVIA.",
+    "keyNote": "Objetivo Game Boy Advance SP funcional: comparar estado y precio; evitar JUNK salvo que podamos probarla y sepamos exactamente el fallo.",
+    "paceNote": "Terminar temprano para lavandería, tax-free, equipaje y descanso antes del vuelo.",
     "activities": [
       {
-        "id": "jp-2026-11-29-yanaka-nezu",
-        "title": "Yanaka / Nezu",
+        "id": "jp-2026-11-29-hardoff",
+        "title": "HARD OFF Oizumigakuen · Game Boy y retro",
         "date": "2026-11-29",
-        "category": "culture",
-        "categories": [
-          "culture",
-          "photography"
-        ],
-        "location": {
-          "name": "Yanaka / Nezu",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo",
-        "optional": true
+        "category": "shopping",
+        "categories": ["shopping", "gaming", "geek"],
+        "location": {"name": "HARD OFF Oizumigakuen", "address": null, "latitude": null, "longitude": null, "placeId": null},
+        "city": "Tokyo"
       },
       {
         "id": "jp-2026-11-29-ikebukuro",
-        "title": "Ikebukuro",
+        "title": "Ikebukuro · comparación / compras pendientes",
         "date": "2026-11-29",
         "category": "shopping",
-        "categories": [
-          "shopping"
-        ],
-        "location": {
-          "name": "Ikebukuro",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
+        "categories": ["shopping", "geek"],
+        "location": {"name": "Ikebukuro", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo",
         "optional": true
       },
       {
         "id": "jp-2026-11-29-shopping",
-        "title": "Compras finales",
+        "title": "Compras finales y revisión de recibos tax-free",
         "date": "2026-11-29",
         "category": "shopping",
-        "categories": [
-          "shopping"
-        ],
-        "location": {
-          "name": "Compras finales",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
+        "categories": ["shopping"],
+        "location": {"name": "Compras finales", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo"
       },
       {
@@ -2001,33 +1960,17 @@ const itinerary: TripDay[] = [
         "title": "Lavandería",
         "date": "2026-11-29",
         "category": "leisure",
-        "categories": [
-          "leisure"
-        ],
-        "location": {
-          "name": "Lavandería",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
+        "categories": ["leisure"],
+        "location": {"name": "Lavandería", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo"
       },
       {
         "id": "jp-2026-11-29-packing",
-        "title": "Preparar equipaje",
+        "title": "Preparar equipaje y separar compras tax-free",
         "date": "2026-11-29",
         "category": "travel",
-        "categories": [
-          "travel"
-        ],
-        "location": {
-          "name": "Preparar equipaje",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
+        "categories": ["travel"],
+        "location": {"name": "Preparar equipaje", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo"
       }
     ]
@@ -2044,7 +1987,7 @@ const itinerary: TripDay[] = [
     "previousBaseId": "tokyo",
     "notes": "Día exclusivamente de salida. Confirmar aeropuerto, terminal, hora, equipaje y procedimiento tax-free.",
     "transportSummary": "Ruta al aeropuerto pendiente de confirmar cuando se valide el vuelo de salida.",
-    "keyNote": "No deducir aeropuerto u hora de itinerarios anteriores.",
+    "keyNote": "Hacer verificación aduanera/tax-free antes de entregar cualquier equipaje que contenga compras que Aduanas pueda pedir inspeccionar.",
     "paceNote": "No planear atracciones este día.",
     "activities": [
       {
@@ -2112,7 +2055,7 @@ export const japan2026Trip: Trip = {
   startDate: "2026-11-11",
   endDate: "2026-11-30",
   dateRange: "11 — 30 Nov 2026",
-  countdownDays: 28,
+  countdownDays: 13,
   currentCity: "San José",
   timezones: { origin: "America/Costa_Rica", destination: "Asia/Tokyo" },
   worldClock: {
@@ -2249,13 +2192,13 @@ export const japan2026Trip: Trip = {
     "provider": "Universal Studios Japan",
     "code": "",
     "title": "Universal Studios Japan",
-    "subtitle": "Jueves 12 nov · PROPUESTO",
+    "subtitle": "Jueves 12 nov · CONFIRMADO",
     "date": "12 Nov 2026",
     "dateISO": "2026-11-12",
     "time": "",
-    "status": "pending",
-    "accent": "#df5753",
-    "meta": "Entrada pendiente · comparar 12 vs 13 antes de comprar"
+    "status": "confirmed",
+    "accent": "#0c8f69",
+    "meta": "CONFIRMADO · Express Pass con SUPER NINTENDO WORLD 11:30–12:30; Mario Kart 11:30–12:00; Yoshi 12:00–12:30"
   },
   {
     "id": "disneysea-2026-11-24",
@@ -2263,13 +2206,27 @@ export const japan2026Trip: Trip = {
     "provider": "Tokyo Disney Resort",
     "code": "",
     "title": "Tokyo DisneySea",
-    "subtitle": "Martes 24 nov · PROPUESTO",
+    "subtitle": "Martes 24 nov · PLAN FIJO",
     "date": "24 Nov 2026",
     "dateISO": "2026-11-24",
     "time": "",
     "status": "pending",
     "accent": "#df5753",
-    "meta": "Entrada pendiente · comprar por canal oficial"
+    "meta": "COMPRA PENDIENTE — OBLIGATORIA · fecha fija del itinerario; comprar por canal oficial"
+  },
+  {
+    "id": "disneyland-2026-11-27",
+    "type": "ticket",
+    "provider": "Tokyo Disney Resort",
+    "code": "",
+    "title": "Tokyo Disneyland",
+    "subtitle": "Viernes 27 nov · PLAN FIJO",
+    "date": "27 Nov 2026",
+    "dateISO": "2026-11-27",
+    "time": "",
+    "status": "pending",
+    "accent": "#df5753",
+    "meta": "COMPRA PENDIENTE — OBLIGATORIA · fecha fija del itinerario; comprar por canal oficial"
   },
   {
     "id": "pokepark-2026-11-26",
@@ -2312,7 +2269,7 @@ export const japan2026Trip: Trip = {
     },
     protected: true,
     createdAt: "2026-08-25T19:00:14.669Z",
-    updatedAt: "2026-10-14T15:01:00.000Z"
+    updatedAt: "2026-10-30T05:50:00.000Z"
   }
 };
 
