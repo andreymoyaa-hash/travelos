@@ -322,6 +322,25 @@ export async function loadAuthorizedTrip(token: string): Promise<CloudTripPayloa
   });
   const extensionRow = (importsResult.data ?? []).find((row) => row.changes_applied?.kind === "travel_os_app_state");
   const extension = extensionRow?.changes_applied ?? {};
+
+  // Keep the canonical Japan plan and the owner's cloud copy in sync.
+  // This only runs when the checked-in template has a newer updatedAt marker,
+  // then syncAuthorizedTrip preserves LiveData (expenses, photos, unlocks, progress)
+  // while replacing planned days/activities/reservations with the newer master plan.
+  if (remoteTrip.slug === "japan-2026" && session.participant.role === "owner") {
+    const templateUpdatedAt = japan2026Trip.settings?.updatedAt;
+    const extensionSettings = extension.settings && typeof extension.settings === "object"
+      ? extension.settings as Record<string, unknown>
+      : {};
+    const cloudTemplateUpdatedAt = typeof extensionSettings.updatedAt === "string"
+      ? extensionSettings.updatedAt
+      : undefined;
+    if (templateUpdatedAt && (!cloudTemplateUpdatedAt || cloudTemplateUpdatedAt < templateUpdatedAt)) {
+      await syncAuthorizedTrip(token, japan2026Trip);
+      return loadAuthorizedTrip(token);
+    }
+  }
+
   trip = {
     ...trip,
     ...extension,
