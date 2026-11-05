@@ -1840,75 +1840,80 @@ const itinerary: TripDay[] = [
     "paceNote": "Revisar estado, etiquetas y políticas de devolución; llevar lista de deseos.",
     "activities": [
       {
-        "id": "jp-2026-11-28-nakano",
-        "title": "Nakano Broadway",
+        "id": "jp-2026-11-28-option-1",
+        "title": "Kawaguchiko · vistas del Monte Fuji",
         "date": "2026-11-28",
-        "category": "geek",
+        "category": "nature",
         "categories": [
-          "geek",
+          "nature"
+        ],
+        "location": {
+          "name": "Kawaguchiko · vistas del Monte Fuji",
+          "address": null,
+          "latitude": null,
+          "longitude": null,
+          "placeId": null
+        },
+        "city": "Kawaguchiko",
+        "notes": "PLAN A sólo con buena visibilidad. Verificar transporte desde Shinjuku y regreso.",
+        "optional": true
+      },
+      {
+        "id": "jp-2026-11-28-option-2",
+        "title": "Oishi Park · orilla norte de Kawaguchiko",
+        "date": "2026-11-28",
+        "category": "nature",
+        "categories": [
+          "nature"
+        ],
+        "location": {
+          "name": "Oishi Park · orilla norte de Kawaguchiko",
+          "address": null,
+          "latitude": null,
+          "longitude": null,
+          "placeId": null
+        },
+        "city": "Kawaguchiko",
+        "notes": "PLAN A junto al lago; no obligatorio si se eligen cascadas.",
+        "optional": true
+      },
+      {
+        "id": "jp-2026-11-28-option-3",
+        "title": "Shiraito Falls + Otodome Falls · Fujinomiya",
+        "date": "2026-11-28",
+        "category": "nature",
+        "categories": [
+          "nature"
+        ],
+        "location": {
+          "name": "Shiraito Falls + Otodome Falls · Fujinomiya",
+          "address": null,
+          "latitude": null,
+          "longitude": null,
+          "placeId": null
+        },
+        "city": "Fujinomiya",
+        "notes": "PLAN B ALTERNATIVO de cascadas, sólo con clima y autobús viable. No combinar automáticamente con Oishi Park.",
+        "optional": true
+      },
+      {
+        "id": "jp-2026-11-28-option-4",
+        "title": "Nakano Broadway / Koenji · plan por lluvia",
+        "date": "2026-11-28",
+        "category": "shopping",
+        "categories": [
           "shopping"
         ],
         "location": {
-          "name": "Nakano Broadway",
+          "name": "Nakano Broadway / Koenji · plan por lluvia",
           "address": null,
           "latitude": null,
           "longitude": null,
           "placeId": null
         },
-        "city": "Tokyo"
-      },
-      {
-        "id": "jp-2026-11-28-mandarake",
-        "title": "Mandarake · Nakano",
-        "date": "2026-11-28",
-        "category": "shopping",
-        "categories": [
-          "shopping",
-          "geek"
-        ],
-        "location": {
-          "name": "Mandarake · Nakano",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo"
-      },
-      {
-        "id": "jp-2026-11-28-koenji",
-        "title": "Koenji",
-        "date": "2026-11-28",
-        "category": "shopping",
-        "categories": [
-          "shopping",
-          "culture"
-        ],
-        "location": {
-          "name": "Koenji",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo"
-      },
-      {
-        "id": "jp-2026-11-28-2ndstreet",
-        "title": "2nd STREET Koenji",
-        "date": "2026-11-28",
-        "category": "shopping",
-        "categories": [
-          "shopping"
-        ],
-        "location": {
-          "name": "2nd STREET Koenji",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo"
+        "city": "Tokyo",
+        "notes": "PLAN C si Fuji no se ve o el transporte no conviene.",
+        "optional": true
       }
     ]
   },
