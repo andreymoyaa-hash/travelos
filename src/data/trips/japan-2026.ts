@@ -221,7 +221,7 @@ const itinerary: TripDay[] = [
     "area": "Namba, Nipponbashi y segunda mano",
     "dayType": "standard",
     "baseId": "osaka",
-    "notes": "Circuito caminable Motomachi → Namba → BOOKOFF → DAISO → Ota Road/Den Den Town → Surugaya → Mandarake → Dotonbori.",
+    "notes": "Namba Yasaka Shrine gratis temprano; Den Den Town; Shinsekai/Tsutenkaku exterior; Dotonbori de noche. Takoyaki, rueda Ebisu ¥1.000 y crucero Tombori ¥2.000 por persona son opciones, no paradas obligatorias.",
     "foodPause": "Comer fuera del eje turístico de Dotonbori cuando sea posible.",
     "keyNote": "Fotografiar precios antes de comprar; comprobar estado y compatibilidad regional de electrónica y juegos.",
     "paceNote": "Comparar figuras, manga, videojuegos, cartas y souvenirs antes de decidir.",
@@ -1471,77 +1471,6 @@ const itinerary: TripDay[] = [
     "dayNumber": "24",
     "month": "NOV",
     "city": "Tokyo",
-    "area": "Tokyo DisneySea · PLAN FIJO",
-    "dayType": "theme-park",
-    "baseId": "tokyo",
-    "notes": "Día completo de DisneySea. Salida muy temprana desde Shiinamachi.",
-    "reservationNote": "COMPRA PENDIENTE — OBLIGATORIA · el día no se mueve; comprar 1-Day Passport por canal oficial cuando sea posible.",
-    "keyNote": "Comprar por canal oficial y usar la app para Premier Access/Standby según necesidad.",
-    "paceNote": "Horario publicado de referencia: 09:00–21:00; verificar antes de ir.",
-    "activities": [
-      {
-        "id": "jp-2026-11-24-disney-transfer",
-        "title": "Shiinamachi → Maihama / DisneySea",
-        "date": "2026-11-24",
-        "category": "transport",
-        "categories": [
-          "travel",
-          "transport"
-        ],
-        "location": {
-          "name": "Shiinamachi → Maihama / DisneySea",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo"
-      },
-      {
-        "id": "jp-2026-11-24-disneysea",
-        "title": "Tokyo DisneySea",
-        "date": "2026-11-24",
-        "category": "theme-park",
-        "categories": [
-          "theme-park"
-        ],
-        "location": {
-          "name": "Tokyo DisneySea",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo",
-        "reservationId": "disneysea-2026-11-24"
-      },
-      {
-        "id": "jp-2026-11-24-disney-return",
-        "title": "Regreso a Shiinamachi",
-        "date": "2026-11-24",
-        "category": "transport",
-        "categories": [
-          "travel",
-          "transport"
-        ],
-        "location": {
-          "name": "Regreso a Shiinamachi",
-          "address": null,
-          "latitude": null,
-          "longitude": null,
-          "placeId": null
-        },
-        "city": "Tokyo"
-      }
-    ]
-  },
-  {
-    "id": "jp-2026-day-2026-11-25",
-    "date": "2026-11-25",
-    "weekday": "Mié",
-    "dayNumber": "25",
-    "month": "NOV",
-    "city": "Tokyo",
     "area": "Meiji Jingu, Harajuku, Shibuya y Pokémon Center",
     "dayType": "standard",
     "baseId": "tokyo",
@@ -1550,9 +1479,9 @@ const itinerary: TripDay[] = [
     "paceNote": "Regresar temprano para descansar antes de PokéPark; dejar compras grandes para el final del día.",
     "activities": [
       {
-        "id": "jp-2026-11-25-meiji",
+        "id": "jp-2026-11-24-meiji",
         "title": "Meiji Jingu",
-        "date": "2026-11-25",
+        "date": "2026-11-24",
         "category": "temple",
         "categories": [
           "temple"
@@ -1567,9 +1496,9 @@ const itinerary: TripDay[] = [
         "city": "Tokyo"
       },
       {
-        "id": "jp-2026-11-25-harajuku",
+        "id": "jp-2026-11-24-harajuku",
         "title": "Harajuku",
-        "date": "2026-11-25",
+        "date": "2026-11-24",
         "category": "shopping",
         "categories": [
           "shopping",
@@ -1585,9 +1514,9 @@ const itinerary: TripDay[] = [
         "city": "Tokyo"
       },
       {
-        "id": "jp-2026-11-25-omotesando",
+        "id": "jp-2026-11-24-omotesando",
         "title": "Omotesando",
-        "date": "2026-11-25",
+        "date": "2026-11-24",
         "category": "shopping",
         "categories": [
           "shopping"
@@ -1602,9 +1531,9 @@ const itinerary: TripDay[] = [
         "city": "Tokyo"
       },
       {
-        "id": "jp-2026-11-25-shibuya",
+        "id": "jp-2026-11-24-shibuya",
         "title": "Shibuya Crossing + Hachiko",
-        "date": "2026-11-25",
+        "date": "2026-11-24",
         "category": "photography",
         "categories": [
           "photography",
@@ -1620,9 +1549,9 @@ const itinerary: TripDay[] = [
         "city": "Tokyo"
       },
       {
-        "id": "jp-2026-11-25-pokemon",
+        "id": "jp-2026-11-24-pokemon",
         "title": "Pokémon Center Shibuya",
-        "date": "2026-11-25",
+        "date": "2026-11-24",
         "category": "geek",
         "categories": [
           "geek",
@@ -1638,9 +1567,9 @@ const itinerary: TripDay[] = [
         "city": "Tokyo"
       },
       {
-        "id": "jp-2026-11-25-nintendo",
+        "id": "jp-2026-11-24-nintendo",
         "title": "Nintendo Tokyo",
-        "date": "2026-11-25",
+        "date": "2026-11-24",
         "category": "geek",
         "categories": [
           "geek",
@@ -1657,9 +1586,9 @@ const itinerary: TripDay[] = [
         "city": "Tokyo"
       },
       {
-        "id": "jp-2026-11-25-shibuya-sky",
+        "id": "jp-2026-11-24-shibuya-sky",
         "title": "Shibuya Sky",
-        "date": "2026-11-25",
+        "date": "2026-11-24",
         "category": "viewpoint",
         "categories": [
           "viewpoint"
@@ -1673,6 +1602,77 @@ const itinerary: TripDay[] = [
         },
         "city": "Tokyo",
         "optional": true
+      }
+    ]
+  },
+  {
+    "id": "jp-2026-day-2026-11-25",
+    "date": "2026-11-25",
+    "weekday": "Mié",
+    "dayNumber": "25",
+    "month": "NOV",
+    "city": "Tokyo",
+    "area": "Tokyo DisneySea · PLAN FIJO",
+    "dayType": "theme-park",
+    "baseId": "tokyo",
+    "notes": "DisneySea: salir 05:45–06:00 desde Shiinamachi. Alimentación orientativa ¥7.000 los dos; Premier Access Frozen/Soaring opcional.",
+    "reservationNote": "FECHA ELEGIDA · COMPRA PENDIENTE · el día no se mueve; comprar 1-Day Passport por canal oficial cuando sea posible.",
+    "keyNote": "Priorizar Frozen, revisar Premier Access al ingresar y no asumir Indiana Jones abierto.",
+    "paceNote": "Horario publicado de referencia: 09:00–21:00; verificar antes de ir.",
+    "activities": [
+      {
+        "id": "jp-2026-11-25-disney-transfer",
+        "title": "Shiinamachi → Maihama / DisneySea",
+        "date": "2026-11-25",
+        "category": "transport",
+        "categories": [
+          "travel",
+          "transport"
+        ],
+        "location": {
+          "name": "Shiinamachi → Maihama / DisneySea",
+          "address": null,
+          "latitude": null,
+          "longitude": null,
+          "placeId": null
+        },
+        "city": "Tokyo"
+      },
+      {
+        "id": "jp-2026-11-25-disneysea",
+        "title": "Tokyo DisneySea",
+        "date": "2026-11-25",
+        "category": "theme-park",
+        "categories": [
+          "theme-park"
+        ],
+        "location": {
+          "name": "Tokyo DisneySea",
+          "address": null,
+          "latitude": null,
+          "longitude": null,
+          "placeId": null
+        },
+        "city": "Tokyo",
+        "reservationId": "disneysea-2026-11-25"
+      },
+      {
+        "id": "jp-2026-11-25-disney-return",
+        "title": "Regreso a Shiinamachi",
+        "date": "2026-11-25",
+        "category": "transport",
+        "categories": [
+          "travel",
+          "transport"
+        ],
+        "location": {
+          "name": "Regreso a Shiinamachi",
+          "address": null,
+          "latitude": null,
+          "longitude": null,
+          "placeId": null
+        },
+        "city": "Tokyo"
       }
     ]
   },
@@ -1778,40 +1778,40 @@ const itinerary: TripDay[] = [
     "dayNumber": "27",
     "month": "NOV",
     "city": "Tokyo",
-    "area": "Tokyo Disneyland · PLAN FIJO",
-    "dayType": "theme-park",
+    "area": "Odaiba / recuperación · FLEX",
+    "dayType": "relaxed",
     "baseId": "tokyo",
-    "notes": "Día completo de Tokyo Disneyland. Mantenerlo separado de PokéPark sólo por una noche, pero sin mover la fecha: el viernes conserva jornada completa y evita el fin de semana.",
-    "reservationNote": "COMPRA PENDIENTE — OBLIGATORIA · el día no se mueve; comprar 1-Day Passport por canal oficial cuando sea posible.",
+    "notes": "Odaiba y descanso tras PokéPark. teamLab opcional si existe entrada comprada. No incluir Disneyland.",
+    "reservationNote": "DÍA FLEXIBLE · sin entradas obligatorias",
     "keyNote": "Llegar antes de apertura y usar la app para Entry Request/Premier Access sólo donde realmente aporte valor.",
-    "paceNote": "Prioridad: Beauty and the Beast, Pooh, Haunted Mansion y programación navideña/nocturna según operación del día.",
+    "paceNote": "Priorizar paseo suave y regreso temprano.",
     "activities": [
       {
         "id": "jp-2026-11-27-disney-transfer",
-        "title": "Shiinamachi → Maihama / Tokyo Disneyland",
+        "title": "Shiinamachi → Maihama / Odaiba",
         "date": "2026-11-27",
         "category": "transport",
         "categories": ["travel", "transport"],
-        "location": {"name": "Shiinamachi → Maihama / Tokyo Disneyland", "address": null, "latitude": null, "longitude": null, "placeId": null},
+        "location": {"name": "Shiinamachi → Maihama / Odaiba", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo"
       },
       {
         "id": "jp-2026-11-27-disneyland",
-        "title": "Tokyo Disneyland",
+        "title": "Odaiba",
         "date": "2026-11-27",
         "category": "theme-park",
         "categories": ["theme-park"],
-        "location": {"name": "Tokyo Disneyland", "address": null, "latitude": null, "longitude": null, "placeId": null},
+        "location": {"name": "Odaiba", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo",
-        "reservationId": "disneyland-2026-11-27"
+        "reservationId": ""
       },
       {
         "id": "jp-2026-11-27-disney-priority",
-        "title": "Atracciones prioritarias · Beauty and the Beast + Pooh + Haunted Mansion",
+        "title": "DiverCity / waterfront opcional",
         "date": "2026-11-27",
         "category": "theme-park",
         "categories": ["theme-park"],
-        "location": {"name": "Tokyo Disneyland", "address": null, "latitude": null, "longitude": null, "placeId": null},
+        "location": {"name": "Odaiba", "address": null, "latitude": null, "longitude": null, "placeId": null},
         "city": "Tokyo"
       },
       {
@@ -1832,11 +1832,11 @@ const itinerary: TripDay[] = [
     "dayNumber": "28",
     "month": "NOV",
     "city": "Tokyo",
-    "area": "Nakano Broadway y Koenji",
+    "area": "Fuji / Kawaguchiko · clima",
     "dayType": "standard",
     "baseId": "tokyo",
-    "notes": "Coleccionismo y objetos retro en Nakano; ropa y segunda mano en Koenji.",
-    "keyNote": "Vintage no siempre significa barato.",
+    "notes": "Si hace buen clima: Kawaguchiko y Oishi Park. ALTERNATIVA: Shiraito Falls + Otodome Falls en Fujinomiya sólo con transporte viable. No combinar por defecto. Con lluvia/mala visibilidad: Nakano, Koenji y descanso.",
+    "keyNote": "Elegir el plan por visibilidad y transporte confirmado. Cascadas opcionales, nunca obligatorias.",
     "paceNote": "Revisar estado, etiquetas y políticas de devolución; llevar lista de deseos.",
     "activities": [
       {
@@ -1925,7 +1925,7 @@ const itinerary: TripDay[] = [
     "notes": "Día principal para buscar Game Boy/retro fuera de Akihabara, aprovechando la conexión desde Shiinamachi por la Seibu Ikebukuro Line. Después volver hacia Ikebukuro y cerrar compras.",
     "reservationNote": "SIN RESERVA PREVIA.",
     "keyNote": "Objetivo Game Boy Advance SP funcional: comparar estado y precio; evitar JUNK salvo que podamos probarla y sepamos exactamente el fallo.",
-    "paceNote": "Terminar temprano para lavandería, tax-free, equipaje y descanso antes del vuelo.",
+    "paceNote": "Vuelo NRT T1 a las 09:35 del lunes; terminar temprano, preparar equipaje y valorar hotel cerca de Narita el 29, sólo si se reserva.",
     "activities": [
       {
         "id": "jp-2026-11-29-hardoff",
@@ -1985,8 +1985,8 @@ const itinerary: TripDay[] = [
     "area": "Salida · aeropuerto y reembolso tax-free",
     "dayType": "travel",
     "previousBaseId": "tokyo",
-    "notes": "Día exclusivamente de salida. Confirmar aeropuerto, terminal, hora, equipaje y procedimiento tax-free.",
-    "transportSummary": "Ruta al aeropuerto pendiente de confirmar cuando se valide el vuelo de salida.",
+    "notes": "Día exclusivamente de salida. Reserva Aeroméxico: AM0057 NRT T1 09:35 → MEX T2 07:20; AM0656 MEX T2 19:05 → SJO 22:15. Llegada sugerida a NRT ~06:35.",
+    "transportSummary": "Narita T1 confirmado. Verificar primer tren desde Shiinamachi o planificar alojamiento cerca de Narita noche anterior.",
     "keyNote": "Hacer verificación aduanera/tax-free antes de entregar cualquier equipaje que contenga compras que Aduanas pueda pedir inspeccionar.",
     "paceNote": "No planear atracciones este día.",
     "activities": [
@@ -2010,7 +2010,7 @@ const itinerary: TripDay[] = [
       },
       {
         "id": "jp-2026-11-30-airport",
-        "title": "Traslado al aeropuerto correspondiente",
+        "title": "Traslado a Narita T1 para salida 09:35",
         "date": "2026-11-30",
         "category": "transport",
         "categories": [
@@ -2201,28 +2201,14 @@ export const japan2026Trip: Trip = {
     "meta": "CONFIRMADO · Express Pass con SUPER NINTENDO WORLD 11:30–12:30; Mario Kart 11:30–12:00; Yoshi 12:00–12:30"
   },
   {
-    "id": "disneysea-2026-11-24",
+    "id": "disneysea-2026-11-25",
     "type": "ticket",
     "provider": "Tokyo Disney Resort",
     "code": "",
     "title": "Tokyo DisneySea",
-    "subtitle": "Martes 24 nov · PLAN FIJO",
-    "date": "24 Nov 2026",
-    "dateISO": "2026-11-24",
-    "time": "",
-    "status": "pending",
-    "accent": "#df5753",
-    "meta": "COMPRA PENDIENTE — OBLIGATORIA · fecha fija del itinerario; comprar por canal oficial"
-  },
-  {
-    "id": "disneyland-2026-11-27",
-    "type": "ticket",
-    "provider": "Tokyo Disney Resort",
-    "code": "",
-    "title": "Tokyo Disneyland",
-    "subtitle": "Viernes 27 nov · PLAN FIJO",
-    "date": "27 Nov 2026",
-    "dateISO": "2026-11-27",
+    "subtitle": "Miércoles 25 nov · FECHA ELEGIDA",
+    "date": "25 Nov 2026",
+    "dateISO": "2026-11-25",
     "time": "",
     "status": "pending",
     "accent": "#df5753",
