@@ -61,3 +61,38 @@ Viajeros: Andy y José. Viaje: **9–30 noviembre 2026**. Estado: planificación
 - La mañana del regreso es temprana y el alojamiento actual se planifica en Shiinamachi; **se recomienda trasladarse la noche del 29 a Narita, condicionado a la reserva de hotel**, o dejar preparado y verificado un transporte muy temprano. No se ha reservado hotel por esta edición.
 - No publicar en interfaz pública código de reserva, números de boleto ni datos personales presentes en el PDF.
 - El PDF identifica a ambos viajeros y confirma estado de los cuatro segmentos Aeroméxico. Verificar directamente con aerolínea si existen cambios posteriores.
+
+
+## Anexo: revisión de reels e imágenes compartidos (5 nov 2026)
+Se analizaron los vídeos de michitabi.tokyo, momoncha_jp, ale.gaco, taadaima, pasaportete, viajeslilo, sisiuve y cocinerojapon, más ocho láminas de hiroko_japan.travel y memojapan. Los reels son ideas, no tarifas verificadas.
+
+### Osaka — 13 noviembre
+- Namba Yasaka Shrine: **YA EXISTÍA**, mantener primero. Entrada gratuita; turismo Osaka indica recinto accesible 06:00–17:00, oficinas 09:00–16:50. Fuente https://osaka-info.jp/en/spot/nanbayasakajinja/
+- Shinsekai/Tsutenkaku exterior: **YA EXISTÍA** y paseo gratuito, valorar luces de noche sólo si se reorganiza sin ida y vuelta.
+- Dotonbori/Glico: **YA EXISTÍA**; visita/fotos gratis.
+- Takoyaki: **AÑADIR TIP gastronómico**, precio del reel de USD 5 es ilustrativo, no tarifa fija; comparar precios/carteles.
+- Ebisu Tower: **NUEVA OPCIÓN** a pie en Dotonbori, no obligatoria. Precio actual oficial **¥1.000/persona**; hasta 15 minutos; lunes-viernes 11–22 h (último acceso 21:30) sujeto a mantenimiento/clima: https://www.donki.com/kanransha/index_en.php
+- Tombori River Cruise: **NUEVA OPCIÓN**, 20 minutos, **¥2.000/adulto** oficial (no USD 13 fijo), alternativa al paseo gratuito; reservar sólo si apetece: https://www.osaka-info.jp/en/spot/tombori-river-cruise/
+- Mantener circuito cercano: Namba Yasaka → Den Den Town → Shinsekai → Dotonbori/Ebisu Tower por la tarde-noche. Si se visita Shinsekai de noche, intercambiar bloques sin añadir cruces repetidos.
+
+### Tokio — 21, 23, 24 noviembre
+- Video michitabi.tokyo propone miradores gratis. Asakusa Culture Tourist Information Center **ya estaba** el 21; mirador gratuito planta 8, terraza abierta 09:00–22:00 (cierre mantenimiento posible): https://www.culture.city.taito.lg.jp/en/facilities/00001c00000000000002000000540085
+- Tokyo Metropolitan Government Building **ya estaba** el 23. Shibuya Hikarie es consejo opcional para el 24, sujeto a acceso concreto y a no quitar tiempo a Pokémon/Nintendo/Shibuya Sky. No duplicar miradores de forma obligatoria.
+
+### Recuerdos culturales
+- Video ale.gaco: goshuincho y goshuin. **AÑADIR consejo opcional** en templos/santuarios que ya visitamos; no confundir con sellos de estación ni con sellos digitales de Nioli. Referencia JNTO: libro ~¥1.000–1.500, goshuin ~¥300–500, varía por templo. Se ofrece tras oración, conforme a las normas del lugar: https://www.japan.travel/en/blog/collecting-goshuin-shrine-and-temple-stamps/
+- Video momoncha_jp: etiqueta de santuarios (reverencia ligera, limpieza ritual si disponible, ofrenda, reverencias/aplausos según tradición del santuario). Añadir guía breve, sin imponer un protocolo idéntico en templos budistas.
+
+### Compras, impuestos, transporte y conectividad
+- Video viajeslilo: compra en USJ con posible trámite tax-free; no contar el reembolso como ahorro automático. Información específica de USJ: https://www.usj.co.jp/web/en/us/service-guide/theme-park-services/shopping
+- **IMPORTANTE EN NOVIEMBRE 2026**: compras tax-free desde 01-11-2026 pasan al método de **reembolso después de comprobación aduanera al salir**, no deducción automática en caja. Planificar tiempo el 30/11 por vuelo NRT T1 09:35; conservar recibos y mercancías para inspección. Fuente aduanas https://www.customs.go.jp/kaigairyoko/taxrefund.htm ; agencia turismo https://www.mlit.go.jp/kankocho/tax-free/page01_000001_00028.html
+- Video cocinerojapon: recarga de Suica mediante terminal Seven Bank. Consejo útil **sólo si el medio de pago es compatible**; no confundir recargar Suica con retirar efectivo de tarjeta bancaria. Confirmar operación/importe en pantalla antes de aceptar.
+- Video taadaima: advertencia de transporte Narita vs Haneda. Nuestro vuelo llega y sale **NRT T1**, por lo que las rutas de Haneda (Tokyo Monorail/Keikyu) **NO APLICAN**. Comprobar transporte Narita–Toshima para última noche.
+- Video sisiuve: consejos generales: equipaje, traductor/cámara, datos móviles, restaurantes económicos y transporte. **TIP**, sin fijar marcas ni tarifas del vídeo.
+
+### Descartes / condicionales
+- Video pasaportete: Gotemba Premium Outlets, **NO SUMAR** al día Kawaguchiko/Fuji 28/11; Gotemba sólo como alternativa si prefieren compras frente al paisaje. Autobús directo desde Ikebukuro ~¥2.000 trayecto según outlet: https://www.premiumoutlets.co.jp/en/gotemba/access/
+- Imagen de Tokyo rail: **es esquema ilustrativo** incompleto; no usar como mapa de rutas real ni fuente de horarios.
+- Mantener 25/11 DisneySea y 26/11 PokéPark sin modificaciones.
+
+**Estado de implementación**: este anexo actualiza la documentación fuente de planificación en GitHub; no implica que Nioli haya sincronizado el almacenamiento interno de la app.
