@@ -12,9 +12,9 @@ Viajeros: Andy y José. Viaje: **9–30 noviembre 2026**. Estado: planificación
 ## Calendario actualizado
 | Fecha | Zona | Actividades | Estado |
 |---|---|---|---|
-| 09 nov | SJO/MEX | AM0691 13:21–16:40; AM0058 sale MEX 21:45 | Vuelos informados |
-| 10 nov | Tránsito | Vuelo a Japón y descanso | Fijo |
-| 11 nov | NRT → KIX → Osaka | Narita 06:30; Jetstar GK215 NRT T3 11:50 → KIX T1 13:30; Nankai Namba, check-in y descanso | Vuelo fijo |
+| 09 nov | SJO → MEX → PVR | **AM0691 SJO 13:45 → MEX T2 17:05**; **AM0058 MEX T2 21:45 → PVR 23:30**, parada intermedia con posible cambio de aeronave | Reserva Aeroméxico confirmada según PDF |
+| 10 nov | PVR → NRT | **AM0058 sale de PVR 00:45**; vuelo de largo recorrido, cruza la línea internacional de fecha | Reserva Aeroméxico confirmada según PDF |
+| 11 nov | NRT → KIX → Osaka | **AM0058 llega a Narita T1 06:30**; conexión entre terminales hasta **Jetstar GK215 NRT T3 11:50 → KIX T1 13:30** (datos Jetstar del itinerario previo). Nankai a Namba, check-in y descanso | Aeroméxico confirmado PDF; Jetstar verificar ticket |
 | 12 nov | Osaka | Universal Studios Japan. SNW 11:30–12:30; Mario Kart 11:30–12:00; Yoshi 12:00–12:30. Completar resto de Express según ticket | Ticket fijo |
 | 13 nov | Osaka | Namba Yasaka Jinja → BOOKOFF/Den Den Town → Shinsekai → Dotonbori/Shinsaibashi | Flex |
 | 14 nov | Osaka | Katsuo-ji temprano → Umeda / Osaka Station | Propuesto |
@@ -32,8 +32,8 @@ Viajeros: Andy y José. Viaje: **9–30 noviembre 2026**. Estado: planificación
 | **26 nov** | **PokéPark KANTO / Yomiuriland** | Sedge Town según horario del ticket; **Pokémon Forest 14:00–15:00** | **TICKET FIJO** |
 | 27 nov | Tokyo | Odaiba / recuperación; teamLab solo si se compra entrada y encaja | Flex |
 | 28 nov | Tokyo/Fuji | Kawaguchiko + Oishi Park solo con visibilidad y buen clima; plan B compras/descanso en Tokyo | Clima |
-| 29 nov | Tokyo | HARD OFF Oizumi-gakuen/Nerima → compras Ikebukuro → maletas | Flex |
-| 30 nov | Tokyo → NRT | Salida internacional de Narita. Un archivo anterior indica **09:35 desde T1**: urgente reconfirmar vuelo, terminal y necesidad de dormir cerca de aeropuerto | Reconfirmar |
+| 29 nov | Tokyo / Narita | Compras HARD OFF Oizumi-gakuen/Nerima **solo temprano si cabe**; recoger equipaje y **priorizar traslado a un hotel cerca de Narita T1** para reducir riesgo por vuelo 09:35 del 30 | Flex + recomendación logística |
+| 30 nov | NRT → MEX → SJO | **AM0057 sale Narita T1 09:35 → MEX T2 07:20**; **AM0656 sale MEX T2 19:05 → SJO 22:15**. Presentarse en Narita aproximadamente a las 06:35 (3 horas antes, sujeto a instrucciones de aerolínea) | Confirmado según reserva PDF adjunta |
 
 ## Detalle DisneySea · 25 noviembre
 - Entrada: aproximadamente ¥10.900 por adulto, total presupuesto de dos **¥21.800**, pendiente compra.
@@ -53,3 +53,11 @@ Viajeros: Andy y José. Viaje: **9–30 noviembre 2026**. Estado: planificación
 - Resolver fuente de datos real: la modificación de este documento de GitHub **no actualiza por sí sola** la base de datos ni la interfaz de Nioli.
 - Sincronizar calendario con el almacén que utiliza el viaje y revisar duplicados.
 - Verificar domicilio de base Tokio; vuelo de regreso 30/11; disponibilidad DisneySea.
+
+## Confirmación documental de vuelos (PDF aportado 05-nov-2026)
+- Ida 09/11: AM0691 SJO 13:45 → MEX 17:05, T2 llegada; AM0058 MEX T2 21:45 → PVR 23:30. El PDF señala **parada intermedia en Puerto Vallarta y posible cambio de aeronave**, pero no confirma que haya que recoger equipaje: verificar con Aeroméxico.
+- 10/11: AM0058 PVR 00:45 → NRT T1 06:30 del 11/11.
+- Regreso 30/11: AM0057 NRT T1 09:35 → MEX T2 07:20; AM0656 MEX T2 19:05 → SJO 22:15, hora local.
+- La mañana del regreso es temprana y el alojamiento actual se planifica en Shiinamachi; **se recomienda trasladarse la noche del 29 a Narita, condicionado a la reserva de hotel**, o dejar preparado y verificado un transporte muy temprano. No se ha reservado hotel por esta edición.
+- No publicar en interfaz pública código de reserva, números de boleto ni datos personales presentes en el PDF.
+- El PDF identifica a ambos viajeros y confirma estado de los cuatro segmentos Aeroméxico. Verificar directamente con aerolínea si existen cambios posteriores.
