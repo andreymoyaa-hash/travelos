@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
 import type { Activity, TripDay } from "@/types/travel";
-import { activityMapTarget, mapsDirectionsUrl, mapsSearchUrl, transferLegs } from "@/lib/lite-maps";
+import { activityMapTarget, mapsDirectionsUrl, mapsSearchUrl, transferLegs, androidMapLocationUri } from "@/lib/lite-maps";
 
 const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
@@ -116,6 +116,25 @@ async function removeReceiptPhoto(id: string) {
 }
 
 
+async function sendRouteToAndroid(url: string, label: string): Promise<string> {
+  // Sharing is initiated by a real tap, to allow the Android app picker.
+  // Avoid trying to force Google Maps through browser-dependent intent redirects.
+  if (typeof navigator.share === "function") {
+    try {
+      await navigator.share({ title: "Ruta a " + label, text: "Ruta de Nioli Lite", url });
+      return "Ruta enviada al menú de compartir. Si aparece Google Maps, elígelo.";
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") return "Compartir cancelado.";
+    }
+  }
+  try {
+    await navigator.clipboard.writeText(url);
+    return "Enlace copiado. Ábrelo en Chrome o compártelo desde el teléfono con Google Maps.";
+  } catch {
+    return "No se pudo abrir el menú de compartir. Mantén presionado «Ruta web» y usa «Copiar enlace».";
+  }
+}
+
 function plannedOrigin(activities: Activity[], index: number, city: string) {
   const current = activityMapTarget(activities[index], city);
   if (current.origin) return current.origin;
@@ -138,6 +157,7 @@ export default function NioliLite() {
   const [aiLoading, setAiLoading] = useState(false);
   const [clockNow, setClockNow] = useState<number | null>(null);
   const [online, setOnline] = useState(true);
+  const [mapMessage, setMapMessage] = useState("");
   const [offlineReady, setOfflineReady] = useState(false);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [receiptTitle, setReceiptTitle] = useState("");
@@ -550,6 +570,10 @@ export default function NioliLite() {
               <p className="mt-1 font-semibold text-slate-950">{nextStop.activity.title}</p>
               <p className="mt-1 text-xs text-slate-600">{nextStop.target.destination?.precision === "verified" ? "Ubicación detallada disponible" : "Destino por nombre: confirma el resultado en Maps"}</p>
               <div className="mt-3 flex flex-wrap gap-2">
+                <button type="button" onClick={() => { void sendRouteToAndroid(mapsDirectionsUrl(nextStop.target.destination!, "transit"), nextStop.activity.title).then(setMapMessage); }}
+                  className="rounded-xl bg-indigo-700 px-3 py-2.5 text-sm font-semibold text-white">Compartir ruta con Android</button>
+                <a href={androidMapLocationUri(nextStop.target.destination!)}
+                  className="rounded-xl border border-indigo-300 px-3 py-2.5 text-sm font-semibold text-indigo-900">Abrir destino en app Maps</a>
                 <a href={mapsDirectionsUrl(nextStop.target.destination!, "transit")} target="_blank" rel="noopener noreferrer"
                   className="rounded-xl bg-blue-700 px-3 py-2.5 text-sm font-semibold text-white">Metro / tren desde aquí</a>
                 <a href={mapsDirectionsUrl(nextStop.target.destination!, "walking")} target="_blank" rel="noopener noreferrer"
@@ -558,6 +582,7 @@ export default function NioliLite() {
                   className="rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-800">Ver ubicación</a>
               </div>
             </div> : <p className="mt-2 text-sm text-slate-700">No hay una siguiente parada con destino identificable.</p>}
+            {mapMessage && <p role="status" className="mt-2 rounded-lg bg-white p-2 text-xs text-blue-900">{mapMessage}</p>}
             <p className="mt-3 text-xs text-blue-950">Para rutas desde tu ubicación, permite el acceso a ubicación en Google Maps. Comprueba las líneas, salidas, transbordos y posibles interrupciones allí antes de viajar. Necesitas Internet para rutas en vivo.</p>
           </section>
           <h3 className="mb-3 mt-5 font-semibold">Actividades ({day.activities.length})</h3>
@@ -586,6 +611,11 @@ export default function NioliLite() {
                     return <div className="mt-3 space-y-2">
                       <p className="text-xs text-slate-500">{route.destination.precision === "verified" ? "Destino con datos de ubicación" : "Destino por búsqueda · comprueba el lugar elegido"}</p>
                       <div className="flex flex-wrap gap-2">
+                        <a href={androidMapLocationUri(route.destination!)}
+                          className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-900">Destino en app Maps</a>
+                        <button type="button"
+                          onClick={() => { void sendRouteToAndroid(mapsDirectionsUrl(route.destination!, "transit"), activity.title).then(setMapMessage); }}
+                          className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-900">Compartir ruta</button>
                         <a href={mapsDirectionsUrl(route.destination!, "transit")} target="_blank" rel="noopener noreferrer"
                           className="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white">Metro / tren desde aquí</a>
                         <a href={mapsDirectionsUrl(route.destination!, "walking")} target="_blank" rel="noopener noreferrer"
