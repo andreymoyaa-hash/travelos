@@ -67,6 +67,8 @@ export default function NioliLite() {
   const [aiError, setAiError] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [clockNow, setClockNow] = useState<number | null>(null);
+  const [online, setOnline] = useState(true);
+  const [offlineReady, setOfflineReady] = useState(false);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [receiptTitle, setReceiptTitle] = useState("");
   const [receiptAmount, setReceiptAmount] = useState("");
@@ -78,6 +80,22 @@ export default function NioliLite() {
   const [receiptError, setReceiptError] = useState("");
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"plan" | "gastos">("plan");
+
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    if ("serviceWorker" in navigator) {
+      void navigator.serviceWorker.register("/lite-sw.js", { scope: "/lite" })
+        .then(() => setOfflineReady(true))
+        .catch(() => setOfflineReady(false));
+    }
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
 
   useEffect(() => {
     setClockNow(Date.now());
@@ -200,6 +218,37 @@ export default function NioliLite() {
     });
   }
 
+  function downloadOfflineGuide() {
+    if (!window.confirm("Este archivo contiene información del viaje y NO tendrá PIN. Guárdalo solo en un dispositivo privado. ¿Descargar la guía?")) return;
+    const lines = [
+      "NIOLI LITE · JAPÓN 2026",
+      "Guía de emergencia sin Internet · Generada: " + new Date().toLocaleString("es-CR"),
+      "IMPORTANTE: este archivo no está protegido por el PIN de Nioli.",
+      "Los enlaces a Google Maps requieren Internet. Verifica los horarios de transporte en la fuente oficial.",
+      "",
+    ];
+    for (const day of days) {
+      lines.push("==================================================");
+      lines.push(day.date + " · " + day.city + " · " + day.area);
+      if (day.reservationNote) lines.push("RESERVA: " + day.reservationNote);
+      if (day.keyNote) lines.push("IMPORTANTE: " + day.keyNote);
+      if (day.notes) lines.push("NOTAS: " + day.notes);
+      for (const activity of day.activities) {
+        lines.push(" • " + (activity.startTime ? activity.startTime + " · " : "") + activity.title);
+        if (activity.notes) lines.push("    " + activity.notes);
+        if (activity.location?.address) lines.push("    Dirección: " + activity.location.address);
+      }
+      lines.push("");
+    }
+    const file = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+    const href = URL.createObjectURL(file);
+    const anchor = document.createElement("a");
+    anchor.href = href;
+    anchor.download = "nioli-japon-2026-sin-internet.txt";
+    anchor.click();
+    window.setTimeout(() => URL.revokeObjectURL(href), 1000);
+  }
+
   function exportData() {
     const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), days, receipts, note: "Las fotos quedan almacenadas localmente en este navegador y no se incluyen en este JSON." }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -279,6 +328,28 @@ export default function NioliLite() {
             <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-rose-950">{timeIn("Asia/Tokyo")}</p>
             <p className="text-xs capitalize text-rose-700">{dateIn("Asia/Tokyo")}</p>
           </div>
+        </section>
+        <section aria-label="Modo sin conexión" className={online ? "rounded-2xl border border-teal-200 bg-teal-50 p-4" : "rounded-2xl border border-amber-300 bg-amber-50 p-4"} role="status">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className={online ? "font-bold text-teal-900" : "font-bold text-amber-900"}>
+                {online ? "● Internet disponible" : "● Sin Internet · modo local"}
+              </p>
+              <p className="mt-1 text-sm text-slate-700">
+                {online
+                  ? "Puedes consultar tus datos guardados aquí. Si se corta Internet mientras Nioli está abierto, podrás seguir usando el itinerario y registrar gastos."
+                  : "El itinerario y los gastos ya abiertos siguen disponibles en este teléfono. Los cambios se guardan localmente y se sincronizarán cuando regrese Internet."}
+              </p>
+              <p className="mt-1 text-xs text-slate-600">
+                {offlineReady ? "Recursos visuales básicos preparados." : "Recursos visuales sin conexión todavía no confirmados."} Gemini y Google Maps necesitan conexión.
+              </p>
+            </div>
+          </div>
+          <button type="button" onClick={downloadOfflineGuide}
+            className="mt-3 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white">
+            Descargar guía de emergencia sin Internet
+          </button>
+          <p className="mt-2 text-xs text-slate-600">Para reabrir el viaje después de cerrar la pestaña o caducar el PIN necesitas Internet. La guía descargada sí se puede abrir sin conexión.</p>
         </section>
         <nav aria-label="Secciones Nioli Lite" className="grid grid-cols-2 gap-2 rounded-2xl bg-white p-2 shadow-sm">
           <button onClick={() => setActiveTab("plan")} className={activeTab === "plan" ? "rounded-xl bg-indigo-700 px-4 py-3 font-semibold text-white" : "rounded-xl px-4 py-3 font-semibold text-indigo-700"}>🗺️ Itinerario</button>
