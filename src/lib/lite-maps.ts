@@ -146,3 +146,14 @@ export function nativeGoogleMapsUrl(webUrl: string, userAgent: string): string {
   }
   return webUrl;
 }
+
+
+/** Android standard geo URI: asks the OS to resolve this destination in a maps application.
+ * It opens the destination search, not a public-transit route; do not mislabel it.
+ * No auto redirect or window.open: call from a direct anchor click.
+ */
+export function androidMapLocationUri(destination: LiteMapDestination): string {
+  const precise = /^-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?$/.test(destination.query);
+  if (precise) return "geo:" + destination.query + "?q=" + encodeURIComponent(destination.query + "(" + destination.label + ")");
+  return "geo:0,0?q=" + encodeURIComponent(destination.query);
+}
