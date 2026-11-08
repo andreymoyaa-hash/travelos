@@ -98,3 +98,51 @@ export function mapsSearchUrl(destination: LiteMapDestination) {
   if (destination.placeId) url.searchParams.set("query_place_id", destination.placeId);
   return url.toString();
 }
+
+
+/**
+ * Google Maps app deep link. Android Chrome supports intent:// links with an
+ * explicit Maps package and a browser fallback URL. On iOS the Google Maps
+ * custom scheme can open the installed app. Desktop/unknown: universal URL.
+ *
+ * Use this only from a direct user gesture. Never send rail trips to
+ * google.navigation: (it cannot select public transit).
+ */
+export function nativeGoogleMapsUrl(webUrl: string, userAgent: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(webUrl);
+    if (parsed.protocol !== "https:" || parsed.hostname !== "www.google.com" ||
+        !parsed.pathname.startsWith("/maps/")) return webUrl;
+  } catch { return webUrl; }
+
+  if (/android/i.test(userAgent)) {
+    // Chrome intent keeps the full transit/route query intact while targeting
+    // com.google.android.apps.maps. Fallback covers browsers without the app.
+    return "intent://" + parsed.host + parsed.pathname + parsed.search +
+      "#Intent;scheme=https;package=com.google.android.apps.maps;" +
+      "S.browser_fallback_url=" + encodeURIComponent(webUrl) + ";end";
+  }
+
+  if (/iPhone|iPad|iPod/i.test(userAgent)) {
+    const query = parsed.searchParams;
+    if (parsed.pathname.startsWith("/maps/dir/")) {
+      const destination = query.get("destination");
+      if (!destination) return webUrl;
+      const ios = new URL("comgooglemaps://");
+      ios.searchParams.set("daddr", destination);
+      const origin = query.get("origin");
+      if (origin) ios.searchParams.set("saddr", origin);
+      ios.searchParams.set("directionsmode", query.get("travelmode") || "transit");
+      return ios.toString();
+    }
+    if (parsed.pathname.startsWith("/maps/search/")) {
+      const destination = query.get("query");
+      if (!destination) return webUrl;
+      const ios = new URL("comgooglemaps://");
+      ios.searchParams.set("q", destination);
+      return ios.toString();
+    }
+  }
+  return webUrl;
+}
