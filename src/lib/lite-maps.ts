@@ -67,6 +67,15 @@ export function activityMapTarget(activity: Activity, city: string): { destinati
   return { destination: safeLocation(activity.location, activity.title, activity.city || city), origin: null, isTransfer: false };
 }
 
+export function transferLegs(activity: Activity, city: string) {
+  if (activity.category !== "transport" && !activity.categories?.includes("transport")) return [];
+  const sections = activity.title.split(/\s*→\s*/).map(v => v.trim()).filter(Boolean);
+  if (sections.length < 3) return [];
+  const stops = sections.map(name => terminal(name, city));
+  return stops.slice(1).flatMap((destination, i) =>
+    stops[i] && destination ? [{ origin: stops[i]!, destination, label: sections[i] + " → " + sections[i + 1] }] : []);
+}
+
 export function mapsDirectionsUrl(destination: LiteMapDestination, mode: LiteTransport, origin?: LiteMapDestination | null) {
   const url = new URL("https://www.google.com/maps/dir/");
   url.searchParams.set("api", "1");
