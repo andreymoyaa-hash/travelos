@@ -26,7 +26,7 @@ interface CloudSyncProps {
 async function apiJson(url: string, init?: RequestInit) {
   const response = await fetch(url, { ...init, cache: "no-store", credentials: "same-origin" });
   const result: unknown = response.status === 204 ? null : await response.json().catch(() => null);
-  const data = result && typeof result === "object" ? result as Record<string, unknown> : {};
+  const data: Record<string, unknown> = result && typeof result === "object" ? result as Record<string, unknown> : {};
   if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "Error de conexión con Supabase.");
   return response.status === 204 ? null : data;
 }
