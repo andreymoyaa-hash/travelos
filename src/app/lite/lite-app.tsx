@@ -563,6 +563,7 @@ export default function NioliLite() {
 
           <section aria-label="Navegación Google Maps" className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
             <h3 className="text-lg font-bold text-blue-950">Cómo llegar · Google Maps</h3>
+            <p className="mt-1 text-xs font-semibold text-blue-800">Navegación Android v3 · menú compartir y respaldo manual</p>
             <p className="mt-1 text-sm text-blue-900">Metro, tren, autobús, transbordos y caminatas se calculan directamente en Google Maps. Nioli no inventa horarios, tarifas, plataformas ni tiempos.</p>
             {day.transportSummary && <p className="mt-2 rounded-lg bg-white p-3 text-sm text-slate-700">Plan de transporte: {day.transportSummary}</p>}
             {nextStop ? <div className="mt-3 rounded-xl bg-white p-3">
@@ -572,6 +573,12 @@ export default function NioliLite() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <button type="button" onClick={() => { void sendRouteToAndroid(mapsDirectionsUrl(nextStop.target.destination!, "transit"), nextStop.activity.title).then(setMapMessage); }}
                   className="rounded-xl bg-indigo-700 px-3 py-2.5 text-sm font-semibold text-white">Compartir ruta con Android</button>
+                <button type="button" onClick={() => {
+                  void navigator.clipboard.writeText(nextStop.target.destination!.query).then(
+                    () => setMapMessage("Destino copiado. Abre la app Google Maps y pega el destino en la búsqueda."),
+                    () => setMapMessage("No pude copiar automáticamente. Usa la opción Compartir ruta con Android.")
+                  );
+                }} className="rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-900">Copiar destino para Maps</button>
                 <a href={androidMapLocationUri(nextStop.target.destination!)}
                   className="rounded-xl border border-indigo-300 px-3 py-2.5 text-sm font-semibold text-indigo-900">Abrir destino en app Maps</a>
                 <a href={mapsDirectionsUrl(nextStop.target.destination!, "transit")} target="_blank" rel="noopener noreferrer"
