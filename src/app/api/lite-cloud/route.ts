@@ -53,10 +53,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "El itinerario no tiene el formato correcto." }, { status: 400 });
     if (!payload.receipts.every(r => r && typeof r === "object" && typeof r.id === "string" && typeof r.title === "string" && typeof r.amount === "number" && Number.isFinite(r.amount) && r.amount >= 0))
       return NextResponse.json({ error: "Los gastos no tienen el formato correcto." }, { status: 400 });
-    const saved = await client.from("nioli_lite_pin_snapshots").upsert({
-      trip_id: session.trip.id, itinerary: payload.days, receipts: payload.receipts, updated_at: new Date().toISOString()
-    }, { onConflict: "trip_id" }).select("updated_at").single();
-    if (saved.error) throw saved.error;
-    return NextResponse.json({ saved: true, updatedAt: saved.data.updated_at }, { headers: { "Cache-Control": "no-store" } });
+    // Optimistic locking: a client must present the version it last inspected.
+    // Prevent older phone tabs/devices from silently overwriting a newer backup.
+    if (!(payload.expectedUpdatedAt === null || typeof payload.expectedUpdatedAt === "string")) {
+      return NextResponse.json({ error: "Consulta primero el respaldo remoto antes de guardar." }, { status: 428 });
+    }
+    const expected = payload.expectedUpdatedAt;
+    const changes = { itinerary: payload.days, receipts: payload.receipts, updated_at: new Date().toISOString() };
+    if (typeof expected === "string") {
+      const result = await client.from("nioli_lite_pin_snapshots")
+        .update(changes).eq("trip_id", session.trip.id).eq("updated_at", expected)
+        .select("updated_at").maybeSingle();
+      if (result.error) throw result.error;
+      if (!result.data) return NextResponse.json({ error: "El respaldo fue modificado desde otro dispositivo. Revisa las diferencias antes de guardar." }, { status: 409 });
+      return NextResponse.json({ saved: true, updatedAt: result.data.updated_at }, { headers: { "Cache-Control": "no-store" } });
+    }
+    const result = await client.from("nioli_lite_pin_snapshots").insert({
+      trip_id: session.trip.id, ...changes,
+    }).select("updated_at").single();
+    if (result.error?.code === "23505") return NextResponse.json({ error: "Ya existe un respaldo reciente. Vuelve a comprobar la nube." }, { status: 409 });
+    if (result.error) throw result.error;
+    return NextResponse.json({ saved: true, updatedAt: result.data.updated_at }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) { return errorResponse(error); }
 }
