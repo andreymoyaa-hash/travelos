@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
-import type { TripDay } from "@/types/travel";
+import type { Activity, TripDay } from "@/types/travel";
+import { activityMapTarget, mapsDirectionsUrl, mapsSearchUrl } from "@/lib/lite-maps";
 
 const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
@@ -115,8 +116,20 @@ async function removeReceiptPhoto(id: string) {
 }
 
 
-function googleMapsUrl(name: string, city: string) {
-  return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(name + ", " + city + ", Japan");
+function openMaps(url: string) {
+  // A real tap opens the current Google Maps route (including transit options).
+  // Google decides departures, platforms, interchanges and changes in service.
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function plannedOrigin(activities: Activity[], index: number, city: string) {
+  const current = activityMapTarget(activities[index], city);
+  if (current.origin) return current.origin;
+  for (let offset = index - 1; offset >= 0; offset--) {
+    const previous = activityMapTarget(activities[offset], city);
+    if (previous.destination) return previous.destination;
+  }
+  return null;
 }
 
 export default function NioliLite() {
@@ -339,6 +352,17 @@ export default function NioliLite() {
   }
 
   const day = useMemo(() => days.find((item) => item.date === selectedDate), [days, selectedDate]);
+  const nextStop = useMemo(() => {
+    if (!day) return null;
+    for (let index = 0; index < day.activities.length; index++) {
+      const activity = day.activities[index];
+      if (activity.completed) continue;
+      const target = activityMapTarget(activity, day.city);
+      if (target.destination) return { activity, target, index };
+    }
+    return null;
+  }, [day]);
+
 
   function updateDay(update: (current: TripDay) => TripDay) {
     setDays((current) => current.map((item) => item.date === selectedDate ? update(item) : item));
@@ -522,6 +546,26 @@ export default function NioliLite() {
           {day.reservationNote && <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">Reserva: {day.reservationNote}</p>}
           {day.keyNote && <p className="mt-3 text-sm">{day.keyNote}</p>}
           {day.notes && <p className="mt-2 text-sm text-slate-600">{day.notes}</p>}
+
+          <section aria-label="Navegación Google Maps" className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
+            <h3 className="text-lg font-bold text-blue-950">Cómo llegar · Google Maps</h3>
+            <p className="mt-1 text-sm text-blue-900">Metro, tren, autobús, transbordos y caminatas se calculan directamente en Google Maps. Nioli no inventa horarios, tarifas, plataformas ni tiempos.</p>
+            {day.transportSummary && <p className="mt-2 rounded-lg bg-white p-3 text-sm text-slate-700">Plan de transporte: {day.transportSummary}</p>}
+            {nextStop ? <div className="mt-3 rounded-xl bg-white p-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Siguiente parada pendiente</p>
+              <p className="mt-1 font-semibold text-slate-950">{nextStop.activity.title}</p>
+              <p className="mt-1 text-xs text-slate-600">{nextStop.target.destination?.precision === "verified" ? "Ubicación detallada disponible" : "Destino por nombre: confirma el resultado en Maps"}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button type="button" onClick={() => openMaps(mapsDirectionsUrl(nextStop.target.destination!, "transit"))}
+                  className="rounded-xl bg-blue-700 px-3 py-2.5 text-sm font-semibold text-white">Metro / tren desde aquí</button>
+                <button type="button" onClick={() => openMaps(mapsDirectionsUrl(nextStop.target.destination!, "walking"))}
+                  className="rounded-xl border border-blue-300 px-3 py-2.5 text-sm font-semibold text-blue-900">Ir caminando</button>
+                <button type="button" onClick={() => openMaps(mapsSearchUrl(nextStop.target.destination!))}
+                  className="rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-800">Ver ubicación</button>
+              </div>
+            </div> : <p className="mt-2 text-sm text-slate-700">No hay una siguiente parada con destino identificable.</p>}
+            <p className="mt-3 text-xs text-blue-950">Para rutas desde tu ubicación, permite el acceso a ubicación en Google Maps. Comprueba las líneas, salidas, transbordos y posibles interrupciones allí antes de viajar. Necesitas Internet para rutas en vivo.</p>
+          </section>
           <h3 className="mb-3 mt-5 font-semibold">Actividades ({day.activities.length})</h3>
           <div className="space-y-3">
             {day.activities.map((activity, index) => <article key={activity.id} className="rounded-xl border border-slate-200 p-3">
@@ -530,7 +574,25 @@ export default function NioliLite() {
                 <div className="min-w-0 flex-1">
                   <p className={activity.completed ? "font-medium line-through opacity-60" : "font-medium"}>{activity.startTime ? activity.startTime + " · " : ""}{activity.title}</p>
                   {activity.notes && <p className="mt-1 text-sm text-slate-600">{activity.notes}</p>}
-                  <a href={googleMapsUrl(activity.location.name || activity.title, day.city)} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-sm font-semibold text-indigo-700 underline">Abrir en Google Maps</a>
+                  {(() => {
+                    const route = activityMapTarget(activity, day.city);
+                    if (!route.destination) return <p className="mt-2 text-xs text-amber-800">Ubicación por confirmar: esta actividad no tiene un destino único. Revisa los detalles del traslado.</p>;
+                    const origin = plannedOrigin(day.activities, index, day.city);
+                    return <div className="mt-3 space-y-2">
+                      <p className="text-xs text-slate-500">{route.destination.precision === "verified" ? "Destino con datos de ubicación" : "Destino por búsqueda · comprueba el lugar elegido"}</p>
+                      <div className="flex flex-wrap gap-2">
+                        <button type="button" onClick={() => openMaps(mapsDirectionsUrl(route.destination!, "transit"))}
+                          className="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white">Metro / tren desde aquí</button>
+                        <button type="button" onClick={() => openMaps(mapsDirectionsUrl(route.destination!, "walking"))}
+                          className="rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-800">A pie</button>
+                        {origin && <button type="button" onClick={() => openMaps(mapsDirectionsUrl(route.destination!, "transit", origin))}
+                          className="rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-900">Desde parada anterior</button>}
+                        <button type="button" onClick={() => openMaps(mapsSearchUrl(route.destination!))}
+                          className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700">Ver destino</button>
+                      </div>
+                      {origin && <p className="text-xs text-slate-500">Ruta planificada desde: {origin.label}. Google Maps ofrece alternativas y conexiones reales al abrirla.</p>}
+                    </div>;
+                  })()}
                 </div>
                 <div className="flex flex-col gap-1">
                   <button aria-label={"Subir " + activity.title} disabled={index === 0} onClick={() => moveActivity(index, -1)} className="rounded-lg bg-slate-100 px-3 py-1 disabled:opacity-30">↑</button>
