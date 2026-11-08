@@ -25,14 +25,16 @@ export default function LitePinGate() {
       const result: unknown = await response.json().catch(() => null);
       const data = result && typeof result === "object" ? result as Record<string, unknown> : {};
       if (!response.ok) throw new Error(typeof data.error === "string" ? data.error : "No se pudo comprobar el PIN.");
-      const trip = data.trip && typeof data.trip === "object" ? data.trip as Record<string, unknown> : {};
-      if (data.accessKind !== "trip" || trip.slug !== "japan-2026") {
-        // Avoid keeping a session for another workspace/trip when accessing this private itinerary.
-        await fetch("/api/travel-session/logout", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ all: true }), credentials: "same-origin",
-        }).catch(() => undefined);
-        throw new Error("Este PIN no corresponde al viaje Japón 2026.");
+      // The login endpoint can omit the trip slug. Verify the actual
+      // server-side session after the secure cookie has been set.
+      const check = await fetch("/api/travel-session", {
+        credentials: "same-origin", cache: "no-store",
+      });
+      const checked: unknown = check.ok && check.status !== 204 ? await check.json().catch(() => null) : null;
+      const session = checked && typeof checked === "object" ? checked as Record<string, unknown> : {};
+      const trip = session.trip && typeof session.trip === "object" ? session.trip as Record<string, unknown> : {};
+      if (session.accessKind !== "trip" || trip.slug !== "japan-2026") {
+        throw new Error("Este acceso no tiene una sesión activa para Japón 2026.");
       }
       setPin("");
       router.refresh();
