@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
 import type { Activity, TripDay } from "@/types/travel";
-import { activityMapTarget, mapsDirectionsUrl, mapsSearchUrl } from "@/lib/lite-maps";
+import { activityMapTarget, mapsDirectionsUrl, mapsSearchUrl, transferLegs } from "@/lib/lite-maps";
 
 const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
@@ -576,7 +576,18 @@ export default function NioliLite() {
                   {activity.notes && <p className="mt-1 text-sm text-slate-600">{activity.notes}</p>}
                   {(() => {
                     const route = activityMapTarget(activity, day.city);
-                    if (!route.destination) return <p className="mt-2 text-xs text-amber-800">Ubicación por confirmar: esta actividad no tiene un destino único. Revisa los detalles del traslado.</p>;
+                    if (!route.destination) {
+                      const legs = transferLegs(activity, day.city);
+                      if (legs.length) return <div className="mt-2 space-y-2 rounded-lg bg-blue-50 p-2">
+                        <p className="text-xs font-semibold text-blue-900">Transbordo con varios tramos · consulta cada trayecto en Google Maps</p>
+                        {legs.map((leg, legIndex) => <button key={legIndex} type="button"
+                          onClick={() => openMaps(mapsDirectionsUrl(leg.destination, "transit", leg.origin))}
+                          className="block w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-left text-xs font-semibold text-blue-800">
+                          Tramo {legIndex + 1}: {leg.label}
+                        </button>)}
+                      </div>;
+                      return <p className="mt-2 text-xs text-amber-800">Ubicación por confirmar: esta actividad no tiene un destino único. Revisa los detalles del traslado.</p>;
+                    }
                     const origin = plannedOrigin(day.activities, index, day.city);
                     return <div className="mt-3 space-y-2">
                       <p className="text-xs text-slate-500">{route.destination.precision === "verified" ? "Destino con datos de ubicación" : "Destino por búsqueda · comprueba el lugar elegido"}</p>
