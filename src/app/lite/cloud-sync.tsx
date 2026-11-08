@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import type { TripDay } from "@/types/travel";
 
 export type LiteReceipt = {
@@ -57,6 +58,7 @@ const validSnapshot = (candidate: unknown): candidate is Snapshot => {
 const BUCKET_LABEL = "Recibos protegidos con tu sesión PIN";
 
 export default function LiteCloudSync({ ready, days, receipts, onRestore, readPhoto, storePhoto }: CloudSyncProps) {
+  const router = useRouter();
   const [session, setSession] = useState<PinSession | null>(null);
   const [pin, setPin] = useState("");
   const [busy, setBusy] = useState(false);
@@ -164,6 +166,7 @@ export default function LiteCloudSync({ ready, days, receipts, onRestore, readPh
       initializedTripRef.current = null; lastSyncedRef.current = null;
       remoteVersionRef.current = null; knownPhotosRef.current.clear();
       setStatus("signedOut"); setMessage("Sesión cerrada.");
+      router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "No se pudo cerrar sesión.");
     } finally { setBusy(false); }
