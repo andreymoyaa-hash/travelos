@@ -266,7 +266,7 @@ export default function NioliLite() {
         <header className="rounded-3xl bg-gradient-to-r from-indigo-700 via-violet-600 to-fuchsia-500 p-6 text-white shadow-lg shadow-violet-200">
           <p className="text-sm font-semibold tracking-widest text-indigo-100">NIOLI LITE · JAPÓN 2026</p>
           <h1 className="text-3xl font-bold">Tu viaje, sin complicaciones</h1>
-          <p className="text-sm text-indigo-100">Itinerario local · rutas en Google Maps · puente con ChatGPT</p>
+          <p className="text-sm text-indigo-100">Itinerario y gastos · guardado automático en la nube · Gemini</p>
         </header>
         <section aria-label="Relojes en tiempo real" className="grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 shadow-sm">
@@ -396,7 +396,7 @@ export default function NioliLite() {
           <button onClick={exportData} className="rounded-xl border border-slate-300 px-4 py-3 font-semibold">Exportar JSON</button>
           <button onClick={() => { if (window.confirm("¿Restaurar el itinerario original? Se borrarán los cambios guardados en este navegador.")) setDays(initialDays); }} className="ml-2 rounded-xl border border-slate-300 px-4 py-3 font-semibold">Restaurar original</button>
         </section>
-        <LiteCloudSync days={days} receipts={receipts} readPhoto={readReceiptPhoto} storePhoto={storeReceiptPhoto} onRestore={(newDays, newReceipts) => {
+        <LiteCloudSync ready={ready} days={days} receipts={receipts} readPhoto={readReceiptPhoto} storePhoto={storeReceiptPhoto} onRestore={(newDays, newReceipts) => {
           setDays(newDays);
           setReceipts(newReceipts);
           setSelectedDate((date) => newDays.some((day) => day.date === date) ? date : (newDays[0]?.date || ""));
