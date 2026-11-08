@@ -62,6 +62,9 @@ export default function NioliLite() {
   const [newTitle, setNewTitle] = useState("");
   const [assistantText, setAssistantText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [aiAnswer, setAiAnswer] = useState("");
+  const [aiError, setAiError] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [receiptTitle, setReceiptTitle] = useState("");
   const [receiptAmount, setReceiptAmount] = useState("");
@@ -199,6 +202,28 @@ export default function NioliLite() {
     URL.revokeObjectURL(url);
   }
 
+  async function askGemini() {
+    if (!day || !assistantText.trim() || aiLoading) return;
+    setAiLoading(true); setAiAnswer(""); setAiError("");
+    const context = [
+      "Fecha: " + day.date, "Ciudad: " + day.city, "Zona: " + day.area,
+      "Reserva: " + (day.reservationNote || "Sin nota"),
+      "Notas: " + (day.notes || ""),
+      ...day.activities.map((activity) => (activity.startTime || "Flexible") + " · " + activity.title + (activity.notes ? " · " + activity.notes : "")),
+    ].join("\\n").slice(0, 9500);
+    try {
+      const result = await fetch("/api/lite-assistant", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: assistantText.trim(), context }),
+      });
+      const data = await result.json();
+      if (!result.ok || !data.answer) throw new Error(data.error || "Error al consultar Gemini.");
+      setAiAnswer(data.answer);
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : "Error de conexión.");
+    } finally { setAiLoading(false); }
+  }
+
   async function copyForChatGPT() {
     if (!day) return;
     const prompt = [
@@ -266,10 +291,15 @@ export default function NioliLite() {
           </form>
         </section>}
         <section className={surface}>
-          <h2 className="text-lg font-bold">Consultar conmigo en ChatGPT</h2>
-          <p className="mt-1 text-sm text-slate-600">Esta primera versión copia el contexto del día y tu pregunta. La integración directa de IA aún no está conectada.</p>
+          <h2 className="text-lg font-bold">✨ Asistente de viaje con Gemini</h2>
+          <p className="mt-1 text-sm text-slate-600">Pregunta por tu día. Gemini propone ideas, pero no modifica reservas ni actividades automáticamente. No escribas datos privados o números de reserva.</p>
           <textarea aria-label="Petición para ChatGPT" rows={3} value={assistantText} onChange={(event) => { setAssistantText(event.target.value); setCopied(false); }} placeholder="Ej. Reordena Kyoto para caminar menos, respetando mis reservas" className="mt-3 w-full rounded-xl border border-slate-300 p-3" />
-          <button onClick={copyForChatGPT} className="mt-2 rounded-xl bg-indigo-700 px-4 py-3 font-semibold text-white">{copied ? "Copiado: pégalo en ChatGPT" : "Copiar consulta para ChatGPT"}</button>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <button onClick={() => { void askGemini(); }} disabled={aiLoading || !assistantText.trim()} className="rounded-xl bg-fuchsia-600 px-4 py-3 font-semibold text-white disabled:opacity-50">{aiLoading ? "Consultando..." : "Preguntar a Gemini"}</button>
+            <button onClick={copyForChatGPT} className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 font-semibold text-indigo-800">{copied ? "Copiado" : "Usar en ChatGPT Plus"}</button>
+          </div>
+          {aiError && <p role="alert" className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{aiError}</p>}
+          {aiAnswer && <div aria-live="polite" className="mt-3 whitespace-pre-wrap rounded-xl bg-violet-50 p-4 text-sm leading-relaxed text-violet-950">{aiAnswer}</div>}
         </section>
         </>}
         {activeTab === "gastos" && <>
