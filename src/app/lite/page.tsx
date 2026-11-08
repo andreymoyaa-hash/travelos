@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
+import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
 import type { TripDay } from "@/types/travel";
 
 const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
 const EXPENSES_KEY = "nioli-lite-expenses-2026-v1";
-type Receipt = { id: string; title: string; amount: number; currency: "JPY" | "CRC" | "USD"; category: string; date: string; note: string; hasPhoto: boolean; };
+type Receipt = LiteReceipt;
 const categories = ["Comida", "Transporte", "Compras", "Souvenirs", "Entradas", "Hotel", "Otros"];
 function openReceiptDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -395,6 +396,11 @@ export default function NioliLite() {
           <button onClick={exportData} className="rounded-xl border border-slate-300 px-4 py-3 font-semibold">Exportar JSON</button>
           <button onClick={() => { if (window.confirm("¿Restaurar el itinerario original? Se borrarán los cambios guardados en este navegador.")) setDays(initialDays); }} className="ml-2 rounded-xl border border-slate-300 px-4 py-3 font-semibold">Restaurar original</button>
         </section>
+        <LiteCloudSync days={days} receipts={receipts} readPhoto={readReceiptPhoto} storePhoto={storeReceiptPhoto} onRestore={(newDays, newReceipts) => {
+          setDays(newDays);
+          setReceipts(newReceipts);
+          setSelectedDate((date) => newDays.some((day) => day.date === date) ? date : (newDays[0]?.date || ""));
+        }} />
         <footer className="pb-5 text-xs text-slate-500">Versión inicial independiente. No modifica la aplicación Nioli principal ni confirma compras o reservas.</footer>
       </div>
     </main>
