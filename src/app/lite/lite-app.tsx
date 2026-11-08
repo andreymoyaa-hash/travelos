@@ -24,6 +24,55 @@ function convert(amount: number, from: Receipt["currency"], to: Receipt["currenc
 }
 
 const categories = ["Comida", "Transporte", "Compras", "Souvenirs", "Entradas", "Hotel", "Otros"];
+
+// Resize phone-camera photos locally before recognition and cloud backup.
+// Keeps receipt text readable while avoiding Gemini and Supabase upload limits.
+async function prepareReceiptImage(original: File): Promise<File> {
+  if (original.size === 0 || original.size > 70_000_000) throw new Error("La foto está vacía o supera 70 MB.");
+  let bitmap: ImageBitmap | null = null;
+  let image: HTMLImageElement | null = null;
+  let objectUrl: string | null = null;
+  try {
+    if ("createImageBitmap" in window) {
+      try { bitmap = await createImageBitmap(original, { imageOrientation: "from-image" }); }
+      catch { /* Fall back to browser image decoding. */ }
+    }
+    if (!bitmap) {
+      objectUrl = URL.createObjectURL(original);
+      image = new Image();
+      image.src = objectUrl;
+      await image.decode();
+    }
+    const width = bitmap?.width ?? image?.naturalWidth ?? 0;
+    const height = bitmap?.height ?? image?.naturalHeight ?? 0;
+    if (!width || !height) throw new Error("La imagen no tiene dimensiones válidas.");
+    const maxEdge = 2400;
+    const factor = Math.min(1, maxEdge / Math.max(width, height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(width * factor));
+    canvas.height = Math.max(1, Math.round(height * factor));
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) throw new Error("El navegador no pudo procesar la fotografía.");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(bitmap ?? image!, 0, 0, canvas.width, canvas.height);
+    const toJpeg = (quality: number) => new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("No se pudo convertir la foto a JPG.")), "image/jpeg", quality);
+    });
+    let blob = await toJpeg(0.88);
+    if (blob.size > 6_500_000) blob = await toJpeg(0.75);
+    if (blob.size > 6_500_000) blob = await toJpeg(0.58);
+    if (blob.size > 6_500_000) throw new Error("La imagen es demasiado grande incluso después de optimizarla.");
+    return new File([blob], "recibo-" + Date.now() + ".jpg", { type: "image/jpeg", lastModified: Date.now() });
+  } catch (error) {
+    throw new Error("Tu navegador no pudo abrir esta imagen. Prueba en la cámara el formato JPG/JPEG o toma una foto con menor resolución. " +
+      (error instanceof Error && error.message.includes("70 MB") ? error.message : ""));
+  } finally {
+    bitmap?.close();
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+  }
+}
+
 function openReceiptDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("nioli-lite-receipts", 1);
@@ -91,6 +140,8 @@ export default function NioliLite() {
   const [receiptDate, setReceiptDate] = useState("");
   const [receiptNote, setReceiptNote] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [preparingPhoto, setPreparingPhoto] = useState(false);
+  const [photoInfo, setPhotoInfo] = useState("");
   const [receiptError, setReceiptError] = useState("");
   const [recognizing, setRecognizing] = useState(false);
   const [recognition, setRecognition] = useState<Recognition | null>(null);
@@ -196,8 +247,24 @@ export default function NioliLite() {
     return () => { cancelled = true; };
   }, [activeTab]);
 
+  async function selectReceiptPhoto(selected: File | null) {
+    setReceiptFile(null); setRecognition(null); setRecognitionError(""); setPhotoInfo("");
+    if (!selected) return;
+    setPreparingPhoto(true);
+    try {
+      const prepared = await prepareReceiptImage(selected);
+      setReceiptFile(prepared);
+      setPhotoInfo("Fotografía preparada: " + (selected.size / 1_000_000).toFixed(1) + " MB → " +
+        (prepared.size / 1_000_000).toFixed(1) + " MB (JPG). Lista para analizar y guardar.");
+    } catch (error) {
+      setRecognitionError(error instanceof Error ? error.message : "No fue posible abrir la foto.");
+      const input = document.getElementById("receipt-photo") as HTMLInputElement | null;
+      if (input) input.value = "";
+    } finally { setPreparingPhoto(false); }
+  }
+
   async function recognizeReceipt() {
-    if (!receiptFile || recognizing) return;
+    if (!receiptFile || recognizing || preparingPhoto) return;
     setRecognitionError(""); setReceiptError(""); setRecognition(null);
     if (!navigator.onLine) {
       setRecognitionError("El reconocimiento necesita Internet; puedes registrar los datos manualmente.");
@@ -260,7 +327,7 @@ export default function NioliLite() {
       }
     }
     setReceipts((current) => [{ id, title: receiptTitle.trim(), amount, currency: receiptCurrency, category: receiptCategory, date: receiptDate || selectedDate, note: receiptNote.trim(), hasPhoto: Boolean(receiptFile) }, ...current]);
-    setReceiptTitle(""); setReceiptAmount(""); setReceiptNote(""); setReceiptFile(null); setRecognition(null); setRecognitionError("");
+    setReceiptTitle(""); setReceiptAmount(""); setReceiptNote(""); setReceiptFile(null); setRecognition(null); setRecognitionError(""); setPhotoInfo("");
     const input = document.getElementById("receipt-photo") as HTMLInputElement | null;
     if (input) input.value = "";
   }
@@ -524,13 +591,16 @@ export default function NioliLite() {
                 </label>
               </div>
               <label className="grid gap-1 text-sm font-semibold">Foto del recibo (opcional)
-                <input id="receipt-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={(event) => { setReceiptFile(event.target.files?.[0] || null); setRecognition(null); setRecognitionError(""); }} className="w-full rounded-xl border border-dashed border-emerald-300 bg-emerald-50 p-3 font-normal" />
+                <input id="receipt-photo" type="file" accept="image/*,.heic,.heif" capture="environment" onChange={(event) => { void selectReceiptPhoto(event.target.files?.[0] || null); }} className="w-full rounded-xl border border-dashed border-emerald-300 bg-emerald-50 p-3 font-normal" />
+                {preparingPhoto && <span className="text-xs text-violet-700">Optimizando foto de la cámara…</span>}
+                {photoInfo && <span role="status" className="text-xs text-emerald-800">{photoInfo}</span>}
+                {recognitionError && !receiptFile && <span role="alert" className="text-xs text-rose-800">{recognitionError}</span>}
               </label>
               {receiptFile && <section className="space-y-2 rounded-xl border border-violet-200 bg-violet-50 p-3">
                 <p className="text-sm font-semibold text-violet-900">Leer factura con Gemini</p>
                 <p className="text-xs text-violet-800">La imagen solo se envía a Gemini cuando pulsas «Analizar factura». La IA puede equivocarse: comprueba el importe final, la fecha y la moneda antes de guardar.</p>
                 <p className="truncate text-xs text-slate-600">{receiptFile.name}</p>
-                <button type="button" disabled={recognizing} onClick={() => { void recognizeReceipt(); }}
+                <button type="button" disabled={recognizing || preparingPhoto} onClick={() => { void recognizeReceipt(); }}
                   className="rounded-xl bg-violet-700 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">
                   {recognizing ? "Leyendo factura…" : "Analizar factura y completar datos"}
                 </button>
