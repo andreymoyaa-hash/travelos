@@ -31,3 +31,8 @@ with check (bucket_id='nioli-lite-receipts' and (storage.foldername(name))[1] = 
 drop policy if exists "lite_receipt_delete" on storage.objects;
 create policy "lite_receipt_delete" on storage.objects for delete to authenticated
 using (bucket_id='nioli-lite-receipts' and (storage.foldername(name))[1] = (select auth.uid())::text);
+
+drop policy if exists "lite_receipt_update" on storage.objects;
+create policy "lite_receipt_update" on storage.objects for update to authenticated
+using (bucket_id='nioli-lite-receipts' and (storage.foldername(name))[1] = (select auth.uid())::text)
+with check (bucket_id='nioli-lite-receipts' and (storage.foldername(name))[1] = (select auth.uid())::text);
