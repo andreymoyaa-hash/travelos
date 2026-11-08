@@ -195,7 +195,7 @@ export default function LiteCloudSync({ ready, days, receipts, onRestore, readPh
       const code = (error as { status?: number }).status;
       if (code === 409 || code === 428) {
         setAutoEnabled(false); setStatus("conflict");
-        setMessage("Otro dispositivo modificó el respaldo. Recupera y revisa la versión reciente antes de continuar. No se reemplazó.");
+        setMessage("Otro dispositivo modificó el respaldo. Pulsa «Comprobar nube» para actualizar la versión remota, y luego elige entre «Recuperar respaldo» o «Subir respaldo manual». No se reemplazó.");
       } else {
         setStatus(navigator.onLine ? "error" : "offline");
         setMessage("Los cambios siguen guardados en este teléfono, pero no llegaron a Supabase. " +
@@ -210,7 +210,7 @@ export default function LiteCloudSync({ ready, days, receipts, onRestore, readPh
   // Debounced autosave: waits for edits to settle, and never writes before cloud
   // version comparison has completed. If another save is in flight, it retries later.
   useEffect(() => {
-    if (!ready || !canWrite || !autoEnabled || status === "checking" || status === "conflict") return;
+    if (!ready || !canWrite || !autoEnabled || status === "checking" || status === "conflict" || status === "error") return;
     const sig = signature(days, receipts);
     if (sig === lastSyncedRef.current && lastSyncedRef.current !== null) return;
     if (status !== "saving") setStatus(navigator.onLine ? "pending" : "offline");
