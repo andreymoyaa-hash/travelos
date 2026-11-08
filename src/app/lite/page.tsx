@@ -65,6 +65,7 @@ export default function NioliLite() {
   const [aiAnswer, setAiAnswer] = useState("");
   const [aiError, setAiError] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [clockNow, setClockNow] = useState<number | null>(null);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [receiptTitle, setReceiptTitle] = useState("");
   const [receiptAmount, setReceiptAmount] = useState("");
@@ -76,6 +77,12 @@ export default function NioliLite() {
   const [receiptError, setReceiptError] = useState("");
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"plan" | "gastos">("plan");
+
+  useEffect(() => {
+    setClockNow(Date.now());
+    const interval = window.setInterval(() => setClockNow(Date.now()), 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     try {
@@ -242,6 +249,15 @@ export default function NioliLite() {
     }
   }
 
+  function timeIn(zone: string) {
+    if (clockNow === null) return "--:--:--";
+    return new Intl.DateTimeFormat("es-CR", { timeZone: zone, hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }).format(clockNow);
+  }
+  function dateIn(zone: string) {
+    if (clockNow === null) return "Cargando fecha";
+    return new Intl.DateTimeFormat("es-CR", { timeZone: zone, weekday: "short", day: "numeric", month: "short" }).format(clockNow);
+  }
+
   const surface = "rounded-2xl border border-indigo-100 bg-white p-4 shadow-sm shadow-indigo-100/50";
   return (
     <main className="min-h-screen bg-gradient-to-b from-sky-50 via-violet-50/60 to-rose-50 text-slate-900">
@@ -251,6 +267,18 @@ export default function NioliLite() {
           <h1 className="text-3xl font-bold">Tu viaje, sin complicaciones</h1>
           <p className="text-sm text-indigo-100">Itinerario local · rutas en Google Maps · puente con ChatGPT</p>
         </header>
+        <section aria-label="Relojes en tiempo real" className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 shadow-sm">
+            <p className="text-sm font-semibold text-blue-800">🇨🇷 Costa Rica</p>
+            <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-blue-950">{timeIn("America/Costa_Rica")}</p>
+            <p className="text-xs capitalize text-blue-700">{dateIn("America/Costa_Rica")}</p>
+          </div>
+          <div className="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-4 shadow-sm">
+            <p className="text-sm font-semibold text-rose-800">🇯🇵 Japón</p>
+            <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-rose-950">{timeIn("Asia/Tokyo")}</p>
+            <p className="text-xs capitalize text-rose-700">{dateIn("Asia/Tokyo")}</p>
+          </div>
+        </section>
         <nav aria-label="Secciones Nioli Lite" className="grid grid-cols-2 gap-2 rounded-2xl bg-white p-2 shadow-sm">
           <button onClick={() => setActiveTab("plan")} className={activeTab === "plan" ? "rounded-xl bg-indigo-700 px-4 py-3 font-semibold text-white" : "rounded-xl px-4 py-3 font-semibold text-indigo-700"}>🗺️ Itinerario</button>
           <button onClick={() => setActiveTab("gastos")} className={activeTab === "gastos" ? "rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white" : "rounded-xl px-4 py-3 font-semibold text-emerald-700"}>🧾 Facturas y gastos</button>
