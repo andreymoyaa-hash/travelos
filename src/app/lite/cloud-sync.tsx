@@ -36,7 +36,17 @@ async function apiJson(url: string, init?: RequestInit): Promise<Record<string, 
   }
   return response.status === 204 ? null : data;
 }
-const signature = (days: TripDay[], receipts: LiteReceipt[]) => JSON.stringify({ days, receipts });
+// PostgreSQL jsonb reorders object keys. Compare canonical content, not key order.
+function stableJson(value: unknown): string {
+  if (Array.isArray(value)) return "[" + value.map(stableJson).join(",") + "]";
+  if (value !== null && typeof value === "object") {
+    const object = value as Record<string, unknown>;
+    return "{" + Object.keys(object).sort().filter(key => object[key] !== undefined)
+      .map(key => JSON.stringify(key) + ":" + stableJson(object[key])).join(",") + "}";
+  }
+  return JSON.stringify(value) ?? "null";
+}
+const signature = (days: TripDay[], receipts: LiteReceipt[]) => stableJson({ days, receipts });
 const validSnapshot = (candidate: unknown): candidate is Snapshot => {
   if (!candidate || typeof candidate !== "object") return false;
   const value = candidate as Partial<Snapshot>;
