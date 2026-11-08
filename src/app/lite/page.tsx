@@ -6,6 +6,50 @@ import type { TripDay } from "@/types/travel";
 
 const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
+const EXPENSES_KEY = "nioli-lite-expenses-2026-v1";
+type Receipt = { id: string; title: string; amount: number; currency: "JPY" | "CRC" | "USD"; category: string; date: string; note: string; hasPhoto: boolean; };
+const categories = ["Comida", "Transporte", "Compras", "Souvenirs", "Entradas", "Hotel", "Otros"];
+function openReceiptDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("nioli-lite-receipts", 1);
+    request.onupgradeneeded = () => { if (!request.result.objectStoreNames.contains("photos")) request.result.createObjectStore("photos"); };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+async function storeReceiptPhoto(id: string, photo: File) {
+  const db = await openReceiptDB();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction("photos", "readwrite");
+      tx.objectStore("photos").put(photo, id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } finally { db.close(); }
+}
+async function readReceiptPhoto(id: string): Promise<Blob | undefined> {
+  const db = await openReceiptDB();
+  try {
+    return await new Promise<Blob | undefined>((resolve, reject) => {
+      const request = db.transaction("photos", "readonly").objectStore("photos").get(id);
+      request.onsuccess = () => resolve(request.result as Blob | undefined);
+      request.onerror = () => reject(request.error);
+    });
+  } finally { db.close(); }
+}
+async function removeReceiptPhoto(id: string) {
+  const db = await openReceiptDB();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction("photos", "readwrite");
+      tx.objectStore("photos").delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } finally { db.close(); }
+}
+
 
 function googleMapsUrl(name: string, city: string) {
   return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(name + ", " + city + ", Japan");
@@ -18,6 +62,17 @@ export default function NioliLite() {
   const [newTitle, setNewTitle] = useState("");
   const [assistantText, setAssistantText] = useState("");
   const [copied, setCopied] = useState(false);
+  const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [receiptTitle, setReceiptTitle] = useState("");
+  const [receiptAmount, setReceiptAmount] = useState("");
+  const [receiptCurrency, setReceiptCurrency] = useState<Receipt["currency"]>("JPY");
+  const [receiptCategory, setReceiptCategory] = useState("Comida");
+  const [receiptDate, setReceiptDate] = useState("");
+  const [receiptNote, setReceiptNote] = useState("");
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [receiptError, setReceiptError] = useState("");
+  const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState<"plan" | "gastos">("plan");
 
   useEffect(() => {
     try {
@@ -29,12 +84,76 @@ export default function NioliLite() {
         }
       }
     } catch { /* Keep official itinerary when browser storage is corrupt. */ }
+    try {
+      const savedReceipts = JSON.parse(localStorage.getItem(EXPENSES_KEY) || "[]");
+      if (Array.isArray(savedReceipts)) setReceipts(savedReceipts);
+    } catch { /* Keep receipts blank on corrupted storage. */ }
     setReady(true);
   }, []);
 
   useEffect(() => {
     if (ready) localStorage.setItem(STORAGE_KEY, JSON.stringify(days));
   }, [days, ready]);
+
+  useEffect(() => {
+    if (ready) {
+      try { localStorage.setItem(EXPENSES_KEY, JSON.stringify(receipts)); }
+      catch { setReceiptError("No hay espacio suficiente para guardar gastos en este navegador."); }
+    }
+  }, [receipts, ready]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const urls: string[] = [];
+    Promise.all(receipts.filter((receipt) => receipt.hasPhoto).map(async (receipt) => {
+      try {
+        const blob = await readReceiptPhoto(receipt.id);
+        if (!blob) return null;
+        const url = URL.createObjectURL(blob);
+        urls.push(url);
+        return { id: receipt.id, url };
+      } catch { return null; }
+    })).then((results) => {
+      if (!cancelled) setPhotoUrls(Object.fromEntries(results.filter((result): result is { id: string; url: string } => result !== null).map((result) => [result.id, result.url])));
+    });
+    return () => { cancelled = true; urls.forEach(URL.revokeObjectURL); };
+  }, [receipts]);
+
+  const totals = useMemo(() => receipts.reduce<Record<string, number>>((acc, receipt) => {
+    acc[receipt.currency] = (acc[receipt.currency] || 0) + receipt.amount;
+    return acc;
+  }, {}), [receipts]);
+
+  async function addReceipt() {
+    setReceiptError("");
+    const amount = Number(receiptAmount);
+    if (!receiptTitle.trim() || !Number.isFinite(amount) || amount <= 0) {
+      setReceiptError("Ingresa un concepto y un monto válido mayor que cero.");
+      return;
+    }
+    if (receiptFile && (!receiptFile.type.startsWith("image/") || receiptFile.size > 10_000_000)) {
+      setReceiptError("Adjunta una foto de hasta 10 MB (JPG, PNG o similar).");
+      return;
+    }
+    const id = "receipt-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+    if (receiptFile) {
+      try { await storeReceiptPhoto(id, receiptFile); }
+      catch {
+        setReceiptError("No pude guardar la foto. Comprueba el almacenamiento del navegador.");
+        return;
+      }
+    }
+    setReceipts((current) => [{ id, title: receiptTitle.trim(), amount, currency: receiptCurrency, category: receiptCategory, date: receiptDate || selectedDate, note: receiptNote.trim(), hasPhoto: Boolean(receiptFile) }, ...current]);
+    setReceiptTitle(""); setReceiptAmount(""); setReceiptNote(""); setReceiptFile(null);
+    const input = document.getElementById("receipt-photo") as HTMLInputElement | null;
+    if (input) input.value = "";
+  }
+
+  async function deleteReceipt(id: string) {
+    if (!window.confirm("¿Eliminar este gasto y su foto?")) return;
+    try { await removeReceiptPhoto(id); } catch { /* The metadata can still be removed. */ }
+    setReceipts((current) => current.filter((receipt) => receipt.id !== id));
+  }
 
   const day = useMemo(() => days.find((item) => item.date === selectedDate), [days, selectedDate]);
 
@@ -71,7 +190,7 @@ export default function NioliLite() {
   }
 
   function exportData() {
-    const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), days }, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), days, receipts, note: "Las fotos quedan almacenadas localmente en este navegador y no se incluyen en este JSON." }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -98,15 +217,20 @@ export default function NioliLite() {
     }
   }
 
-  const surface = "rounded-2xl border border-slate-200 bg-white p-4 shadow-sm";
+  const surface = "rounded-2xl border border-indigo-100 bg-white p-4 shadow-sm shadow-indigo-100/50";
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
+    <main className="min-h-screen bg-gradient-to-b from-sky-50 via-violet-50/60 to-rose-50 text-slate-900">
       <div className="mx-auto max-w-3xl space-y-5 px-4 py-6">
-        <header className="space-y-1">
-          <p className="text-sm font-semibold tracking-widest text-indigo-600">NIOLI LITE · JAPÓN 2026</p>
+        <header className="rounded-3xl bg-gradient-to-r from-indigo-700 via-violet-600 to-fuchsia-500 p-6 text-white shadow-lg shadow-violet-200">
+          <p className="text-sm font-semibold tracking-widest text-indigo-100">NIOLI LITE · JAPÓN 2026</p>
           <h1 className="text-3xl font-bold">Tu viaje, sin complicaciones</h1>
-          <p className="text-sm text-slate-600">Itinerario local · rutas en Google Maps · puente con ChatGPT</p>
+          <p className="text-sm text-indigo-100">Itinerario local · rutas en Google Maps · puente con ChatGPT</p>
         </header>
+        <nav aria-label="Secciones Nioli Lite" className="grid grid-cols-2 gap-2 rounded-2xl bg-white p-2 shadow-sm">
+          <button onClick={() => setActiveTab("plan")} className={activeTab === "plan" ? "rounded-xl bg-indigo-700 px-4 py-3 font-semibold text-white" : "rounded-xl px-4 py-3 font-semibold text-indigo-700"}>🗺️ Itinerario</button>
+          <button onClick={() => setActiveTab("gastos")} className={activeTab === "gastos" ? "rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white" : "rounded-xl px-4 py-3 font-semibold text-emerald-700"}>🧾 Facturas y gastos</button>
+        </nav>
+        {activeTab === "plan" && <>
         <section className={surface}>
           <label htmlFor="day" className="mb-2 block font-semibold">Selecciona el día</label>
           <select id="day" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} className="w-full rounded-xl border border-slate-300 p-3">
@@ -147,9 +271,69 @@ export default function NioliLite() {
           <textarea aria-label="Petición para ChatGPT" rows={3} value={assistantText} onChange={(event) => { setAssistantText(event.target.value); setCopied(false); }} placeholder="Ej. Reordena Kyoto para caminar menos, respetando mis reservas" className="mt-3 w-full rounded-xl border border-slate-300 p-3" />
           <button onClick={copyForChatGPT} className="mt-2 rounded-xl bg-indigo-700 px-4 py-3 font-semibold text-white">{copied ? "Copiado: pégalo en ChatGPT" : "Copiar consulta para ChatGPT"}</button>
         </section>
+        </>}
+        {activeTab === "gastos" && <>
+          <section className={surface}>
+            <div className="mb-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 p-4 text-white">
+              <h2 className="text-xl font-bold">Facturas y gastos</h2>
+              <p className="text-sm text-emerald-50">Registra compras y guarda una foto de cada recibo.</p>
+            </div>
+            <div className="mb-4 grid grid-cols-3 gap-2">
+              {(["JPY", "CRC", "USD"] as const).map((currency) => <div key={currency} className="rounded-xl bg-emerald-50 p-3 text-center">
+                <p className="text-xs font-semibold text-emerald-800">{currency}</p>
+                <p className="break-all text-lg font-bold text-emerald-950">{(totals[currency] || 0).toLocaleString("es-CR")}</p>
+              </div>)}
+            </div>
+            <form onSubmit={(event) => { event.preventDefault(); void addReceipt(); }} className="grid gap-3">
+              <label className="grid gap-1 text-sm font-semibold">¿Qué compraste?
+                <input required value={receiptTitle} onChange={(event) => setReceiptTitle(event.target.value)} placeholder="Ej. Almuerzo en Osaka" className="rounded-xl border border-slate-300 p-3 font-normal" />
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="grid gap-1 text-sm font-semibold">Monto
+                  <input required type="number" min="0.01" step="any" value={receiptAmount} onChange={(event) => setReceiptAmount(event.target.value)} placeholder="1500" className="min-w-0 rounded-xl border border-slate-300 p-3 font-normal" />
+                </label>
+                <label className="grid gap-1 text-sm font-semibold">Moneda
+                  <select value={receiptCurrency} onChange={(event) => setReceiptCurrency(event.target.value as Receipt["currency"])} className="min-w-0 rounded-xl border border-slate-300 p-3 font-normal">
+                    <option value="JPY">JPY · ¥</option><option value="CRC">CRC · ₡</option><option value="USD">USD · $</option>
+                  </select>
+                </label>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="grid gap-1 text-sm font-semibold">Categoría
+                  <select value={receiptCategory} onChange={(event) => setReceiptCategory(event.target.value)} className="min-w-0 rounded-xl border border-slate-300 p-3 font-normal">{categories.map((category) => <option key={category}>{category}</option>)}</select>
+                </label>
+                <label className="grid gap-1 text-sm font-semibold">Fecha
+                  <input type="date" value={receiptDate || selectedDate} onChange={(event) => setReceiptDate(event.target.value)} className="min-w-0 rounded-xl border border-slate-300 p-3 font-normal" />
+                </label>
+              </div>
+              <label className="grid gap-1 text-sm font-semibold">Foto del recibo (opcional)
+                <input id="receipt-photo" type="file" accept="image/*" capture="environment" onChange={(event) => setReceiptFile(event.target.files?.[0] || null)} className="w-full rounded-xl border border-dashed border-emerald-300 bg-emerald-50 p-3 font-normal" />
+              </label>
+              <label className="grid gap-1 text-sm font-semibold">Nota (opcional)
+                <input value={receiptNote} onChange={(event) => setReceiptNote(event.target.value)} placeholder="Tienda, artículo, quién pagó..." className="rounded-xl border border-slate-300 p-3 font-normal" />
+              </label>
+              {receiptError && <p role="alert" className="rounded-lg bg-rose-50 p-3 text-sm text-rose-800">{receiptError}</p>}
+              <button type="submit" className="rounded-xl bg-emerald-600 px-4 py-3 font-bold text-white">Guardar factura o gasto</button>
+            </form>
+          </section>
+          <section className={surface}>
+            <h2 className="mb-3 text-lg font-bold">Mis registros ({receipts.length})</h2>
+            {receipts.length === 0 && <p className="text-sm text-slate-600">Todavía no tienes gastos registrados.</p>}
+            <div className="space-y-3">{receipts.map((receipt) => <article key={receipt.id} className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-3">
+              <div className="flex items-start justify-between gap-3"><div>
+                <p className="font-semibold">{receipt.title}</p>
+                <p className="text-sm text-slate-600">{receipt.date} · {receipt.category}</p>
+                <p className="font-bold text-emerald-800">{receipt.currency} {receipt.amount.toLocaleString("es-CR")}</p>
+                {receipt.note && <p className="mt-1 text-sm">{receipt.note}</p>}
+              </div><button aria-label={"Eliminar " + receipt.title} onClick={() => { void deleteReceipt(receipt.id); }} className="rounded-lg bg-white px-3 py-2 text-sm text-rose-700">Eliminar</button></div>
+              {photoUrls[receipt.id] && <a href={photoUrls[receipt.id]} target="_blank" rel="noopener noreferrer"><img src={photoUrls[receipt.id]} alt={"Recibo: " + receipt.title} className="mt-3 max-h-64 w-full rounded-xl object-contain" /></a>}
+              {receipt.hasPhoto && !photoUrls[receipt.id] && <p className="mt-2 text-xs text-amber-700">Foto no disponible en este navegador.</p>}
+            </article>)}</div>
+          </section>
+        </>}
         <section className={surface}>
           <h2 className="font-semibold">Respaldo de tu viaje</h2>
-          <p className="my-2 text-sm text-slate-600">Los cambios se guardan solamente en este navegador. Exporta un respaldo, especialmente antes de limpiar datos o cambiar de teléfono.</p>
+          <p className="my-2 text-sm text-slate-600">El itinerario y los gastos se guardan en este navegador. Las fotos de facturas se guardan por separado en el dispositivo y NO se incluyen en el respaldo JSON. Consérvalas también en tu galería.</p>
           <button onClick={exportData} className="rounded-xl border border-slate-300 px-4 py-3 font-semibold">Exportar JSON</button>
           <button onClick={() => { if (window.confirm("¿Restaurar el itinerario original? Se borrarán los cambios guardados en este navegador.")) setDays(initialDays); }} className="ml-2 rounded-xl border border-slate-300 px-4 py-3 font-semibold">Restaurar original</button>
         </section>
