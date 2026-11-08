@@ -550,11 +550,11 @@ export default function NioliLite() {
               <p className="mt-1 font-semibold text-slate-950">{nextStop.activity.title}</p>
               <p className="mt-1 text-xs text-slate-600">{nextStop.target.destination?.precision === "verified" ? "Ubicación detallada disponible" : "Destino por nombre: confirma el resultado en Maps"}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <a type="button" href={mapsDirectionsUrl(nextStop.target.destination!, "transit")} target="_blank" rel="noopener noreferrer"
+                <a href={mapsDirectionsUrl(nextStop.target.destination!, "transit")} target="_blank" rel="noopener noreferrer"
                   className="rounded-xl bg-blue-700 px-3 py-2.5 text-sm font-semibold text-white">Metro / tren desde aquí</a>
-                <a type="button" href={mapsDirectionsUrl(nextStop.target.destination!, "walking")} target="_blank" rel="noopener noreferrer"
+                <a href={mapsDirectionsUrl(nextStop.target.destination!, "walking")} target="_blank" rel="noopener noreferrer"
                   className="rounded-xl border border-blue-300 px-3 py-2.5 text-sm font-semibold text-blue-900">Ir caminando</a>
-                <a type="button" href={mapsSearchUrl(nextStop.target.destination!)} target="_blank" rel="noopener noreferrer"
+                <a href={mapsSearchUrl(nextStop.target.destination!)} target="_blank" rel="noopener noreferrer"
                   className="rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-800">Ver ubicación</a>
               </div>
             </div> : <p className="mt-2 text-sm text-slate-700">No hay una siguiente parada con destino identificable.</p>}
@@ -574,7 +574,7 @@ export default function NioliLite() {
                       const legs = transferLegs(activity, day.city);
                       if (legs.length) return <div className="mt-2 space-y-2 rounded-lg bg-blue-50 p-2">
                         <p className="text-xs font-semibold text-blue-900">Transbordo con varios tramos · consulta cada trayecto en Google Maps</p>
-                        {legs.map((leg, legIndex) => <a key={legIndex} type="button"
+                        {legs.map((leg, legIndex) => <a key={legIndex}
                           href={mapsDirectionsUrl(leg.destination, "transit", leg.origin)} target="_blank" rel="noopener noreferrer"
                           className="block w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-left text-xs font-semibold text-blue-800">
                           Tramo {legIndex + 1}: {leg.label}
@@ -586,13 +586,13 @@ export default function NioliLite() {
                     return <div className="mt-3 space-y-2">
                       <p className="text-xs text-slate-500">{route.destination.precision === "verified" ? "Destino con datos de ubicación" : "Destino por búsqueda · comprueba el lugar elegido"}</p>
                       <div className="flex flex-wrap gap-2">
-                        <a type="button" href={mapsDirectionsUrl(route.destination!, "transit")} target="_blank" rel="noopener noreferrer"
+                        <a href={mapsDirectionsUrl(route.destination!, "transit")} target="_blank" rel="noopener noreferrer"
                           className="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white">Metro / tren desde aquí</a>
-                        <a type="button" href={mapsDirectionsUrl(route.destination!, "walking")} target="_blank" rel="noopener noreferrer"
+                        <a href={mapsDirectionsUrl(route.destination!, "walking")} target="_blank" rel="noopener noreferrer"
                           className="rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-800">A pie</a>
-                        {origin && <a type="button" href={mapsDirectionsUrl(route.destination!, "transit", origin)} target="_blank" rel="noopener noreferrer"
+                        {origin && <a href={mapsDirectionsUrl(route.destination!, "transit", origin)} target="_blank" rel="noopener noreferrer"
                           className="rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-900">Desde parada anterior</a>}
-                        <a type="button" href={mapsSearchUrl(route.destination!)} target="_blank" rel="noopener noreferrer"
+                        <a href={mapsSearchUrl(route.destination!)} target="_blank" rel="noopener noreferrer"
                           className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700">Ver destino</a>
                       </div>
                       {origin && <p className="text-xs text-slate-500">Ruta planificada desde: {origin.label}. Google Maps ofrece alternativas y conexiones reales al abrirla.</p>}
