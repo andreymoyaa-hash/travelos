@@ -9,6 +9,20 @@ const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
 const EXPENSES_KEY = "nioli-lite-expenses-2026-v1";
 type Receipt = LiteReceipt;
+type FxRates = { perUSD: { USD: number; JPY: number; CRC: number }; asOf: string | null; source: string };
+type Recognition = { merchant: string | null; total: number | null; currency: Receipt["currency"] | null; date: string | null; confidence: "high" | "medium" | "low"; warning: string | null };
+function validRates(value: unknown): value is FxRates {
+  if (!value || typeof value !== "object") return false;
+  const r = value as Partial<FxRates>;
+  return !!r.perUSD && (["USD","JPY","CRC"] as const).every(key => Number.isFinite(r.perUSD?.[key]) && (r.perUSD?.[key] || 0) > 0);
+}
+function fmtMoney(value: number, currency: Receipt["currency"]) {
+  return new Intl.NumberFormat("es-CR", { maximumFractionDigits: currency === "USD" ? 2 : 0, minimumFractionDigits: currency === "USD" ? 2 : 0 }).format(value);
+}
+function convert(amount: number, from: Receipt["currency"], to: Receipt["currency"], rates: FxRates) {
+  return amount / rates.perUSD[from] * rates.perUSD[to];
+}
+
 const categories = ["Comida", "Transporte", "Compras", "Souvenirs", "Entradas", "Hotel", "Otros"];
 function openReceiptDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -78,6 +92,13 @@ export default function NioliLite() {
   const [receiptNote, setReceiptNote] = useState("");
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [receiptError, setReceiptError] = useState("");
+  const [recognizing, setRecognizing] = useState(false);
+  const [recognition, setRecognition] = useState<Recognition | null>(null);
+  const [recognitionError, setRecognitionError] = useState("");
+  const [fxRates, setFxRates] = useState<FxRates | null>(null);
+  const [fxCached, setFxCached] = useState(false);
+  const [fxError, setFxError] =("");
+
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"plan" | "gastos">("plan");
 
@@ -148,6 +169,72 @@ export default function NioliLite() {
     return () => { cancelled = true; urls.forEach(URL.revokeObjectURL); };
   }, [receipts]);
 
+  useEffect(() => {
+    if (activeTab !== "gastos") return;
+    let cancelled = false;
+    try {
+      const cached = localStorage.getItem("nioli-lite-fx-cache-v1");
+      if (cached) {
+        const data: unknown = JSON.parse(cached);
+        if (validRates(data)) { setFxRates(data); setFxCached(true); }
+      }
+    } catch { /* Local cache optional. */ }
+    if (!navigator.onLine) {
+      setFxError("Sin Internet: usando la última tasa guardada, si existe.");
+      return;
+    }
+    void fetch("/api/lite-rates", { credentials: "same-origin", cache: "no-store" }).then(async response => {
+      if (!response.ok) throw new Error("No se pudieron actualizar las tasas.");
+      const data: unknown = await response.json();
+      if (!validRates(data)) throw new Error("Tipos de cambio inválidos.");
+      if (cancelled) return;
+      setFxRates(data); setFxCached(false); setFxError("");
+      try { localStorage.setItem("nioli-lite-fx-cache-v1", JSON.stringify(data)); } catch {}
+    }).catch(() => {
+      if (!cancelled) setFxError("No se pudieron actualizar las tasas. Se usa la última tasa guardada, si existe.");
+    });
+    return () => { cancelled = true; };
+  }, [activeTab]);
+
+  async function recognizeReceipt() {
+    if (!receiptFile || recognizing) return;
+    setRecognitionError(""); setReceiptError(""); setRecognition(null);
+    if (!navigator.onLine) {
+      setRecognitionError("El reconocimiento necesita Internet; puedes registrar los datos manualmente.");
+      return;
+    }
+    setRecognizing(true);
+    try {
+      if (!["image/jpeg", "image/png", "image/webp"].includes(receiptFile.type) || receiptFile.size > 7_000_000)
+        throw new Error("Para reconocimiento usa JPG, PNG o WebP de máximo 7 MB.");
+      const form = new FormData();
+      form.append("receipt", receiptFile);
+      const response = await fetch("/api/lite-receipt-recognize", { method: "POST", credentials: "same-origin", cache: "no-store", body: form });
+      const data: unknown = await response.json().catch(() => null);
+      const record = data && typeof data === "object" ? data as Record<string, unknown> : {};
+      if (!response.ok) throw new Error(typeof record.error === "string" ? record.error : "No se pudo reconocer la factura.");
+      const info = record as Recognition;
+      setRecognition(info);
+      if (info.merchant) setReceiptTitle(info.merchant);
+      if (info.total !== null && typeof info.total === "number" && Number.isFinite(info.total) && info.total > 0) setReceiptAmount(String(info.total));
+      if (info.currency && ["JPY", "CRC", "USD"].includes(info.currency)) setReceiptCurrency(info.currency);
+      if (info.date && /^\d{4}-\d{2}-\d{2}$/.test(info.date)) setReceiptDate(info.date);
+      if (!info.total || !info.currency) setRecognitionError("Faltan datos. Revisa y corrige el monto y la moneda.");
+    } catch (error) {
+      setRecognitionError(error instanceof Error ? error.message : "No se pudo leer esta factura.");
+    } finally { setRecognizing(false); }
+  }
+
+  const receiptEstimate = useMemo(() => {
+    const amount = Number(receiptAmount);
+    if (!fxRates || !receiptAmount.trim() || !Number.isFinite(amount) || amount <= 0) return null;
+    return {
+      JPY: convert(amount, receiptCurrency, "JPY", fxRates),
+      CRC: convert(amount, receiptCurrency, "CRC", fxRates),
+      USD: convert(amount, receiptCurrency, "USD", fxRates),
+    };
+  }, [receiptAmount, receiptCurrency, fxRates]);
+
   const totals = useMemo(() => receipts.reduce<Record<string, number>>((acc, receipt) => {
     acc[receipt.currency] = (acc[receipt.currency] || 0) + receipt.amount;
     return acc;
@@ -173,7 +260,7 @@ export default function NioliLite() {
       }
     }
     setReceipts((current) => [{ id, title: receiptTitle.trim(), amount, currency: receiptCurrency, category: receiptCategory, date: receiptDate || selectedDate, note: receiptNote.trim(), hasPhoto: Boolean(receiptFile) }, ...current]);
-    setReceiptTitle(""); setReceiptAmount(""); setReceiptNote(""); setReceiptFile(null);
+    setReceiptTitle(""); setReceiptAmount(""); setReceiptNote(""); setReceiptFile(null); setRecognition(null); setRecognitionError("");
     const input = document.getElementById("receipt-photo") as HTMLInputElement | null;
     if (input) input.value = "";
   }
@@ -437,8 +524,37 @@ export default function NioliLite() {
                 </label>
               </div>
               <label className="grid gap-1 text-sm font-semibold">Foto del recibo (opcional)
-                <input id="receipt-photo" type="file" accept="image/*" capture="environment" onChange={(event) => setReceiptFile(event.target.files?.[0] || null)} className="w-full rounded-xl border border-dashed border-emerald-300 bg-emerald-50 p-3 font-normal" />
+                <input id="receipt-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={(event) => { setReceiptFile(event.target.files?.[0] || null); setRecognition(null); setRecognitionError(""); }} className="w-full rounded-xl border border-dashed border-emerald-300 bg-emerald-50 p-3 font-normal" />
               </label>
+              {receiptFile && <section className="space-y-2 rounded-xl border border-violet-200 bg-violet-50 p-3">
+                <p className="text-sm font-semibold text-violet-900">Leer factura con Gemini</p>
+                <p className="text-xs text-violet-800">La imagen solo se envía a Gemini cuando pulsas «Analizar factura». La IA puede equivocarse: comprueba el importe final, la fecha y la moneda antes de guardar.</p>
+                <p className="truncate text-xs text-slate-600">{receiptFile.name}</p>
+                <button type="button" disabled={recognizing} onClick={() => { void recognizeReceipt(); }}
+                  className="rounded-xl bg-violet-700 px-4 py-3 text-sm font-semibold text-white disabled:opacity-50">
+                  {recognizing ? "Leyendo factura…" : "Analizar factura y completar datos"}
+                </button>
+                {recognition && <div role="status" className="rounded-lg bg-white p-3 text-sm">
+                  <p className="font-semibold">Confianza: {recognition.confidence === "high" ? "alta" : recognition.confidence === "medium" ? "media" : "baja"}</p>
+                  <p>{recognition.total !== null ? "Total detectado: " + recognition.total + " " + (recognition.currency || "moneda desconocida") : "No se pudo detectar el total"}</p>
+                  <p>{recognition.date ? "Fecha: " + recognition.date : "Fecha no reconocida"}</p>
+                  {recognition.warning && <p className="text-amber-800">{recognition.warning}</p>}
+                  <p className="mt-1 font-semibold">Revisa los campos antes de guardar.</p>
+                </div>}
+                {recognitionError && <p role="alert" className="rounded-lg bg-amber-50 p-3 text-sm text-amber-900">{recognitionError}</p>}
+              </section>}
+              <section className="rounded-xl border border-sky-200 bg-sky-50 p-3" aria-label="Conversión aproximada">
+                <p className="text-sm font-semibold text-sky-900">Conversión aproximada</p>
+                {receiptEstimate ? <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+                  {(["JPY","CRC","USD"] as const).map(currency => <div key={currency} className="rounded-lg bg-white p-2">
+                    <p className="text-xs font-semibold">{currency}</p>
+                    <p className="break-all text-sm font-bold text-sky-900">{fmtMoney(receiptEstimate[currency], currency)}</p>
+                  </div>)}
+                </div> : <p className="mt-1 text-xs">Escribe el monto para ver la conversión cuando exista una tasa disponible.</p>}
+                {fxRates && <p className="mt-2 text-xs text-slate-600">Tasa {fxCached ? "guardada" : "consultada en línea"} · {fxRates.asOf || "fecha no disponible"} · {fxRates.source}. Es aproximada y no incluye comisiones ni refleja necesariamente la tasa del día de compra.</p>}
+                {fxError && <p className="mt-1 text-xs text-amber-800">{fxError}</p>}
+                {!fxRates && <p className="mt-1 text-xs text-amber-800">Sin tasa verificable no se muestran conversiones.</p>}
+              </section>
               <label className="grid gap-1 text-sm font-semibold">Nota (opcional)
                 <input value={receiptNote} onChange={(event) => setReceiptNote(event.target.value)} placeholder="Tienda, artículo, quién pagó..." className="rounded-xl border border-slate-300 p-3 font-normal" />
               </label>
@@ -454,6 +570,7 @@ export default function NioliLite() {
                 <p className="font-semibold">{receipt.title}</p>
                 <p className="text-sm text-slate-600">{receipt.date} · {receipt.category}</p>
                 <p className="font-bold text-emerald-800">{receipt.currency} {receipt.amount.toLocaleString("es-CR")}</p>
+                {fxRates && <p className="mt-1 text-xs text-slate-600">Aprox. ₡{fmtMoney(convert(receipt.amount, receipt.currency, "CRC", fxRates), "CRC")} · ${fmtMoney(convert(receipt.amount, receipt.currency, "USD", fxRates), "USD")} · ¥{fmtMoney(convert(receipt.amount, receipt.currency, "JPY", fxRates), "JPY")}</p>}
                 {receipt.note && <p className="mt-1 text-sm">{receipt.note}</p>}
               </div><button aria-label={"Eliminar " + receipt.title} onClick={() => { void deleteReceipt(receipt.id); }} className="rounded-lg bg-white px-3 py-2 text-sm text-rose-700">Eliminar</button></div>
               {photoUrls[receipt.id] && <a href={photoUrls[receipt.id]} target="_blank" rel="noopener noreferrer"><img src={photoUrls[receipt.id]} alt={"Recibo: " + receipt.title} className="mt-3 max-h-64 w-full rounded-xl object-contain" /></a>}
