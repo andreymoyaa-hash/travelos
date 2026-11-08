@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
-import type { Activity, TripDay } from "@/types/travel";
-import { activityMapTarget, mapsDirectionsUrl, mapsSearchUrl, transferLegs, androidMapLocationUri } from "@/lib/lite-maps";
+import type { TripDay } from "@/types/travel";
+import { activityMapTarget, mapsDirectionsUrl, transferLegs, androidMapLocationUri } from "@/lib/lite-maps";
 
 const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
@@ -133,16 +133,6 @@ async function sendRouteToAndroid(url: string, label: string): Promise<string> {
   } catch {
     return "No se pudo abrir el menú de compartir. Mantén presionado «Ruta web» y usa «Copiar enlace».";
   }
-}
-
-function plannedOrigin(activities: Activity[], index: number, city: string) {
-  const current = activityMapTarget(activities[index], city);
-  if (current.origin) return current.origin;
-  for (let offset = index - 1; offset >= 0; offset--) {
-    const previous = activityMapTarget(activities[offset], city);
-    if (previous.destination) return previous.destination;
-  }
-  return null;
 }
 
 export default function NioliLite() {
@@ -563,30 +553,17 @@ export default function NioliLite() {
 
           <section aria-label="Navegación Google Maps" className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
             <h3 className="text-lg font-bold text-blue-950">Cómo llegar · Google Maps</h3>
-            <p className="mt-1 text-xs font-semibold text-blue-800">Navegación Android v3 · menú compartir y respaldo manual</p>
-            <p className="mt-1 text-sm text-blue-900">Metro, tren, autobús, transbordos y caminatas se calculan directamente en Google Maps. Nioli no inventa horarios, tarifas, plataformas ni tiempos.</p>
+            <p className="mt-1 text-sm text-blue-900">Abre la ruta en Google Maps para ver trenes, metro y transbordos actualizados.</p>
             {day.transportSummary && <p className="mt-2 rounded-lg bg-white p-3 text-sm text-slate-700">Plan de transporte: {day.transportSummary}</p>}
             {nextStop ? <div className="mt-3 rounded-xl bg-white p-3">
               <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Siguiente parada pendiente</p>
               <p className="mt-1 font-semibold text-slate-950">{nextStop.activity.title}</p>
               <p className="mt-1 text-xs text-slate-600">{nextStop.target.destination?.precision === "verified" ? "Ubicación detallada disponible" : "Destino por nombre: confirma el resultado en Maps"}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-2">
                 <button type="button" onClick={() => { void sendRouteToAndroid(mapsDirectionsUrl(nextStop.target.destination!, "transit"), nextStop.activity.title).then(setMapMessage); }}
-                  className="rounded-xl bg-indigo-700 px-3 py-2.5 text-sm font-semibold text-white">Compartir ruta con Android</button>
-                <button type="button" onClick={() => {
-                  void navigator.clipboard.writeText(nextStop.target.destination!.query).then(
-                    () => setMapMessage("Destino copiado. Abre la app Google Maps y pega el destino en la búsqueda."),
-                    () => setMapMessage("No pude copiar automáticamente. Usa la opción Compartir ruta con Android.")
-                  );
-                }} className="rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-900">Copiar destino para Maps</button>
+                  className="rounded-xl bg-blue-700 px-3 py-3 text-sm font-semibold text-white">🚆 Ruta en Maps</button>
                 <a href={androidMapLocationUri(nextStop.target.destination!)}
-                  className="rounded-xl border border-indigo-300 px-3 py-2.5 text-sm font-semibold text-indigo-900">Abrir destino en app Maps</a>
-                <a href={mapsDirectionsUrl(nextStop.target.destination!, "transit")} target="_blank" rel="noopener noreferrer"
-                  className="rounded-xl bg-blue-700 px-3 py-2.5 text-sm font-semibold text-white">Metro / tren desde aquí</a>
-                <a href={mapsDirectionsUrl(nextStop.target.destination!, "walking")} target="_blank" rel="noopener noreferrer"
-                  className="rounded-xl border border-blue-300 px-3 py-2.5 text-sm font-semibold text-blue-900">Ir caminando</a>
-                <a href={mapsSearchUrl(nextStop.target.destination!)} target="_blank" rel="noopener noreferrer"
-                  className="rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-semibold text-slate-800">Ver ubicación</a>
+                  className="rounded-xl border border-blue-300 bg-white px-3 py-3 text-center text-sm font-semibold text-blue-900">📍 Ver destino</a>
               </div>
             </div> : <p className="mt-2 text-sm text-slate-700">No hay una siguiente parada con destino identificable.</p>}
             {mapMessage && <p role="status" className="mt-2 rounded-lg bg-white p-2 text-xs text-blue-900">{mapMessage}</p>}
@@ -606,33 +583,23 @@ export default function NioliLite() {
                       const legs = transferLegs(activity, day.city);
                       if (legs.length) return <div className="mt-2 space-y-2 rounded-lg bg-blue-50 p-2">
                         <p className="text-xs font-semibold text-blue-900">Transbordo con varios tramos · consulta cada trayecto en Google Maps</p>
-                        {legs.map((leg, legIndex) => <a key={legIndex}
-                          href={mapsDirectionsUrl(leg.destination, "transit", leg.origin)} target="_blank" rel="noopener noreferrer"
+                        {legs.map((leg, legIndex) => <button key={legIndex} type="button"
+                          onClick={() => { void sendRouteToAndroid(mapsDirectionsUrl(leg.destination, "transit", leg.origin), leg.label).then(setMapMessage); }}
                           className="block w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-left text-xs font-semibold text-blue-800">
-                          Tramo {legIndex + 1}: {leg.label}
-                        </a>)}
+                          🚆 Tramo {legIndex + 1}: {leg.label}
+                        </button>)}
                       </div>;
                       return <p className="mt-2 text-xs text-amber-800">Ubicación por confirmar: esta actividad no tiene un destino único. Revisa los detalles del traslado.</p>;
                     }
-                    const origin = plannedOrigin(day.activities, index, day.city);
                     return <div className="mt-3 space-y-2">
                       <p className="text-xs text-slate-500">{route.destination.precision === "verified" ? "Destino con datos de ubicación" : "Destino por búsqueda · comprueba el lugar elegido"}</p>
-                      <div className="flex flex-wrap gap-2">
-                        <a href={androidMapLocationUri(route.destination!)}
-                          className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-900">Destino en app Maps</a>
+                      <div className="mt-2 flex flex-wrap gap-2">
                         <button type="button"
-                          onClick={() => { void sendRouteToAndroid(mapsDirectionsUrl(route.destination!, "transit"), activity.title).then(setMapMessage); }}
-                          className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-900">Compartir ruta</button>
-                        <a href={mapsDirectionsUrl(route.destination!, "transit")} target="_blank" rel="noopener noreferrer"
-                          className="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white">Metro / tren desde aquí</a>
-                        <a href={mapsDirectionsUrl(route.destination!, "walking")} target="_blank" rel="noopener noreferrer"
-                          className="rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-800">A pie</a>
-                        {origin && <a href={mapsDirectionsUrl(route.destination!, "transit", origin)} target="_blank" rel="noopener noreferrer"
-                          className="rounded-lg border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-900">Desde parada anterior</a>}
-                        <a href={mapsSearchUrl(route.destination!)} target="_blank" rel="noopener noreferrer"
-                          className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700">Ver destino</a>
+                          onClick={() => { void sendRouteToAndroid(mapsDirectionsUrl(route.destination!, "transit", route.isTransfer ? route.origin : undefined), activity.title).then(setMapMessage); }}
+                          className="rounded-lg bg-blue-700 px-3 py-2 text-xs font-semibold text-white">🚆 Ruta en Maps</button>
+                        <a href={androidMapLocationUri(route.destination!)}
+                          className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-900">📍 Ver destino</a>
                       </div>
-                      {origin && <p className="text-xs text-slate-500">Ruta planificada desde: {origin.label}. Google Maps ofrece alternativas y conexiones reales al abrirla.</p>}
                     </div>;
                   })()}
                 </div>
