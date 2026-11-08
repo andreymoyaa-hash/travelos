@@ -97,7 +97,7 @@ export default function NioliLite() {
   const [recognitionError, setRecognitionError] = useState("");
   const [fxRates, setFxRates] = useState<FxRates | null>(null);
   const [fxCached, setFxCached] = useState(false);
-  const [fxError, setFxError] =("");
+  const [fxError, setFxError] = useState("");
 
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"plan" | "gastos">("plan");
