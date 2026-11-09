@@ -73,10 +73,9 @@ export async function POST(request: Request) {
   form.set("From", "whatsapp:" + cfg.from);
   form.set("To", "whatsapp:" + cfg.numbers[recipient]);
   // Trial accounts require a Twilio-provided pre-approved Content SID.
-  // Sandbox appointment reminder template has placeholders {{1}} and {{2}}.
-  // Never combine Body or MediaUrl with ContentSid.
+  // Twilio trial Try out WhatsApp allows From, To and its provided ContentSid.
+  // Use the exact sample template SID from Twilio trial Console; never add Body.
   form.set("ContentSid", cfg.templateSid);
-  form.set("ContentVariables", JSON.stringify({ "1": "Nioli Lite - prueba", "2": "ahora" }));
 
   try {
     const response = await fetch("https://api.twilio.com/2010-04-01/Accounts/" + cfg.sid + "/Messages.json", {
