@@ -40,7 +40,7 @@ export default function WhatsAppSetup() {
 
   return <section className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-4">
     <h3 className="font-bold text-green-950">Recordatorios por WhatsApp</h3>
-    <p className="mt-1 text-sm text-green-900">Andy y José ya están inscritos en el Sandbox. Los envíos automáticos siguen desactivados hasta configurar el remitente y las plantillas.</p>
+    <p className="mt-1 text-sm text-green-900">Sandbox de Andy y José. Primero confirma que cada teléfono recibe su mensaje de prueba; los recordatorios automáticos permanecen desactivados.</p>
     {status && <p className="mt-2 text-xs font-semibold text-green-950">
       {status.configured ? "Twilio conectado · pruebas manuales disponibles" : "Pendiente: configurar las claves y ambos números de Twilio en Vercel."}
     </p>}
