@@ -31,7 +31,8 @@ export default function WhatsAppSetup() {
         body: JSON.stringify({ recipient }),
       });
       const data: { note?: string; error?: string; twilioCode?: number } = await response.json();
-      if (!response.ok) throw Error(data.error || "No se pudo enviar." + (data.twilioCode ? " Código " + data.twilioCode : ""));
+      if (!response.ok) throw Error((data.error || "Twilio rechazó el envío.") +
+        (data.twilioCode ? " · Código Twilio " + data.twilioCode : ""));
       setMessage("Twilio aceptó la prueba para " + (recipient === "andy" ? "Andy" : "José") +
         ". Confirma que haya llegado al teléfono.");
     } catch (e) { setError(e instanceof Error ? e.message : "Error de conexión."); }
