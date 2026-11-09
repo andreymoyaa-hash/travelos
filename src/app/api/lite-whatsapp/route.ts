@@ -100,9 +100,9 @@ export async function POST(request: Request) {
       // Never return credentials, message content, phone numbers, or API response data.
       const rawMessage = typeof result.message === "string" ? result.message : "";
       const safeMessage = rawMessage
-        .replace(/(?:whatsapp:)?\\+\\d[\\d\\s().-]{6,}/gi, "[número oculto]")
+        .replace(/(?:whatsapp:)?\+\d[\d\s().-]{6,}/gi, "[número oculto]")
         .replace(/(?:AC|SK|HX|SM)[a-f0-9]{32}/gi, "[identificador oculto]")
-        .replace(/https?:\\/\\/\\S+/gi, "[enlace oculto]")
+        .replace(/https?:\/\/\S+/gi, "[enlace oculto]")
         .slice(0, 280);
       return NextResponse.json({
         error: code !== null && messages[code] ? messages[code] : "Twilio rechazó el envío. Consulta el código de error para identificar el motivo.",
