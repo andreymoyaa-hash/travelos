@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
 import LiteJourneyHero from "./journey-hero";
+import { bradyAssets } from "@/lib/nioli/assets/manifest";
+import { getSafeNioliAsset } from "@/lib/nioli/assets/helpers";
 import type { TripDay } from "@/types/travel";
 import { activityMapTarget, mapsDirectionsUrl, transferLegs, androidMapLocationUri } from "@/lib/lite-maps";
 
@@ -14,6 +16,7 @@ type Receipt = LiteReceipt;
 type ChatTurn = { role: "user" | "model"; text: string };
 type GeminiWebSource = { title: string; url: string };
 const CHAT_STORE_PREFIX = "nioli-lite-gemini-chat-v2:";
+const BRADY_CHAT_AVATAR = getSafeNioliAsset(bradyAssets.base.neutral);
 type FxRates = { perUSD: { USD: number; JPY: number; CRC: number }; asOf: string | null; source: string };
 type Recognition = { merchant: string | null; total: number | null; currency: Receipt["currency"] | null; date: string | null; confidence: "high" | "medium" | "low"; warning: string | null };
 function validRates(value: unknown): value is FxRates {
@@ -678,24 +681,28 @@ export default function NioliLite() {
           </form>
         </section>}
         <section className={surface}>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#658367]">Conversación de viaje</p>
-              <h2 className="mt-1 text-lg font-bold text-[#2c5037]">Asistente con Gemini</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              {BRADY_CHAT_AVATAR && <img src={BRADY_CHAT_AVATAR} width={64} height={64} alt="Brady, el perezoso de Nioli" className="h-16 w-16 rounded-2xl border border-[#d7e4d2] bg-[#eef5e9] object-contain p-1" />}
+              <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#658367]">Tu compañero de viaje</p>
+              <h2 className="mt-1 text-lg font-bold text-[#2c5037]">Habla con Brady</h2>
+              <p className="mt-1 text-xs text-[#658367]">Perezoso aventurero · impulsado por Gemini</p>
+              </div>
             </div>
             {chatMessages.length > 0 && <button type="button" onClick={clearGeminiChat} disabled={aiLoading}
               className="rounded-xl border border-[#dedbd2] px-3 py-2 text-xs font-semibold text-[#5b615a] disabled:opacity-50">Nueva conversación</button>}
           </div>
-          <p className="mt-2 text-sm text-slate-600">Gemini recuerda lo conversado en este dispositivo, por separado para cada participante. Puedes continuar una pregunta sin volver a explicarla. No modifica reservas ni el itinerario automáticamente.</p>
-          {!chatKey && <p role="status" className="mt-3 rounded-xl bg-[#f3f4eb] p-3 text-sm text-[#49654b]">Recuperando tu conversación…</p>}
+          <p className="mt-2 text-sm text-slate-600">Brady recuerda lo que conversaron en este dispositivo, por separado para cada participante. Pregúntale con naturalidad: puede seguir el hilo sin que repitas todo. No cambia reservas ni itinerarios automáticamente.</p>
+          {!chatKey && <p role="status" className="mt-3 rounded-xl bg-[#f3f4eb] p-3 text-sm text-[#49654b]">Brady está recuperando tu conversación…</p>}
           {chatError && <p role="alert" className="mt-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{chatError}</p>}
           {chatMessages.length > 0 && <div aria-label="Historial de conversación" className="mt-4 max-h-[32rem] space-y-3 overflow-y-auto rounded-[20px] border border-[#e3e5db] bg-[#f8f9f4] p-3">
             {chatMessages.map((turn, index) => <div key={index} className={turn.role === "user" ? "ml-7 rounded-2xl rounded-tr-sm bg-[#deeadc] p-3 text-sm text-[#2a4533]" : "mr-7 rounded-2xl rounded-tl-sm border border-[#e6e5dc] bg-white p-3 text-sm text-slate-800"}>
-              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#627764]">{turn.role === "user" ? "Tú" : "Gemini"}</p>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#627764]">{turn.role === "user" ? "Tú" : "Brady"}</p>
               <p className="whitespace-pre-wrap leading-relaxed">{turn.text}</p>
             </div>)}
           </div>}
-          <label htmlFor="lite-gemini-question" className="mt-4 block text-sm font-semibold">¿Qué quieres preguntarle?</label>
+          <label htmlFor="lite-gemini-question" className="mt-4 block text-sm font-semibold">¿Qué quieres preguntarle a Brady?</label>
           <textarea id="lite-gemini-question" rows={3} value={assistantText} maxLength={700}
             onChange={event => { setAssistantText(event.target.value); setCopied(false); }}
             placeholder="Ej. ¿Y cuánto cuesta eso? ¿Cómo llegamos desde el hotel?"
@@ -712,12 +719,12 @@ export default function NioliLite() {
           <div className="mt-2 flex flex-wrap gap-2">
             <button type="button" onClick={() => { void askGemini(); }}
               disabled={aiLoading || !assistantText.trim() || !chatKey}
-              className="rounded-xl bg-[#365a45] px-4 py-3 font-semibold text-white disabled:opacity-50">{aiLoading ? "Gemini está respondiendo…" : "Enviar a Gemini"}</button>
+              className="rounded-xl bg-[#365a45] px-4 py-3 font-semibold text-white disabled:opacity-50">{aiLoading ? "Brady está pensando…" : "Preguntar a Brady"}</button>
             <button type="button" onClick={copyForChatGPT}
               className="rounded-xl border border-[#cddccc] bg-[#eaf1e8] px-4 py-3 font-semibold text-[#385c40]">{copied ? "Copiado" : "Usar en ChatGPT Plus"}</button>
           </div>
           {aiError && <p role="alert" className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{aiError}</p>}
-          {geminiSearched && <p role="status" className="mt-3 text-xs font-semibold text-[#456b4c]">Respuesta con búsqueda de Google</p>}
+          {geminiSearched && <p role="status" className="mt-3 text-xs font-semibold text-[#456b4c]">Brady consultó Google para esta respuesta</p>}
           {geminiSources.length > 0 && <aside aria-label="Fuentes consultadas por Gemini" className="mt-2 rounded-2xl border border-[#dbe3dc] bg-white p-3">
             <p className="text-xs font-bold uppercase tracking-wide text-[#57735e]">Fuentes web</p>
             <ul className="mt-2 space-y-2">{geminiSources.map(source => <li key={source.url}>
