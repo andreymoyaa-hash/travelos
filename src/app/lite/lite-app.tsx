@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
 import WhatsAppSetup from "./whatsapp-setup";
+import LiteJourneyHero from "./journey-hero";
 import type { TripDay } from "@/types/travel";
 import { activityMapTarget, mapsDirectionsUrl, transferLegs, androidMapLocationUri } from "@/lib/lite-maps";
 
@@ -491,28 +492,17 @@ export default function NioliLite() {
     return new Intl.DateTimeFormat("es-CR", { timeZone: zone, weekday: "short", day: "numeric", month: "short" }).format(clockNow);
   }
 
-  const surface = "rounded-2xl border border-indigo-100 bg-white p-4 shadow-sm shadow-indigo-100/50";
+  const surface = "rounded-[24px] border border-[#e6e1d6] bg-white p-4 shadow-[0_12px_28px_-26px_rgba(29,57,39,0.55)] sm:p-5";
   return (
-    <main className="min-h-screen bg-gradient-to-b from-sky-50 via-violet-50/60 to-rose-50 text-slate-900">
-      <div className="mx-auto max-w-3xl space-y-5 px-4 py-6">
-        <header className="rounded-3xl bg-gradient-to-r from-indigo-700 via-violet-600 to-fuchsia-500 p-6 text-white shadow-lg shadow-violet-200">
-          <p className="text-sm font-semibold tracking-widest text-indigo-100">NIOLI LITE · JAPÓN 2026</p>
-          <h1 className="text-3xl font-bold">Tu viaje, sin complicaciones</h1>
-          <p className="text-sm text-indigo-100">Itinerario y gastos · guardado automático en la nube · Gemini</p>
-        </header>
-        <section aria-label="Relojes en tiempo real" className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-4 shadow-sm">
-            <p className="text-sm font-semibold text-blue-800">🇨🇷 Costa Rica</p>
-            <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-blue-950">{timeIn("America/Costa_Rica")}</p>
-            <p className="text-xs capitalize text-blue-700">{dateIn("America/Costa_Rica")}</p>
-          </div>
-          <div className="rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white p-4 shadow-sm">
-            <p className="text-sm font-semibold text-rose-800">🇯🇵 Japón</p>
-            <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-rose-950">{timeIn("Asia/Tokyo")}</p>
-            <p className="text-xs capitalize text-rose-700">{dateIn("Asia/Tokyo")}</p>
-          </div>
-        </section>
-        <section aria-label="Modo sin conexión" className={online ? "rounded-2xl border border-teal-200 bg-teal-50 p-4" : "rounded-2xl border border-amber-300 bg-amber-50 p-4"} role="status">
+    <main className="min-h-screen bg-[#f5f4ef] text-[#27382f]">
+      <div className="mx-auto max-w-3xl space-y-4 px-4 py-5 sm:space-y-5 sm:py-7">
+        <LiteJourneyHero
+          costaRicaTime={timeIn("America/Costa_Rica")} japanTime={timeIn("Asia/Tokyo")}
+          costaRicaDate={dateIn("America/Costa_Rica")} japanDate={dateIn("Asia/Tokyo")}
+          now={clockNow} city={day?.city ?? "Japón"} tripDate={selectedDate}
+          onPlan={() => setActiveTab("plan")} onExpenses={() => setActiveTab("gastos")}
+        />
+        <section aria-label="Modo sin conexión" className={online ? "rounded-[22px] border border-[#d9e4d7] bg-[#edf4ec] p-4" : "rounded-[22px] border border-amber-300 bg-amber-50 p-4"} role="status">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className={online ? "font-bold text-teal-900" : "font-bold text-amber-900"}>
@@ -529,14 +519,14 @@ export default function NioliLite() {
             </div>
           </div>
           <button type="button" onClick={downloadOfflineGuide}
-            className="mt-3 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white">
+            className="mt-3 rounded-xl bg-[#365a45] px-4 py-2.5 text-sm font-semibold text-white">
             Descargar guía de emergencia sin Internet
           </button>
           <p className="mt-2 text-xs text-slate-600">Para reabrir el viaje después de cerrar la pestaña o caducar el PIN necesitas Internet. La guía descargada sí se puede abrir sin conexión.</p>
         </section>
-        <nav aria-label="Secciones Nioli Lite" className="grid grid-cols-2 gap-2 rounded-2xl bg-white p-2 shadow-sm">
-          <button onClick={() => setActiveTab("plan")} className={activeTab === "plan" ? "rounded-xl bg-indigo-700 px-4 py-3 font-semibold text-white" : "rounded-xl px-4 py-3 font-semibold text-indigo-700"}>🗺️ Itinerario</button>
-          <button onClick={() => setActiveTab("gastos")} className={activeTab === "gastos" ? "rounded-xl bg-emerald-600 px-4 py-3 font-semibold text-white" : "rounded-xl px-4 py-3 font-semibold text-emerald-700"}>🧾 Facturas y gastos</button>
+        <nav aria-label="Secciones Nioli Lite" className="sticky top-2 z-20 grid grid-cols-2 gap-2 rounded-2xl border border-[#e1dfd5] bg-white/95 p-2 shadow-sm backdrop-blur">
+          <button onClick={() => setActiveTab("plan")} className={activeTab === "plan" ? "rounded-xl bg-[#365a45] px-4 py-3 font-semibold text-white shadow-sm" : "rounded-xl px-4 py-3 font-semibold text-[#476c53]"}>🗺️ Itinerario</button>
+          <button onClick={() => setActiveTab("gastos")} className={activeTab === "gastos" ? "rounded-xl bg-[#365a45] px-4 py-3 font-semibold text-white shadow-sm" : "rounded-xl px-4 py-3 font-semibold text-[#476c53]"}>🧾 Facturas y gastos</button>
         </nav>
         {activeTab === "plan" && <>
         <section className={surface}>
@@ -546,14 +536,14 @@ export default function NioliLite() {
           </select>
         </section>
         {day && <section className={surface}>
-          <h2 className="text-xl font-bold">{day.area}</h2>
+          <div className="mb-3 flex flex-wrap items-center gap-2"><span className="rounded-full bg-[#e5eee2] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#45694c]">{day.city}</span><span className="rounded-full bg-[#f3ecde] px-3 py-1 text-xs font-semibold text-[#886637]">{day.date}</span></div>
+          <h2 className="text-xl font-extrabold tracking-tight text-[#2b4935] sm:text-2xl">{day.area}</h2>
           <p className="mt-1 text-sm text-slate-600">{day.city} · {day.date}</p>
           {day.reservationNote && <p className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-900">Reserva: {day.reservationNote}</p>}
           {day.keyNote && <p className="mt-3 text-sm">{day.keyNote}</p>}
           {day.notes && <p className="mt-2 text-sm text-slate-600">{day.notes}</p>}
 
-          <WhatsAppSetup />
-          <section aria-label="Navegación Google Maps" className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
+          <section aria-label="Navegación Google Maps" className="mt-4 rounded-[20px] border border-[#dbe4e8] bg-[#edf3f4] p-4">
             <h3 className="text-lg font-bold text-blue-950">Cómo llegar · Google Maps</h3>
             <p className="mt-1 text-sm text-blue-900">Abre la ruta en Google Maps para ver trenes, metro y transbordos actualizados.</p>
             {day.transportSummary && <p className="mt-2 rounded-lg bg-white p-3 text-sm text-slate-700">Plan de transporte: {day.transportSummary}</p>}
@@ -631,7 +621,7 @@ export default function NioliLite() {
         </>}
         {activeTab === "gastos" && <>
           <section className={surface}>
-            <div className="mb-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-500 p-4 text-white">
+            <div className="mb-4 rounded-[20px] bg-gradient-to-r from-[#41694e] to-[#74947b] p-4 text-white">
               <h2 className="text-xl font-bold">Facturas y gastos</h2>
               <p className="text-sm text-emerald-50">Registra compras y guarda una foto de cada recibo.</p>
             </div>
@@ -727,6 +717,7 @@ export default function NioliLite() {
           <button onClick={exportData} className="rounded-xl border border-slate-300 px-4 py-3 font-semibold">Exportar JSON</button>
           <button onClick={() => { if (window.confirm("¿Restaurar el itinerario original? Se borrarán los cambios guardados en este navegador.")) setDays(initialDays); }} className="ml-2 rounded-xl border border-slate-300 px-4 py-3 font-semibold">Restaurar original</button>
         </section>
+        <WhatsAppSetup />
         <LiteCloudSync ready={ready} days={days} receipts={receipts} readPhoto={readReceiptPhoto} storePhoto={storeReceiptPhoto} onRestore={(newDays, newReceipts) => {
           setDays(newDays);
           setReceipts(newReceipts);
