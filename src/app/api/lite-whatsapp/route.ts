@@ -96,11 +96,21 @@ export async function POST(request: Request) {
         21608: "El número de destino no está verificado para esta cuenta de prueba.",
         20003: "Twilio rechazó las credenciales o la cuenta no tiene permiso.",
       };
+      // Only show non-sensitive field NAMES and a sanitized Twilio message.
+      // Never return credentials, message content, phone numbers, or API response data.
+      const rawMessage = typeof result.message === "string" ? result.message : "";
+      const safeMessage = rawMessage
+        .replace(/(?:whatsapp:)?\\+\\d[\\d\\s().-]{6,}/gi, "[número oculto]")
+        .replace(/(?:AC|SK|HX|SM)[a-f0-9]{32}/gi, "[identificador oculto]")
+        .replace(/https?:\\/\\/\\S+/gi, "[enlace oculto]")
+        .slice(0, 280);
       return NextResponse.json({
         error: code !== null && messages[code] ? messages[code] : "Twilio rechazó el envío. Consulta el código de error para identificar el motivo.",
         twilioCode: code,
         httpStatus: response.status,
         requestMode: "sandbox-body-only",
+        sentFieldNames: [...form.keys()],
+        twilioMessage: safeMessage,
       }, { status: 502 });
     }
     return NextResponse.json({
