@@ -10,13 +10,15 @@ function configured() {
   const sid = process.env.TWILIO_ACCOUNT_SID || "";
   const token = process.env.TWILIO_AUTH_TOKEN || "";
   const from = process.env.TWILIO_WHATSAPP_FROM || "";
+  const templateSid = process.env.TWILIO_WHATSAPP_CONTENT_SID || "";
   const numbers: Record<Recipient, string> = {
     andy: process.env.TWILIO_WHATSAPP_TO_ANDY || "",
     jose: process.env.TWILIO_WHATSAPP_TO_JOSE || "",
   };
   const valid = (value: string) => /^\+[1-9]\d{7,14}$/.test(value);
   return {
-    sid, token, from, numbers,
+    sid, token, from, numbers, templateSid,
+    templateReady: /^HX[a-f\d]{32}$/i.test(templateSid),
     ready: /^AC[a-f\d]{32}$/i.test(sid) && token.length > 10 && valid(from) &&
       valid(numbers.andy) && valid(numbers.jose),
   };
@@ -42,7 +44,7 @@ function status() {
   const c = configured();
   return { configured: c.ready, recipients: {
     andy: Boolean(c.numbers.andy), jose: Boolean(c.numbers.jose),
-  }, sandbox: true,
+  }, sandbox: true, templateConfigured: c.templateReady,
   enabled: false };
 }
 export async function GET() {
@@ -57,6 +59,7 @@ export async function POST(request: Request) {
   if (!(await authorized())) return NextResponse.json({ error: "Se requiere el PIN de editor." }, { status: 401 });
   const cfg = configured();
   if (!cfg.ready) return NextResponse.json({ error: "Faltan las variables privadas de Twilio en Vercel." }, { status: 503 });
+  if (!cfg.templateReady) return NextResponse.json({ error: "La cuenta de prueba requiere TWILIO_WHATSAPP_CONTENT_SID, tomado de la plantilla oficial en Try out WhatsApp (empieza por HX).", twilioCode: 21654 }, { status: 503 });
   let recipient: Recipient;
   try {
     const data: unknown = await request.json();
@@ -69,10 +72,11 @@ export async function POST(request: Request) {
   const form = new URLSearchParams();
   form.set("From", "whatsapp:" + cfg.from);
   form.set("To", "whatsapp:" + cfg.numbers[recipient]);
-  // Sandbox diagnostic: always send a freeform Body only, never ContentVariables.
-  // This requires a WhatsApp message from the recipient within the preceding 24h.
-  form.set("Body", "Nioli Lite: mensaje de prueba para " + (recipient === "andy" ? "Andy" : "José") +
-    ". Los recordatorios automáticos aún no están activos.");
+  // Trial accounts require a Twilio-provided pre-approved Content SID.
+  // Sandbox appointment reminder template has placeholders {{1}} and {{2}}.
+  // Never combine Body or MediaUrl with ContentSid.
+  form.set("ContentSid", cfg.templateSid);
+  form.set("ContentVariables", JSON.stringify({ "1": "Nioli Lite - prueba", "2": "ahora" }));
 
   try {
     const response = await fetch("https://api.twilio.com/2010-04-01/Accounts/" + cfg.sid + "/Messages.json", {
@@ -88,7 +92,7 @@ export async function POST(request: Request) {
     if (!response.ok) {
       const code = typeof result.code === "number" ? result.code : null;
       const messages: Record<number, string> = {
-        21654: "Twilio exige un ContentSid para variables de plantilla. Esta prueba envía solo Body; revisa el detalle del intento en la consola si persiste.",
+        21654: "Twilio no reconoce la plantilla del mensaje. Comprueba que el ContentSid HX sea el de la plantilla oficial de recordatorios en tu cuenta.",
         63007: "El número remitente no corresponde al Sandbox de esta cuenta de Twilio.",
         63015: "El destinatario no está unido a este Sandbox o su inscripción caducó.",
         63016: "Pasó la ventana de 24 horas para mensajes libres. Envía un WhatsApp al Sandbox y repite la prueba.",
@@ -108,7 +112,7 @@ export async function POST(request: Request) {
         error: code !== null && messages[code] ? messages[code] : "Twilio rechazó el envío. Consulta el código de error para identificar el motivo.",
         twilioCode: code,
         httpStatus: response.status,
-        requestMode: "sandbox-body-only",
+        requestMode: "sandbox-approved-content-template",
         sentFieldNames: [...form.keys()],
         twilioMessage: safeMessage,
       }, { status: 502 });
