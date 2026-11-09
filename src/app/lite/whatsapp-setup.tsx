@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { buildLiteAlerts } from "@/lib/lite-alerts";
 
 type State = { configured: boolean; recipients: { andy: boolean; jose: boolean }; sandbox: boolean; templateConfigured: boolean; enabled: boolean };
 type Person = "andy" | "jose";
@@ -10,6 +11,9 @@ export default function WhatsAppSetup() {
   const [error, setError] = useState("");
   const [sending, setSending] = useState<Person | null>(null);
   const [message, setMessage] = useState("");
+  const [showPlan, setShowPlan] = useState(false);
+  const planned = buildLiteAlerts();
+  const nextAlerts = planned.filter(item => Date.parse(item.whenUTC) > Date.now()).slice(0, 7);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,7 +47,7 @@ export default function WhatsAppSetup() {
 
   return <section className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-4">
     <h3 className="font-bold text-green-950">Recordatorios por WhatsApp</h3>
-    <p className="mt-1 text-sm text-green-900">Sandbox de Andy y José. Primero confirma que cada teléfono recibe su mensaje de prueba; los recordatorios automáticos permanecen desactivados.</p>
+    <p className="mt-1 text-sm text-green-900">Los dos WhatsApp recibieron pruebas. La agenda está preparada en horario de Japón; los envíos automáticos requieren un remitente de producción y una plantilla autorizada.</p>
     {status && <p className="mt-2 text-xs font-semibold text-green-950">
       {!status.configured ? "Pendiente: configurar las claves y ambos números de Twilio en Vercel." : status.templateConfigured ? "Twilio y plantilla configurados · pruebas manuales disponibles" : "Falta TWILIO_WHATSAPP_CONTENT_SID (plantilla HX oficial de recordatorio) en Preview de Vercel."}
     </p>}
@@ -54,6 +58,19 @@ export default function WhatsAppSetup() {
       <button type="button" disabled={sending !== null} onClick={() => void test("jose")} className="rounded-lg bg-green-800 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">
         {sending === "jose" ? "Enviando…" : "Probar con José"}
       </button>
+    </div>}
+    <button type="button" onClick={() => setShowPlan(value => !value)}
+      aria-expanded={showPlan}
+      className="mt-3 rounded-lg border border-green-300 bg-white px-3 py-2 text-sm font-semibold text-green-900">
+      {showPlan ? "Ocultar próximos recordatorios" : "Ver próximos recordatorios (JST)"}
+    </button>
+    {showPlan && <div className="mt-3 space-y-2">
+      {nextAlerts.length === 0 ? <p className="text-xs text-green-900">No hay avisos próximos.</p> :
+        nextAlerts.map(item => <div key={item.id} className="rounded-lg bg-white p-2 text-sm text-green-950">
+          <p className="font-semibold">{new Intl.DateTimeFormat("es-CR", { timeZone: "Asia/Tokyo", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date(item.whenUTC))} · {item.description}</p>
+          <p className="mt-1 text-xs text-green-800">{item.kind === "morning" ? "Resumen diario" : "Aviso " + item.advanceMinutes + " min antes"} · Solo planificación, envío desactivado</p>
+        </div>)}
+      <p className="text-xs text-green-800">DisneySea no se incluye como entrada confirmada hasta registrar la compra.</p>
     </div>}
     {message && <p role="status" className="mt-2 text-sm text-green-900">{message}</p>}
     {error && <p role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
