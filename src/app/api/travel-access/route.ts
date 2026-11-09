@@ -89,7 +89,7 @@ export async function GET() {
 
     let participants: AccessParticipant[] = [];
     if (canManageTrip) {
-      const managedParticipants = await client.schema("app").rpc("list_trip_participants_for_management");
+      const managedParticipants = await client.rpc("list_trip_participants_for_management_bridge");
       if (managedParticipants.error) throw managedParticipants.error;
       participants = (managedParticipants.data ?? []).map((row: {
         participant_id: string;
@@ -116,7 +116,7 @@ export async function GET() {
       createdAt: string;
     }> = [];
     if (canManagePlatform) {
-      const result = await client.schema("app").rpc("list_guest_workspace_accesses");
+      const result = await client.rpc("list_guest_workspace_accesses_bridge");
       if (result.error) throw result.error;
       workspaces = (result.data ?? []).map((row: {
         workspace_id: string;
@@ -158,7 +158,7 @@ export async function POST(request: Request) {
 
     if (body?.action === "createTravelerInvitation") {
       requirePlatformAccess(session, "create");
-      const result = await client.schema("app").rpc("issue_independent_traveler_invitation", {
+      const result = await client.rpc("issue_independent_traveler_invitation_bridge", {
         p_display_name: body.name?.trim(),
         p_access_expires_at: optionalDate(body.accessExpiresAt),
       });
@@ -179,7 +179,7 @@ export async function POST(request: Request) {
 
     if (body?.action === "createCompanionInvitation") {
       requireTripParticipantManager(session);
-      const result = await client.schema("app").rpc("issue_trip_companion_invitation", {
+      const result = await client.rpc("issue_trip_companion_invitation_bridge", {
         p_display_name: body.name?.trim(),
         p_permissions: tripPermissionsOnly(body.permissions),
         p_access_expires_at: optionalDate(body.accessExpiresAt),
@@ -202,7 +202,7 @@ export async function POST(request: Request) {
 
     if (body?.action === "resetCompanionPin" && body.participantId) {
       requireTripParticipantManager(session);
-      const result = await client.schema("app").rpc("issue_trip_companion_pin_reset", {
+      const result = await client.rpc("issue_trip_companion_pin_reset_bridge", {
         p_participant_id: body.participantId,
       });
       if (result.error) throw result.error;
@@ -223,7 +223,7 @@ export async function POST(request: Request) {
 
     if (body?.action === "resetTravelerPin" && body.workspaceId) {
       requirePlatformAccess(session, "manage");
-      const result = await client.schema("app").rpc("issue_independent_traveler_pin_reset", {
+      const result = await client.rpc("issue_independent_traveler_pin_reset_bridge", {
         p_workspace_id: body.workspaceId,
       });
       if (result.error) throw result.error;
@@ -243,7 +243,7 @@ export async function POST(request: Request) {
 
     if (body?.action === "updateTripPermissions" && body.participantId) {
       requireTripParticipantManager(session);
-      const result = await client.schema("app").rpc("set_trip_participant_permissions", {
+      const result = await client.rpc("set_trip_participant_permissions_bridge", {
         p_participant_id: body.participantId,
         p_permissions: tripPermissionsOnly(body.permissions),
       });
@@ -253,7 +253,7 @@ export async function POST(request: Request) {
 
     if (body?.action === "revokeTripAccess" && body.participantId) {
       requireTripParticipantManager(session);
-      const result = await client.schema("app").rpc("revoke_trip_participant_access", {
+      const result = await client.rpc("revoke_trip_participant_access_bridge", {
         p_participant_id: body.participantId,
       });
       if (result.error) throw result.error;
@@ -262,7 +262,7 @@ export async function POST(request: Request) {
 
     if (body?.action === "revokeTravelerAccess" && body.workspaceId) {
       requirePlatformAccess(session, "manage");
-      const result = await client.schema("app").rpc("revoke_guest_workspace_access", {
+      const result = await client.rpc("revoke_guest_workspace_access_bridge", {
         p_workspace_id: body.workspaceId,
       });
       if (result.error) throw result.error;
