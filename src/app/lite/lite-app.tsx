@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
-import WhatsAppSetup from "./whatsapp-setup";
 import LiteJourneyHero from "./journey-hero";
 import type { TripDay } from "@/types/travel";
 import { activityMapTarget, mapsDirectionsUrl, transferLegs, androidMapLocationUri } from "@/lib/lite-maps";
@@ -717,7 +716,6 @@ export default function NioliLite() {
           <button onClick={exportData} className="rounded-xl border border-slate-300 px-4 py-3 font-semibold">Exportar JSON</button>
           <button onClick={() => { if (window.confirm("¿Restaurar el itinerario original? Se borrarán los cambios guardados en este navegador.")) setDays(initialDays); }} className="ml-2 rounded-xl border border-slate-300 px-4 py-3 font-semibold">Restaurar original</button>
         </section>
-        <WhatsAppSetup />
         <LiteCloudSync ready={ready} days={days} receipts={receipts} readPhoto={readReceiptPhoto} storePhoto={storeReceiptPhoto} onRestore={(newDays, newReceipts) => {
           setDays(newDays);
           setReceipts(newReceipts);
