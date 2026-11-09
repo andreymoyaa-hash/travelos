@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-type State = { configured: boolean; recipients: { andy: boolean; jose: boolean }; sandbox: boolean; enabled: boolean };
+type State = { configured: boolean; recipients: { andy: boolean; jose: boolean }; sandbox: boolean; templateConfigured: boolean; enabled: boolean };
 type Person = "andy" | "jose";
 
 export default function WhatsAppSetup() {
@@ -45,9 +45,9 @@ export default function WhatsAppSetup() {
     <h3 className="font-bold text-green-950">Recordatorios por WhatsApp</h3>
     <p className="mt-1 text-sm text-green-900">Sandbox de Andy y José. Primero confirma que cada teléfono recibe su mensaje de prueba; los recordatorios automáticos permanecen desactivados.</p>
     {status && <p className="mt-2 text-xs font-semibold text-green-950">
-      {status.configured ? "Twilio conectado · pruebas manuales disponibles" : "Pendiente: configurar las claves y ambos números de Twilio en Vercel."}
+      {!status.configured ? "Pendiente: configurar las claves y ambos números de Twilio en Vercel." : status.templateConfigured ? "Twilio y plantilla configurados · pruebas manuales disponibles" : "Falta TWILIO_WHATSAPP_CONTENT_SID (plantilla HX oficial de recordatorio) en Preview de Vercel."}
     </p>}
-    {status?.configured && <div className="mt-3 flex gap-2">
+    {status?.configured && status.templateConfigured && <div className="mt-3 flex gap-2">
       <button type="button" disabled={sending !== null} onClick={() => void test("andy")} className="rounded-lg bg-green-800 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">
         {sending === "andy" ? "Enviando…" : "Probar con Andy"}
       </button>
