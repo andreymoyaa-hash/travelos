@@ -90,10 +90,22 @@ export async function POST(request: Request) {
     });
     const data: unknown = await response.json();
     const result = data && typeof data === "object" ? data as Record<string, unknown> : {};
-    if (!response.ok) return NextResponse.json({
-      error: "Twilio rechazó el envío. Comprueba que el Sandbox siga activo y la ventana de 24 horas.",
-      twilioCode: typeof result.code === "number" ? result.code : null,
-    }, { status: 502 });
+    if (!response.ok) {
+      const code = typeof result.code === "number" ? result.code : null;
+      const messages: Record<number, string> = {
+        63007: "El número remitente no corresponde al Sandbox de esta cuenta de Twilio.",
+        63015: "El destinatario no está unido a este Sandbox o su inscripción caducó.",
+        63016: "Pasó la ventana de 24 horas para mensajes libres. Envía un WhatsApp al Sandbox y repite la prueba.",
+        21211: "El número de destino tiene formato incorrecto.",
+        21608: "El número de destino no está verificado para esta cuenta de prueba.",
+        20003: "Twilio rechazó las credenciales o la cuenta no tiene permiso.",
+      };
+      return NextResponse.json({
+        error: code !== null && messages[code] ? messages[code] : "Twilio rechazó el envío. Consulta el código de error para identificar el motivo.",
+        twilioCode: code,
+        httpStatus: response.status,
+      }, { status: 502 });
+    }
     return NextResponse.json({
       accepted: true,
       recipient,
