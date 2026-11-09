@@ -50,8 +50,8 @@ export async function POST(request: Request) {
 
   if (body?.action === "inspect") {
     try {
-      const result = await createTravelClient().schema("app").rpc(
-        "inspect_access_setup_invitation",
+      const result = await createTravelClient().rpc(
+        "inspect_access_setup_invitation_bridge",
         { p_setup_token: body.token },
       );
       if (result.error) throw result.error;
@@ -72,8 +72,8 @@ export async function POST(request: Request) {
 
   if (body?.action === "complete" && typeof body.pin === "string") {
     try {
-      const result = await createTravelClient().schema("app").rpc(
-        "complete_access_setup_invitation",
+      const result = await createTravelClient().rpc(
+        "complete_access_setup_invitation_bridge",
         { p_setup_token: body.token, p_pin: body.pin },
       );
       if (result.error) {
