@@ -42,7 +42,7 @@ function status() {
   const c = configured();
   return { configured: c.ready, recipients: {
     andy: Boolean(c.numbers.andy), jose: Boolean(c.numbers.jose),
-  }, sandbox: !Boolean(process.env.TWILIO_WHATSAPP_CONTENT_SID),
+  }, sandbox: true,
   enabled: false };
 }
 export async function GET() {
@@ -69,15 +69,10 @@ export async function POST(request: Request) {
   const form = new URLSearchParams();
   form.set("From", "whatsapp:" + cfg.from);
   form.set("To", "whatsapp:" + cfg.numbers[recipient]);
-  const templateSid = process.env.TWILIO_WHATSAPP_CONTENT_SID;
-  if (templateSid) {
-    form.set("ContentSid", templateSid);
-    form.set("ContentVariables", JSON.stringify({ "1": "Nioli Lite - prueba", "2": "ahora" }));
-  } else {
-    // Valid only when the recipient has messaged the Sandbox within 24h.
-    form.set("Body", "Nioli Lite: mensaje de prueba para " + (recipient === "andy" ? "Andy" : "José") +
-      ". Los recordatorios automáticos aún no están activos.");
-  }
+  // Sandbox diagnostic: always send a freeform Body only, never ContentVariables.
+  // This requires a WhatsApp message from the recipient within the preceding 24h.
+  form.set("Body", "Nioli Lite: mensaje de prueba para " + (recipient === "andy" ? "Andy" : "José") +
+    ". Los recordatorios automáticos aún no están activos.");
 
   try {
     const response = await fetch("https://api.twilio.com/2010-04-01/Accounts/" + cfg.sid + "/Messages.json", {
@@ -93,6 +88,7 @@ export async function POST(request: Request) {
     if (!response.ok) {
       const code = typeof result.code === "number" ? result.code : null;
       const messages: Record<number, string> = {
+        21654: "Twilio exige un ContentSid para variables de plantilla. Esta prueba envía solo Body; revisa el detalle del intento en la consola si persiste.",
         63007: "El número remitente no corresponde al Sandbox de esta cuenta de Twilio.",
         63015: "El destinatario no está unido a este Sandbox o su inscripción caducó.",
         63016: "Pasó la ventana de 24 horas para mensajes libres. Envía un WhatsApp al Sandbox y repite la prueba.",
@@ -104,6 +100,7 @@ export async function POST(request: Request) {
         error: code !== null && messages[code] ? messages[code] : "Twilio rechazó el envío. Consulta el código de error para identificar el motivo.",
         twilioCode: code,
         httpStatus: response.status,
+        requestMode: "sandbox-body-only",
       }, { status: 502 });
     }
     return NextResponse.json({
