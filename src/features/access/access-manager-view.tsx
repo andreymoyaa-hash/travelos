@@ -122,6 +122,16 @@ export function AccessManagerView({
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "").trim();
+    const existing = participants.find((person) => person.name.trim().toLocaleLowerCase("es") === name.toLocaleLowerCase("es"));
+    if (existing) {
+      if (existing.id === currentParticipantId || existing.role === "owner") {
+        setError("Este participante ya tiene acceso como propietario; no es necesario crear otro.");
+        return;
+      }
+      setCompanionOpen(false);
+      await resetParticipant(existing);
+      return;
+    }
     const payload = await requestAccess({
       action: "createCompanionInvitation",
       name,
@@ -220,6 +230,7 @@ export function AccessManagerView({
           <p className="eyebrow">{canManageTripParticipants ? "Participantes" : "Administrador de NIOLI"}</p>
           <h1>{canManageTripParticipants ? `Acompañantes de ${currentTripName}` : "Administración de accesos"}</h1>
           <p>{canManageTripParticipants ? "Administra quién puede colaborar en este viaje. El acceso no se extiende a otros viajes." : "Administra únicamente los accesos independientes autorizados para la plataforma."}</p>
+          {canManageTripParticipants ? <p className="data-note">Si la persona ya aparece abajo (por ejemplo, José), usa «Renovar acceso / PIN». Se genera un enlace para que elija su nuevo PIN sin duplicar el participante.</p> : null}
         </div>
         <div className="heading-actions">
           {canCreateTravelerSpaces ? <button type="button" className="secondary-button" onClick={() => setTravelerOpen(true)}><FolderPlus size={18} /> Crear viajero independiente</button> : null}
@@ -240,7 +251,7 @@ export function AccessManagerView({
               <div className="access-actions">
                 {participant.id !== currentParticipantId && participant.role !== "owner" ? <>
                   {participant.accessActive !== false ? <button type="button" className="secondary-button" disabled={workingId === participant.id} onClick={() => setEditingParticipant(participant)}>{workingId === participant.id ? <LoaderCircle className="auth-spinner" size={15} /> : <Settings2 size={15} />} Administrar permisos</button> : null}
-                  <button type="button" className="icon-button" aria-label={`Crear nuevo enlace de acceso para ${participant.name}`} disabled={workingId === participant.id} onClick={() => void resetParticipant(participant)}><RotateCcw size={17} /></button>
+                  <button type="button" className="secondary-button" disabled={workingId === participant.id} onClick={() => void resetParticipant(participant)}><RotateCcw size={16} /> Renovar acceso / PIN</button>
                   <button type="button" className="icon-button danger" aria-label={`Quitar a ${participant.name} de este viaje`} onClick={() => revokeParticipant(participant)}><ShieldOff size={17} /></button>
                 </> : <span className="storage-pill"><Check size={12} /> Sesión actual</span>}
               </div>
