@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { japan2026Trip } from "@/data/trips/japan-2026";
 import LiteCloudSync, { type LiteReceipt } from "./cloud-sync";
+import WhatsAppSetup from "./whatsapp-setup";
 import type { TripDay } from "@/types/travel";
 import { activityMapTarget, mapsDirectionsUrl, transferLegs, androidMapLocationUri } from "@/lib/lite-maps";
 
@@ -551,6 +552,7 @@ export default function NioliLite() {
           {day.keyNote && <p className="mt-3 text-sm">{day.keyNote}</p>}
           {day.notes && <p className="mt-2 text-sm text-slate-600">{day.notes}</p>}
 
+          <WhatsAppSetup />
           <section aria-label="Navegación Google Maps" className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4">
             <h3 className="text-lg font-bold text-blue-950">Cómo llegar · Google Maps</h3>
             <p className="mt-1 text-sm text-blue-900">Abre la ruta en Google Maps para ver trenes, metro y transbordos actualizados.</p>
