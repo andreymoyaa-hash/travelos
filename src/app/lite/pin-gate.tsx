@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { bradyAssets } from "@/lib/nioli/assets/manifest";
+import { getSafeNioliAsset } from "@/lib/nioli/assets/helpers";
+
+const brady = getSafeNioliAsset(bradyAssets.base.neutral);
 
 export default function LitePinGate() {
   const router = useRouter();
@@ -47,12 +51,15 @@ export default function LitePinGate() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-sky-50 via-violet-50 to-rose-50 px-4 py-8 text-slate-900">
-      <section className="w-full max-w-sm overflow-hidden rounded-3xl border border-indigo-100 bg-white shadow-xl shadow-indigo-100/70">
-        <div className="bg-gradient-to-r from-indigo-700 via-violet-600 to-fuchsia-500 px-6 py-7 text-white">
-          <p className="text-xs font-bold tracking-widest text-indigo-100">NIOLI LITE · JAPÓN 2026</p>
+    <main className="flex min-h-screen items-center justify-center bg-[#f5f4ef] px-4 py-8 text-[#283b30]">
+      <section className="w-full max-w-sm overflow-hidden rounded-[30px] border border-[#e3dfd1] bg-white shadow-[0_20px_60px_-26px_rgba(32,61,40,0.3)]">
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#f3f5ed] to-[#e5eee6] px-6 py-8 text-[#2f503a]">
+          {brady && <img src={brady} alt="Brady, mascota de Nioli" className="absolute right-1 top-2 h-28 w-24 object-contain opacity-95" />}
+          <div className="relative pr-14">
+          <p className="text-xs font-bold tracking-widest text-[#658367]">NIOLI LITE · JAPÓN 2026</p>
           <h1 className="mt-2 text-2xl font-bold">Bienvenidos a Nioli</h1>
-          <p className="mt-1 text-sm text-indigo-100">Tu viaje comienza con tu PIN.</p>
+          <p className="mt-1 text-sm text-[#54715a]">Tu viaje comienza con tu PIN.</p>
+          </div>
         </div>
         <form onSubmit={(event) => { void login(event); }} className="space-y-4 p-6">
           <label htmlFor="nioli-lite-pin" className="block text-sm font-semibold">PIN de acceso · 6 dígitos</label>
@@ -67,9 +74,9 @@ export default function LitePinGate() {
             value={pin}
             onChange={(event) => setPin(event.target.value.replace(/\D/g, "").slice(0, 6))}
             placeholder="● ● ● ● ● ●"
-            className="w-full rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-4 text-center text-2xl tracking-widest outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-200"
+            className="w-full rounded-xl border border-[#cddccb] bg-[#f2f6ef] px-4 py-4 text-center text-2xl tracking-widest outline-none focus:border-[#597e60] focus:ring-2 focus:ring-[#d5e4d4]"
           />
-          <button type="submit" disabled={busy || pin.length !== 6} className="w-full rounded-xl bg-indigo-700 px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
+          <button type="submit" disabled={busy || pin.length !== 6} className="w-full rounded-xl bg-[#365a45] px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
             {busy ? "Verificando acceso…" : "Ingresar al viaje"}
           </button>
           {error && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-900">{error}</p>}
