@@ -11,6 +11,8 @@ const STORAGE_KEY = "nioli-lite-japan-2026-v1";
 const initialDays = japan2026Trip.itinerary;
 const EXPENSES_KEY = "nioli-lite-expenses-2026-v1";
 type Receipt = LiteReceipt;
+type ChatTurn = { role: "user" | "model"; text: string };
+const CHAT_STORE_PREFIX = "nioli-lite-gemini-chat-v2:";
 type FxRates = { perUSD: { USD: number; JPY: number; CRC: number }; asOf: string | null; source: string };
 type Recognition = { merchant: string | null; total: number | null; currency: Receipt["currency"] | null; date: string | null; confidence: "high" | "medium" | "low"; warning: string | null };
 function validRates(value: unknown): value is FxRates {
@@ -146,6 +148,9 @@ export default function NioliLite() {
   const [aiAnswer, setAiAnswer] = useState("");
   const [aiError, setAiError] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [chatKey, setChatKey] = useState<string | null>(null);
+  const [chatMessages, setChatMessages] = useState<ChatTurn[]>([]);
+  const [chatError, setChatError] = useState("");
   const [clockNow, setClockNow] = useState<number | null>(null);
   const [online, setOnline] = useState(true);
   const [mapMessage, setMapMessage] = useState("");
@@ -170,6 +175,43 @@ export default function NioliLite() {
 
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<"plan" | "gastos">("plan");
+
+  // Keep conversations in this browser, isolated by server-validated participant and trip IDs.
+  // Never use a global localStorage key: Andy and José may share a device.
+  useEffect(() => {
+    let cancelled = false;
+    void fetch("/api/travel-session", { credentials: "same-origin", cache: "no-store" })
+      .then(async response => {
+        if (!response.ok || response.status === 204) throw new Error("Inicia sesión para recuperar tu chat.");
+        const result: unknown = await response.json();
+        const session = result && typeof result === "object" ? result as Record<string, unknown> : {};
+        const participant = session.participant && typeof session.participant === "object" ? session.participant as Record<string, unknown> : {};
+        const trip = session.trip && typeof session.trip === "object" ? session.trip as Record<string, unknown> : {};
+        if (session.accessKind !== "trip" || trip.slug !== "japan-2026" || typeof participant.id !== "string" || typeof trip.id !== "string") {
+          throw new Error("Este chat requiere tu acceso al viaje Japón 2026.");
+        }
+        const key = CHAT_STORE_PREFIX + trip.id + ":" + participant.id;
+        let stored: ChatTurn[] = [];
+        try {
+          const parsed: unknown = JSON.parse(localStorage.getItem(key) ?? "[]");
+          if (Array.isArray(parsed)) stored = parsed.filter((turn): turn is ChatTurn =>
+            !!turn && typeof turn === "object" && (turn.role === "user" || turn.role === "model") &&
+            typeof turn.text === "string" && turn.text.length <= 4000).slice(-60);
+        } catch { /* Ignore unreadable local history. */ }
+        if (!cancelled) { setChatMessages(stored); setChatKey(key); setChatError(""); }
+      })
+      .catch(error => {
+        if (!cancelled) setChatError(error instanceof Error ? error.message : "No se pudo recuperar el chat.");
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!chatKey) return;
+    try { localStorage.setItem(chatKey, JSON.stringify(chatMessages.slice(-60))); }
+    catch { setChatError("No hay espacio para guardar la conversación en este dispositivo."); }
+  }, [chatKey, chatMessages]);
+
 
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
@@ -443,25 +485,41 @@ export default function NioliLite() {
   }
 
   async function askGemini() {
-    if (!day || !assistantText.trim() || aiLoading) return;
-    setAiLoading(true); setAiAnswer(""); setAiError("");
+    if (!day || !assistantText.trim() || aiLoading || !chatKey) return;
+    const question = assistantText.trim();
+    setAiLoading(true); setAiError(""); setChatError("");
     const context = [
       "Fecha: " + day.date, "Ciudad: " + day.city, "Zona: " + day.area,
       "Reserva: " + (day.reservationNote || "Sin nota"),
       "Notas: " + (day.notes || ""),
-      ...day.activities.map((activity) => (activity.startTime || "Flexible") + " · " + activity.title + (activity.notes ? " · " + activity.notes : "")),
+      ...day.activities.map(activity => (activity.startTime || "Flexible") + " · " + activity.title + (activity.notes ? " · " + activity.notes : "")),
     ].join("\\n").slice(0, 9500);
+    const history = chatMessages.slice(-16).map(turn => ({ role: turn.role, text: turn.text.slice(0, 1400) }));
+    while (history.reduce((total, item) => total + item.text.length, 0) > 9500) history.shift();
     try {
       const result = await fetch("/api/lite-assistant", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: assistantText.trim(), context }),
+        method: "POST", credentials: "same-origin", cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: question, context, history }),
       });
       const data = await result.json();
-      if (!result.ok || !data.answer) throw new Error(data.error || "Error al consultar Gemini.");
-      setAiAnswer(data.answer);
+      if (!result.ok || typeof data.answer !== "string" || !data.answer.trim()) {
+        throw new Error(data.error || "Error al consultar Gemini.");
+      }
+      setChatMessages(previous => [...previous, { role: "user", text: question }, { role: "model", text: data.answer.trim() }].slice(-60) as ChatTurn[]);
+      setAssistantText("");
+      setAiAnswer("");
     } catch (error) {
       setAiError(error instanceof Error ? error.message : "Error de conexión.");
     } finally { setAiLoading(false); }
+  }
+
+  function clearGeminiChat() {
+    if (!chatKey || aiLoading || !window.confirm("¿Borrar el historial de Gemini guardado para este participante en este navegador?")) return;
+    setChatMessages([]);
+    setAiAnswer("");
+    setAiError("");
+    setAssistantText("");
   }
 
   async function copyForChatGPT() {
@@ -607,15 +665,37 @@ export default function NioliLite() {
           </form>
         </section>}
         <section className={surface}>
-          <h2 className="text-lg font-bold">✨ Asistente de viaje con Gemini</h2>
-          <p className="mt-1 text-sm text-slate-600">Pregunta por tu día. Gemini propone ideas, pero no modifica reservas ni actividades automáticamente. No escribas datos privados o números de reserva.</p>
-          <textarea aria-label="Petición para ChatGPT" rows={3} value={assistantText} onChange={(event) => { setAssistantText(event.target.value); setCopied(false); }} placeholder="Ej. Reordena Kyoto para caminar menos, respetando mis reservas" className="mt-3 w-full rounded-xl border border-slate-300 p-3" />
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#658367]">Conversación de viaje</p>
+              <h2 className="mt-1 text-lg font-bold text-[#2c5037]">Asistente con Gemini</h2>
+            </div>
+            {chatMessages.length > 0 && <button type="button" onClick={clearGeminiChat} disabled={aiLoading}
+              className="rounded-xl border border-[#dedbd2] px-3 py-2 text-xs font-semibold text-[#5b615a] disabled:opacity-50">Nueva conversación</button>}
+          </div>
+          <p className="mt-2 text-sm text-slate-600">Gemini recuerda lo conversado en este dispositivo, por separado para cada participante. Puedes continuar una pregunta sin volver a explicarla. No modifica reservas ni el itinerario automáticamente.</p>
+          {!chatKey && <p role="status" className="mt-3 rounded-xl bg-[#f3f4eb] p-3 text-sm text-[#49654b]">Recuperando tu conversación…</p>}
+          {chatError && <p role="alert" className="mt-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{chatError}</p>}
+          {chatMessages.length > 0 && <div aria-label="Historial de conversación" className="mt-4 max-h-[32rem] space-y-3 overflow-y-auto rounded-[20px] border border-[#e3e5db] bg-[#f8f9f4] p-3">
+            {chatMessages.map((turn, index) => <div key={index} className={turn.role === "user" ? "ml-7 rounded-2xl rounded-tr-sm bg-[#deeadc] p-3 text-sm text-[#2a4533]" : "mr-7 rounded-2xl rounded-tl-sm border border-[#e6e5dc] bg-white p-3 text-sm text-slate-800"}>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wide text-[#627764]">{turn.role === "user" ? "Tú" : "Gemini"}</p>
+              <p className="whitespace-pre-wrap leading-relaxed">{turn.text}</p>
+            </div>)}
+          </div>}
+          <label htmlFor="lite-gemini-question" className="mt-4 block text-sm font-semibold">¿Qué quieres preguntarle?</label>
+          <textarea id="lite-gemini-question" rows={3} value={assistantText} maxLength={700}
+            onChange={event => { setAssistantText(event.target.value); setCopied(false); }}
+            placeholder="Ej. ¿Y cuánto cuesta eso? ¿Cómo llegamos desde el hotel?"
+            className="mt-2 w-full rounded-xl border border-[#c9d8ca] bg-white p-3 outline-none focus:ring-2 focus:ring-[#a1bea4]" />
           <div className="mt-2 flex flex-wrap gap-2">
-            <button onClick={() => { void askGemini(); }} disabled={aiLoading || !assistantText.trim()} className="rounded-xl bg-fuchsia-600 px-4 py-3 font-semibold text-white disabled:opacity-50">{aiLoading ? "Consultando..." : "Preguntar a Gemini"}</button>
-            <button onClick={copyForChatGPT} className="rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-3 font-semibold text-indigo-800">{copied ? "Copiado" : "Usar en ChatGPT Plus"}</button>
+            <button type="button" onClick={() => { void askGemini(); }}
+              disabled={aiLoading || !assistantText.trim() || !chatKey}
+              className="rounded-xl bg-[#365a45] px-4 py-3 font-semibold text-white disabled:opacity-50">{aiLoading ? "Gemini está respondiendo…" : "Enviar a Gemini"}</button>
+            <button type="button" onClick={copyForChatGPT}
+              className="rounded-xl border border-[#cddccc] bg-[#eaf1e8] px-4 py-3 font-semibold text-[#385c40]">{copied ? "Copiado" : "Usar en ChatGPT Plus"}</button>
           </div>
           {aiError && <p role="alert" className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{aiError}</p>}
-          {aiAnswer && <div aria-live="polite" className="mt-3 whitespace-pre-wrap rounded-xl bg-violet-50 p-4 text-sm leading-relaxed text-violet-950">{aiAnswer}</div>}
+          <p className="mt-2 text-xs text-slate-500">Historial local por participante. Gemini recibe las últimas intervenciones necesarias para continuar. Evita compartir datos sensibles.</p>
         </section>
         </>}
         {activeTab === "gastos" && <>
