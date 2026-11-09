@@ -12,6 +12,7 @@ const initialDays = japan2026Trip.itinerary;
 const EXPENSES_KEY = "nioli-lite-expenses-2026-v1";
 type Receipt = LiteReceipt;
 type ChatTurn = { role: "user" | "model"; text: string };
+type GeminiWebSource = { title: string; url: string };
 const CHAT_STORE_PREFIX = "nioli-lite-gemini-chat-v2:";
 type FxRates = { perUSD: { USD: number; JPY: number; CRC: number }; asOf: string | null; source: string };
 type Recognition = { merchant: string | null; total: number | null; currency: Receipt["currency"] | null; date: string | null; confidence: "high" | "medium" | "low"; warning: string | null };
@@ -148,6 +149,10 @@ export default function NioliLite() {
   const [aiAnswer, setAiAnswer] = useState("");
   const [aiError, setAiError] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [geminiWebSearch, setGeminiWebSearch] = useState(false);
+  const [geminiSources, setGeminiSources] = useState<GeminiWebSource[]>([]);
+  const [geminiSearched, setGeminiSearched] = useState(false);
+  const [geminiSearchSuggestions, setGeminiSearchSuggestions] = useState("");
   const [chatKey, setChatKey] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatTurn[]>([]);
   const [chatError, setChatError] = useState("");
@@ -488,6 +493,7 @@ export default function NioliLite() {
     if (!day || !assistantText.trim() || aiLoading || !chatKey) return;
     const question = assistantText.trim();
     setAiLoading(true); setAiError(""); setChatError("");
+    setGeminiSources([]); setGeminiSearched(false); setGeminiSearchSuggestions("");
     const context = [
       "Fecha: " + day.date, "Ciudad: " + day.city, "Zona: " + day.area,
       "Reserva: " + (day.reservationNote || "Sin nota"),
@@ -500,7 +506,7 @@ export default function NioliLite() {
       const result = await fetch("/api/lite-assistant", {
         method: "POST", credentials: "same-origin", cache: "no-store",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: question, context, history }),
+        body: JSON.stringify({ message: question, context, history, webSearch: geminiWebSearch }),
       });
       const data = await result.json();
       if (!result.ok || typeof data.answer !== "string" || !data.answer.trim()) {
@@ -509,6 +515,12 @@ export default function NioliLite() {
       setChatMessages(previous => [...previous, { role: "user", text: question }, { role: "model", text: data.answer.trim() }].slice(-60) as ChatTurn[]);
       setAssistantText("");
       setAiAnswer("");
+      const sources: unknown = data.sources;
+      setGeminiSources(Array.isArray(sources) ? sources.filter((source): source is GeminiWebSource =>
+        !!source && typeof source === "object" && typeof source.url === "string" &&
+        /^https?:\/\//.test(source.url) && typeof source.title === "string").slice(0, 6) : []);
+      setGeminiSearched(data.searched === true);
+      setGeminiSearchSuggestions(typeof data.searchEntryPoint === "string" ? data.searchEntryPoint : "");
     } catch (error) {
       setAiError(error instanceof Error ? error.message : "Error de conexión.");
     } finally { setAiLoading(false); }
@@ -520,6 +532,7 @@ export default function NioliLite() {
     setAiAnswer("");
     setAiError("");
     setAssistantText("");
+    setGeminiSources([]); setGeminiSearched(false); setGeminiSearchSuggestions("");
   }
 
   async function copyForChatGPT() {
@@ -687,6 +700,15 @@ export default function NioliLite() {
             onChange={event => { setAssistantText(event.target.value); setCopied(false); }}
             placeholder="Ej. ¿Y cuánto cuesta eso? ¿Cómo llegamos desde el hotel?"
             className="mt-2 w-full rounded-xl border border-[#c9d8ca] bg-white p-3 outline-none focus:ring-2 focus:ring-[#a1bea4]" />
+          <label className="mt-3 flex items-start gap-3 rounded-xl border border-[#d5e1d3] bg-[#f3f8f1] p-3 text-sm text-[#31513d]">
+            <input type="checkbox" checked={geminiWebSearch} disabled={aiLoading}
+              onChange={event => setGeminiWebSearch(event.target.checked)}
+              className="mt-1 h-4 w-4 accent-[#365a45]" />
+            <span><strong>Buscar en Internet con Google</strong><span className="block text-xs text-[#57715b]">
+              Para precios, horarios o información reciente. Desactivado por defecto para ahorrar cuota.
+              La búsqueda puede requerir facturación y no confirma disponibilidad en tiempo real.
+            </span></span>
+          </label>
           <div className="mt-2 flex flex-wrap gap-2">
             <button type="button" onClick={() => { void askGemini(); }}
               disabled={aiLoading || !assistantText.trim() || !chatKey}
@@ -695,6 +717,20 @@ export default function NioliLite() {
               className="rounded-xl border border-[#cddccc] bg-[#eaf1e8] px-4 py-3 font-semibold text-[#385c40]">{copied ? "Copiado" : "Usar en ChatGPT Plus"}</button>
           </div>
           {aiError && <p role="alert" className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{aiError}</p>}
+          {geminiSearched && <p role="status" className="mt-3 text-xs font-semibold text-[#456b4c]">Respuesta con búsqueda de Google</p>}
+          {geminiSources.length > 0 && <aside aria-label="Fuentes consultadas por Gemini" className="mt-2 rounded-2xl border border-[#dbe3dc] bg-white p-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-[#57735e]">Fuentes web</p>
+            <ul className="mt-2 space-y-2">{geminiSources.map(source => <li key={source.url}>
+              <a href={source.url} target="_blank" rel="noopener noreferrer"
+                className="break-words text-sm font-medium text-[#285e65] underline underline-offset-2">{source.title}</a>
+            </li>)}</ul>
+          </aside>}
+          {geminiSearchSuggestions && <div className="mt-2">
+            <p className="mb-1 text-xs font-semibold text-[#57735e]">Sugerencias de búsqueda de Google</p>
+            <iframe title="Sugerencias oficiales de Google Search" srcDoc={geminiSearchSuggestions}
+              sandbox="allow-popups allow-popups-to-escape-sandbox" referrerPolicy="no-referrer"
+              className="h-20 w-full rounded-lg border border-[#dbe3dc]" />
+          </div>}
           <p className="mt-2 text-xs text-slate-500">Historial local por participante. Gemini recibe las últimas intervenciones necesarias para continuar. Evita compartir datos sensibles.</p>
         </section>
         </>}
