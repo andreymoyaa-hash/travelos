@@ -121,6 +121,32 @@ export async function POST(request: NextRequest) {
       // Continue with another compatible model, but never retry quota/billing failures.
       if (response.status !== 404 && response.status !== 400) break;
     }
+    // Grounded Google Search can be unavailable on free-tier Gemini 3 projects.
+    // Keep the conversation usable, but never pretend an ungrounded answer was web-verified.
+    if (!answer && webSearch && failure?.code === 429) {
+      const ungroundedPayload = JSON.parse(payload) as Record<string, unknown>;
+      delete ungroundedPayload.tools;
+      const systemInstruction = ungroundedPayload.systemInstruction as { parts: Array<{ text: string }> };
+      systemInstruction.parts[0].text += " IMPORTANTE: La búsqueda web fue rechazada por una cuota o restricción del proyecto. No puedes consultar Internet en esta respuesta. No afirmes datos recientes como verificados ni inventes fuentes.";
+      // Only one additional normal chat request. No retry loop against a zero web quota.
+      for (const model of MODELS) {
+        const retry = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent", {
+          method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+          signal: controller.signal, body: JSON.stringify(ungroundedPayload), cache: "no-store",
+        });
+        if (retry.ok) {
+          const result = await retry.json();
+          answer = (result.candidates?.[0]?.content?.parts ?? [])
+            .map((part: { text?: string }) => part.text || "").join("").trim();
+          if (answer) return NextResponse.json({
+            answer, sources: [], searched: false,
+            searchUnavailable: "Google no permitió la búsqueda web (429). Brady respondió sin consultar Internet. Para búsquedas en vivo revisa la cuota y la facturación de Google AI Studio."
+          }, { headers: { "Cache-Control": "no-store" } });
+          break;
+        }
+        if (retry.status !== 404) break;
+      }
+    }
     if (!answer) {
       const code = failure?.code ?? 502;
       const status = failure?.status ?? "UNKNOWN";
@@ -128,7 +154,9 @@ export async function POST(request: NextRequest) {
         ? "Google no autorizó la búsqueda web con esta clave. La función puede requerir habilitar la facturación o una cuota compatible; puedes desactivar «Buscar en Internet» para continuar sin búsquedas."
         : code === 403 ? "Google rechazó el acceso de este proyecto o clave (403). Revisa la elegibilidad del nivel gratuito en AI Studio."
         : code === 401 ? "Google rechazó la clave de API (401). Revisa GEMINI_API_KEY."
-        : code === 429 ? "Gemini alcanzó su cuota o límite de solicitudes (429)."
+        : code === 429 ? (webSearch
+          ? "Google rechazó la búsqueda en Internet (429). Puede ser una restricción de Search Grounding para la cuenta gratuita, no necesariamente que agotaste el chat. Revisa Search Grounding y la facturación en Google AI Studio; puedes desactivar la búsqueda para conversar sin Internet."
+          : "Gemini alcanzó su cuota o límite de solicitudes (429).")
         : code === 404 ? (webSearch
           ? "Los modelos con búsqueda web no están habilitados para esta clave de Gemini (404). Revisa los modelos disponibles en Google AI Studio."
           : "Ninguno de los modelos está disponible para este proyecto (404).")
