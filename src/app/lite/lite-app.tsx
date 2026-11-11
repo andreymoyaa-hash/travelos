@@ -542,13 +542,24 @@ export default function NioliLite() {
 
   async function copyForChatGPT() {
     if (!day) return;
+    // Free handoff to the user's existing ChatGPT account.
+    // No OpenAI API key, invented URL parameter or automatic transcript upload.
+    const previous = chatMessages.slice(-12).map(turn =>
+      (turn.role === "user" ? "Viajero" : "Brady") + ": " + turn.text.slice(0, 1200)).join("\n\n");
     const prompt = [
-      "Soy Andy. Ayúdame a organizar este día de mi viaje a Japón. No cambies reservas ni horarios fijos sin pedirme permiso.",
-      "Devuélveme una propuesta concreta y explica qué moverías. No inventes disponibilidad ni tiempos de transporte.",
-      "Fecha: " + day.date + " · " + day.city + " · " + day.area,
-      "Actividades: " + day.activities.map((activity) => (activity.startTime ? activity.startTime + " " : "") + activity.title).join(" | "),
-      "Petición: " + (assistantText.trim() || "Optimiza el orden del día evitando vueltas innecesarias."),
-    ].join("\n");
+      "Quiero seguir conversando contigo como Brady, el perezoso costarricense y compañero de viaje de Nioli Lite.",
+      "Habla en español como Brady: cálido, aventurero, un poquito travieso y siempre útil. No inventes precios, horarios ni reservas. No cambies reservas ni itinerarios sin consultarme.",
+      "No asumas quién soy: esta conversación puede pertenecer a Andy o a José. Esta información procede de Nioli, no de tus memorias.",
+      "CONTEXTO DEL DÍA: " + day.date + " · " + day.city + " · " + day.area,
+      "RESERVAS Y NOTAS: " + (day.reservationNote || "Sin nota") + " · " + (day.notes || "Sin notas"),
+      "ACTIVIDADES: " + day.activities.map(activity =>
+        (activity.startTime ? activity.startTime + " " : "") + activity.title).join(" | "),
+      previous ? "HISTORIAL RECIENTE DEL CHAT EN NIOLI:\n" + previous : "",
+      "MI MENSAJE ACTUAL: " + (assistantText.trim() || "Brady, continuemos nuestro viaje desde aquí."),
+      "Responde al mensaje actual teniendo en cuenta el historial, y si es relevante consulta información actualizada."
+    ].filter(Boolean).join("\n\n");
+    // The user opens their own ChatGPT session: content is transferred only when pasted.
+    window.open("https://chatgpt.com/", "_blank", "noopener,noreferrer");
     try {
       await navigator.clipboard.writeText(prompt);
       setCopied(true);
@@ -723,7 +734,7 @@ export default function NioliLite() {
               disabled={aiLoading || !assistantText.trim() || !chatKey}
               className="rounded-xl bg-[#365a45] px-4 py-3 font-semibold text-white disabled:opacity-50">{aiLoading ? "Brady está pensando…" : "Preguntar a Brady"}</button>
             <button type="button" onClick={copyForChatGPT}
-              className="rounded-xl border border-[#cddccc] bg-[#eaf1e8] px-4 py-3 font-semibold text-[#385c40]">{copied ? "Copiado" : "Usar en ChatGPT Plus"}</button>
+              className="rounded-xl border border-[#cddccc] bg-[#eaf1e8] px-4 py-3 font-semibold text-[#385c40]">{copied ? "Contexto copiado: pégalo en ChatGPT" : "Continuar con ChatGPT como Brady"}</button>
           </div>
           {aiError && <p role="alert" className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{aiError}</p>}
           {geminiSearchWarning && <p role="alert" className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{geminiSearchWarning}</p>}
@@ -741,6 +752,7 @@ export default function NioliLite() {
               sandbox="allow-popups allow-popups-to-escape-sandbox" referrerPolicy="no-referrer"
               className="h-20 w-full rounded-lg border border-[#dbe3dc]" />
           </div>}
+          <p className="mt-2 text-xs text-slate-500">La opción ChatGPT abre tu cuenta y copia el contexto de Nioli al portapapeles: pégalo en la conversación para continuar. No se envía automáticamente ni consume API de OpenAI.</p>
           <p className="mt-2 text-xs text-slate-500">Historial local por participante. Gemini recibe las últimas intervenciones necesarias para continuar. Evita compartir datos sensibles.</p>
         </section>
         </>}
