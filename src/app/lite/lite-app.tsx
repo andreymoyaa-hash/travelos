@@ -155,6 +155,7 @@ export default function NioliLite() {
   const [geminiWebSearch, setGeminiWebSearch] = useState(false);
   const [geminiSources, setGeminiSources] = useState<GeminiWebSource[]>([]);
   const [geminiSearched, setGeminiSearched] = useState(false);
+  const [geminiSearchWarning, setGeminiSearchWarning] = useState("");
   const [geminiSearchSuggestions, setGeminiSearchSuggestions] = useState("");
   const [chatKey, setChatKey] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatTurn[]>([]);
@@ -496,7 +497,7 @@ export default function NioliLite() {
     if (!day || !assistantText.trim() || aiLoading || !chatKey) return;
     const question = assistantText.trim();
     setAiLoading(true); setAiError(""); setChatError("");
-    setGeminiSources([]); setGeminiSearched(false); setGeminiSearchSuggestions("");
+    setGeminiSources([]); setGeminiSearched(false); setGeminiSearchSuggestions(""); setGeminiSearchWarning("");
     const context = [
       "Fecha: " + day.date, "Ciudad: " + day.city, "Zona: " + day.area,
       "Reserva: " + (day.reservationNote || "Sin nota"),
@@ -523,6 +524,7 @@ export default function NioliLite() {
         !!source && typeof source === "object" && typeof source.url === "string" &&
         /^https?:\/\//.test(source.url) && typeof source.title === "string").slice(0, 6) : []);
       setGeminiSearched(data.searched === true);
+      setGeminiSearchWarning(typeof data.searchUnavailable === "string" ? data.searchUnavailable : "");
       setGeminiSearchSuggestions(typeof data.searchEntryPoint === "string" ? data.searchEntryPoint : "");
     } catch (error) {
       setAiError(error instanceof Error ? error.message : "Error de conexión.");
@@ -535,7 +537,7 @@ export default function NioliLite() {
     setAiAnswer("");
     setAiError("");
     setAssistantText("");
-    setGeminiSources([]); setGeminiSearched(false); setGeminiSearchSuggestions("");
+    setGeminiSources([]); setGeminiSearched(false); setGeminiSearchSuggestions(""); setGeminiSearchWarning("");
   }
 
   async function copyForChatGPT() {
@@ -713,7 +715,7 @@ export default function NioliLite() {
               className="mt-1 h-4 w-4 accent-[#365a45]" />
             <span><strong>Buscar en Internet con Google</strong><span className="block text-xs text-[#57715b]">
               Para precios, horarios o información reciente. Desactivado por defecto para ahorrar cuota.
-              La búsqueda puede requerir facturación y no confirma disponibilidad en tiempo real.
+              Google puede bloquear Search Grounding en proyectos gratuitos (429); si ocurre, Brady responde sin Internet y lo avisa. No confirma disponibilidad en tiempo real.
             </span></span>
           </label>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -724,6 +726,7 @@ export default function NioliLite() {
               className="rounded-xl border border-[#cddccc] bg-[#eaf1e8] px-4 py-3 font-semibold text-[#385c40]">{copied ? "Copiado" : "Usar en ChatGPT Plus"}</button>
           </div>
           {aiError && <p role="alert" className="mt-3 rounded-xl bg-rose-50 p-3 text-sm text-rose-800">{aiError}</p>}
+          {geminiSearchWarning && <p role="alert" className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">{geminiSearchWarning}</p>}
           {geminiSearched && <p role="status" className="mt-3 text-xs font-semibold text-[#456b4c]">Brady consultó Google para esta respuesta</p>}
           {geminiSources.length > 0 && <aside aria-label="Fuentes consultadas por Gemini" className="mt-2 rounded-2xl border border-[#dbe3dc] bg-white p-3">
             <p className="text-xs font-bold uppercase tracking-wide text-[#57735e]">Fuentes web</p>
