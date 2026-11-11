@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTravelSession, readTravelSessionToken } from "@/lib/supabase/session";
 
 export const runtime = "nodejs";
+// Match search model selection to the standard chat: restricted legacy 2.5 cannot be the only web option.
 const MODELS = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-2.5-flash-lite"];
+const SEARCH_MODELS = ["gemini-3.5-flash-lite", "gemini-2.5-flash-lite"];
 const MAX_MESSAGE = 700;
 const MAX_CONTEXT = 10000;
 const MAX_HISTORY_ITEMS = 16;
@@ -84,9 +86,9 @@ export async function POST(request: NextRequest) {
     let sources: WebSource[] = [];
     let searchEntryPoint = "";
     let actuallySearched = false;
-    // 2.5 Flash-Lite has a published free-search allowance; newer Flash-Lite
-    // models may require a billed project. Never silently switch to them for search.
-    for (const model of webSearch ? ["gemini-2.5-flash-lite"] : MODELS) {
+    // A user explicitly opts into web searches in the UI; avoid silently disabling grounding.
+    // New Gemini projects may not have access to 2.5. Try the supported current model first.
+    for (const model of webSearch ? SEARCH_MODELS : MODELS) {
       const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent", {
         method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key },
         signal: controller.signal, body: payload, cache: "no-store",
@@ -115,7 +117,9 @@ export async function POST(request: NextRequest) {
       const errorBody = await response.json().catch(() => ({}));
       const status = typeof errorBody?.error?.status === "string" ? errorBody.error.status : "UNKNOWN";
       failure = { code: response.status, status };
-      if (response.status !== 404) break;
+      // 404: unavailable model. 400: a model may reject the Google Search tool.
+      // Continue with another compatible model, but never retry quota/billing failures.
+      if (response.status !== 404 && response.status !== 400) break;
     }
     if (!answer) {
       const code = failure?.code ?? 502;
@@ -125,7 +129,9 @@ export async function POST(request: NextRequest) {
         : code === 403 ? "Google rechazó el acceso de este proyecto o clave (403). Revisa la elegibilidad del nivel gratuito en AI Studio."
         : code === 401 ? "Google rechazó la clave de API (401). Revisa GEMINI_API_KEY."
         : code === 429 ? "Gemini alcanzó su cuota o límite de solicitudes (429)."
-        : code === 404 ? "Ninguno de los modelos está disponible para este proyecto (404)."
+        : code === 404 ? (webSearch
+          ? "Los modelos con búsqueda web no están habilitados para esta clave de Gemini (404). Revisa los modelos disponibles en Google AI Studio."
+          : "Ninguno de los modelos está disponible para este proyecto (404).")
         : code === 400 ? "Google rechazó la solicitud por formato o parámetros (400)."
         : code === 502 ? "Gemini devolvió una respuesta vacía."
         : "Gemini rechazó la solicitud (HTTP " + code + "; " + status.replace(/[^A-Z_]/g, "").slice(0, 40) + ").";
